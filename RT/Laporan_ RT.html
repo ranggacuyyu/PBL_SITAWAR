@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="Laporan_RT.css">
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div>
+            <div class="sidebar-header">
+                <h1>SITAWAR</h1>
+                <p>Sistem Terpadu Administrasi Warga</p>
+            </div>
+            <nav class="nav">
+                <a href="Dashboard_RT.html">Dashboard</a>
+                <a href="DataWarga_RT.html">Data Warga</a>
+                <a href="Dokumen_RT.html">Dokumen</a>
+                <a href="#">Laporan</a>
+            </nav>
+        </div>
+        <div class="sidebar-footer">
+            © 2025 RT Smart System
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <div class="panduan">
+            <b>Panduan:</b>
+            Klik ikon mata untuk melihat rincian laporan
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Blok Rumah</th>
+                    <th>Jenis</th>
+                    <th>Periksa</th>
+                </tr>
+            </thead>
+            <tbody id="tabelData"></tbody>
+        </table>
+    </div>
+
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <h3>Rincian Laporan</h3>
+            <p><b>Nama Pelapor:</b> <span id="popupNama"></span></p>
+            <p><b>No. Telepon:</b> <span id="popupTelepon"></span></p>
+            <p><b>Blok Rumah yang Dilapor:</b> <span id="popupBlok"></span></p>
+            <p><b>Usia yang Dilapor:</b> <span id="popupUsia"></span></p>
+            <button class="close-btn" onclick="tutupPopup()">Tutup</button>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // Data dummy
+        const dataWarga = [
+            { nama: "Ayu Lestari", blok: "A-12", jenis: "Pelaporan Ibu Hamil", pelapor: "Siti Nurhaliza", telepon: "08123456789", usia: "27 tahun" },
+            { nama: "Budi Santoso", blok: "B-09", jenis: "Pelaporan Warga Meninggal", pelapor: "Dedi Saputra", telepon: "08213455678", usia: "65 tahun" },
+            { nama: "Citra Dewi", blok: "C-04", jenis: "Pelaporan Ibu Hamil", pelapor: "Nanda Pratiwi", telepon: "08129456712", usia: "31 tahun" },
+            { nama: "Doni Pratama", blok: "D-07", jenis: "Pelaporan Warga Meninggal", pelapor: "Hendra Kurnia", telepon: "08216789453", usia: "70 tahun" },
+            { nama: "Eka Wulandari", blok: "E-02", jenis: "Pelaporan Ibu Hamil", pelapor: "Nur Azizah", telepon: "08127895643", usia: "25 tahun" },
+            { nama: "Fajar Hidayat", blok: "F-15", jenis: "Pelaporan Warga Meninggal", pelapor: "Rina Kurniasih", telepon: "08134567922", usia: "63 tahun" },
+            { nama: "Gita Paramitha", blok: "G-08", jenis: "Pelaporan Ibu Hamil", pelapor: "Rudi Hartono", telepon: "08129876433", usia: "30 tahun" },
+            { nama: "Hendra Wijaya", blok: "H-10", jenis: "Pelaporan Warga Meninggal", pelapor: "Asep Ramdan", telepon: "08214567893", usia: "68 tahun" },
+            { nama: "Indah Sari", blok: "I-06", jenis: "Pelaporan Ibu Hamil", pelapor: "Dewi Lestari", telepon: "08122233445", usia: "29 tahun" },
+            { nama: "Joko Purnomo", blok: "J-11", jenis: "Pelaporan Warga Meninggal", pelapor: "Reni Marlina", telepon: "08217778899", usia: "72 tahun" },
+            { nama: "Kartika Dewi", blok: "K-09", jenis: "Pelaporan Ibu Hamil", pelapor: "Ahmad Yusuf", telepon: "08133445566", usia: "26 tahun" },
+            { nama: "Lukman Hakim", blok: "L-05", jenis: "Pelaporan Warga Meninggal", pelapor: "Sulastri", telepon: "08124445555", usia: "60 tahun" },
+            { nama: "Maya Fitri", blok: "M-14", jenis: "Pelaporan Ibu Hamil", pelapor: "Agus Salim", telepon: "08217775544", usia: "32 tahun" },
+            { nama: "Niko Prasetyo", blok: "N-03", jenis: "Pelaporan Warga Meninggal", pelapor: "Diana Kusuma", telepon: "08123334445", usia: "69 tahun" },
+            { nama: "Olivia Anggraini", blok: "O-07", jenis: "Pelaporan Ibu Hamil", pelapor: "Lina Marlina", telepon: "08129876543", usia: "28 tahun" },
+            { nama: "Putu Aditya", blok: "P-02", jenis: "Pelaporan Warga Meninggal", pelapor: "Made Sari", telepon: "08135557788", usia: "64 tahun" },
+            { nama: "Qory Amalia", blok: "Q-10", jenis: "Pelaporan Ibu Hamil", pelapor: "Siti Rahma", telepon: "08214443322", usia: "24 tahun" },
+            { nama: "Rizky Ramadhan", blok: "R-08", jenis: "Pelaporan Warga Meninggal", pelapor: "Junaedi", telepon: "08126667789", usia: "71 tahun" },
+            { nama: "Sinta Ayu", blok: "S-01", jenis: "Pelaporan Ibu Hamil", pelapor: "Yuni Lestari", telepon: "08124567891", usia: "29 tahun" },
+            { nama: "Teguh Saputra", blok: "T-13", jenis: "Pelaporan Warga Meninggal", pelapor: "Rahmat Hidayat", telepon: "08213445566", usia: "67 tahun" }
+        ];
+
+
+        const tabel = document.getElementById("tabelData");
+
+        // Tampilkan data ke tabel
+        dataWarga.forEach((w, i) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+        <td>${w.nama}</td>
+        <td>${w.blok}</td>
+        <td>${w.jenis}</td>
+        <td>
+          <button class="detail" onclick="lihatDetail(${i})">
+            periksa
+          </button>
+        </td>
+      `;
+            tabel.appendChild(row);
+        });
+
+        // Fungsi untuk menampilkan popup
+        function lihatDetail(i) {
+            const warga = dataWarga[i];
+            document.getElementById("popupNama").textContent = warga.pelapor;
+            document.getElementById("popupTelepon").textContent = warga.telepon;
+            document.getElementById("popupBlok").textContent = warga.blok;
+            document.getElementById("popupUsia").textContent = warga.usia;
+            document.getElementById("popup").style.display = "flex";
+        }
+
+        function tutupPopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+    </script>
+</body>
+
+</html>

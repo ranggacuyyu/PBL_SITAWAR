@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SITAWAR</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      background-image: url(download.jpg);
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .kepala {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .kepala span {
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .pop-up11 {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+    }
+
+    .pop-up22 {
+      width: 100%;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.8);
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      position: fixed;
+      padding: 50px;
+      padding-top: 0;
+    }
+
+    .pop-up22 h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: bold;
+      padding: 10px;
+    }
+
+    .modal {
+      animation: fadeIn 0.3s ease-in-out;
+      background-color: white;
+      width: 500px;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .modal-form input {
+      padding: 8px;
+      border: 1px solid #bbbbbb;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .modal-form input[type="submit"] {
+      background-color: #4CAF50;
+      padding: 12px;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    header {
+      background: linear-gradient(to right, #3f492d, #88976c);
+      color: white;
+      height: 13vh;
+      display: flex;
+      align-items: center;
+      padding-left: 20px;
+      font-weight: bold;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    nav {
+      background-color: #899a68;
+      color: white;
+      font-weight: bolder;
+      padding: 10px;
+      width: 200px;
+      flex-shrink: 0;
+      position: fixed;
+      height: 100%;
+      top: 13vh;
+      left: 0;
+      z-index: 0;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    nav ul h2 {
+      padding: 10px;
+      margin: 10px 0;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-radius: 4px;
+    }
+
+    nav ul h2:hover {
+      background-color: white;
+      color: #738B67;
+      transform: translateY(3px);
+    }
+
+    main {
+      background-color: #88976cce;
+      width: 100%;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      padding-left: 240px;
+      padding-top: calc(87px + 1rem);
+      box-sizing: border-box;
+    }
+
+    .top-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .menu-dokumen {
+      background-color: #728156;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #899a68;
+    }
+
+    .menu-dokumen h4 {
+      margin-top: 5px;
+      margin-bottom: 10px;
+      color: white;
+      text-align: center;
+    }
+
+    .dokumen-tombol {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .dokumen-tombol button {
+      padding: 10px;
+      background-color: #a2ad7d;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .dokumen-tombol button:hover {
+      background-color: #899a68;
+      color: white;
+    }
+
+    .alert-box {
+      background-color: #899a68;
+      padding: 10px;
+      border-radius: 5px;
+      flex-grow: 1;
+      color: rgb(3, 3, 3);
+
+      font-size: 18px;
+    }
+
+    .riwayat {
+      background-color: #899a68;
+      padding: 10px;
+      border: 1px solid #899a68;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .riwayat-header-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #dbeeb4;
+    }
+
+    th,
+    td {
+      border: 1px solid #748156;
+      padding: 8px;
+      text-align: center;
+      color: #222e08;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: #f6fae9;
+    }
+
+    #docType {
+      cursor: pointer;
+    }
+
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 992px) {
+      body {
+        width: 100%;
+      }
+
+      nav {
+        width: 100%;
+        text-align: center;
+      }
+
+      nav ul {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+      }
+
+      main {
+        padding: 10px;
+      }
+
+      header {
+        height: auto;
+        padding: 10px;
+        text-align: center;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .menu-dokumen {
+        width: 100%;
+      }
+
+      .alert-box {
+        font-size: 13px;
+      }
+
+      table th,
+      table td {
+        font-size: 12px;
+        padding: 5px;
+      }
+
+      .riwayat-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .riwayat-header-row div {
+        margin-bottom: 5px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="pop-up11">
+    <div class="pop-up22">
+      <div class="modal">
+        <div class="kepala">
+          <h3>Form Pengajuan Domisili</h3>
+          <span id="clodemodal">✖️</span>
+        </div>
+        <hr>
+        <form action="" class="modal-form">
+          <input type="text" name="" id="nama" placeholder="Nama Lengkap">
+          <input type="text" name="" id="nik" placeholder="NIk">
+          <input type="text" name="" id="alamat" placeholder="Alamat Lengkap">
+          <input type="text" name="" id="RT" placeholder="RT/RW">
+          <input type="text" name="" id="Kelurahan" placeholder="Kelurahan">
+          <input type="text" name="" id="kecamatan" placeholder="kecamatan">
+          <input type="text" name="" id="kota" placeholder="Kota/Kabupaten">
+          <input type="number" name="" id="nohp" placeholder="No handphone">
+          <input type="date" name="" id="tanggal" placeholder="Tanggal Lahir">
+          <input type="submit" value="Ajukan">
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <h1>SITAWAR</h1>
+  </header>
+
+
+  <nav>
+    <ul>
+      <a href="datasiWarga.html">
+        <h2>Data Pribadi</h2>
+      </a>
+      <h2>Dokumen</h2>
+      <a href="Data Ibu Hamil.html">
+        <h2>Laporan</h2>
+      </a>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="top-row">
+      <div class="menu-dokumen">
+        <h4>Jenis Dokumen</h4>
+        <hr>
+        <div class="dokumen-tombol">
+          <button id="openDomisili">Pengantar Domisili</button>
+          <button id="openPengantar">Penganar RT</button>
+        </div>
+      </div>
+      <div class="alert-box">
+        <p>Halaman ini adalah bagian untuk membuat sebuah dokumen yang akan diajukan kedapa RT,<br> dengan tata cara
+          sebagai
+          berikut:</p>
+        <ol>
+          <li>Pilih jenis dokumen yang ingin diajukan pada menu jenis dokumen yang berada di samping kiri.</li>
+          <li>Isi form pengajuan dokumen dengan data yang benar dan lengkap.</li>
+          <li>Setelah mengisi form, klik tombol "Ajukan" untuk mengirim permohonan dokumen.</li>
+          <li>Tunggu konfirmasi dari RT mengenai status pengajuan dokumen Anda.</li>
+        </ol>
+        <p>Pastikan semua data yang dimasukkan sudah benar sebelum mengajukan permohonan dokumen.</p>
+      </div>
+    </div>
+
+    <div class="riwayat">
+      <div class="riwayat-header-row">
+        <div>Riwayat Pelaporan</div>
+        <div class="tampil-10">Tampilkan 10</div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-custom text-center">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Jenis</th>
+              <th>Tanggal Pembuatan</th>
+              <th>Status</th>
+              <th>validasi </th>
+              <th>Cetak</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Domisili</td>
+              <td>01/10/2025</td>
+              <td>Selesai</td>
+              <td class="validasi">Valid</td>
+              <td><button class="btn btn-sm btn-outline-dark" onclick="cekValidasi(this)">Cetak</button></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Pengantar RT</td>
+              <td>02/10/2025</td>
+              <td>Diproses</td>
+              <td class="validasi">-</td>
+              <td><button class="btn btn-sm btn-outline-dark" onclick="cekValidasi(this)">Cetak</button></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Pengantar RT</td>
+              <td>03/10/2025</td>
+              <td>Selesai</td>
+              <td class="validasi">Valid</td>
+              <td><button class="btn btn-sm btn-outline-dark" onclick="cekValidasi(this)">Cetak</button></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>PengantarRT</td>
+              <td>04/10/2025</td>
+              <td>Diproses</td>
+              <td class="validasi">-</td>
+              <td><button class="btn btn-sm btn-outline-dark" onclick="cekValidasi(this)">Cetak</button></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Domisili</td>
+              <td>05/10/2025</td>
+              <td>Selesai</td>
+              <td class="validasi">Valid</td>
+              <td><button class="btn btn-sm btn-outline-dark" onclick="cekValidasi(this)">Cetak</button></td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>domisili</td>
+              <td>06/10/2025</td>
+              <td>Diproses</td>
+              <td class="validasi">-</td>
+              <td><button class="btn btn-sm btn-outline-dark" onclick="cekValidasi(this)">Cetak</button></td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>Pengantar RT</td>
+              <td>07/10/2025</td>
+              <td>Selesai</td>
+              <td class="validasi">Valid</td>
+              <td><button class="btn btn-sm btn-outline-dark" onclick="cekValidasi(this)">Cetak</button></td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td>Domisili</td>
+              <td>08/10/2025</td>
+              <td>Diproses</td>
+              <td class="validasi">-</td>
+              <td><button class="btn btn-sm btn-outline-dark" onclick="cekValidasi(this)">Cetak</button></td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td>Domisili</td>
+              <td>09/10/2025</td>
+              <td>Selesai</td>
+              <td class="validasi">Valid</td>
+              <td><button class="btn btn-sm btn-outline-dark" onclick="cekValidasi(this)">Cetak</button></td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td>Pengantar RT</td>
+              <td>10/10/2025</td>
+              <td>Selesai</td>
+              <td class="validasi">valid</td>
+              <td><button class="btn btn-sm btn-outline-dark" onclick="cekValidasi(this)">Cetak</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const openmodaldomisii = document.getElementById('openDomisili');
+    const openmodalpengantar = document.getElementById('openPengantar');
+    const popUp11 = document.querySelector('.pop-up11');
+    const closemodal = document.getElementById('clodemodal');
+
+    openmodaldomisii.onclick = () => popUp11.style.display = 'flex';
+    closemodal.onclick = () => popUp11.style.display = 'none';
+    
+    function cekValidasi(btn) {
+      let validasi = btn.parentElement.parentElement.querySelector(".validasi").innerText.trim();
+
+      if (validasi.toLowerCase() === "valid") {
+        alert("Anda akan pergi kehalaman cetak dokumen")
+        var printContents = window.open("surat domisili.html", "_blank").document.body.innerHTML;
+        printContents.onload = function () {
+          printContents.print();
+        };
+      } else {
+        alert("Dokumen belum divalidasi, tidak dapat mencetak!");
+      }
+    }
+  </script>
+</body>
+
+</html>

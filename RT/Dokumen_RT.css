@@ -1,0 +1,187 @@
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-image: url(download.jpg);
+            background-size: cover;
+            background-position: fixed;
+            color: #333;
+            min-height: 100vh;
+        }
+
+                /* SIDEBAR */
+        .sidebar {
+            width: 250px;
+            background-color: #8da070;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            height: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding-top: 22px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-header h1 {
+            font-weight: 700;
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: #4b5c30;
+            font-weight: bold;
+        }
+
+        .nav {
+            padding: 20px;
+        }
+
+        .nav a {
+            display: block;
+            width: 100%;
+            color: white;
+            text-decoration: none;
+            padding-bottom: 8px;
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-top: 8px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            font-size: 1.35em;
+        }
+
+        .nav a:hover {
+            background-color: #6b7a59;
+        }
+
+        .sidebar-footer {
+            padding: 14px;
+            text-align: center;
+            font-size: 12px;
+            color: #ffffff;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .bungkus {
+            margin-left: 250px;
+            display: flex;
+            background-color: #88976cce;
+            width: 100%;
+        }
+
+        .datatambahan {
+            width: 100%;
+            margin: 20px;
+        }
+
+        .main-content {
+            margin-left: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #a6b48c;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        .filter-bar {
+            display: flex;
+            font-size: 1.3em;
+            margin-left: 40px;
+            margin-top: 30px;
+            color: white;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #a6b48c;
+        }
+
+        th,
+        td {
+            border: 1px solid #8b9a70;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #tabelPengajuan th{
+            background-color: #7f8f62;
+            color: white;
+        }
+
+        #tabelPengajuan tbody tr:nth-child(even) {
+            background-color: #c2d1a9;
+        }
+
+        .btn {
+            border-radius: 5px;
+        }
+
+        .modal-content {
+            background-color: #e9f0da;
+        }
+
+        #tabelPengajuan th {
+        background-color: #5c7040; /* header hijau tua */
+        color: white;
+    }
+
+    /* Warna kolom pertama (Nama) */
+    #tabelPengajuan td:nth-child(1) {
+        background-color: #dee9d1;
+        font-weight: 600;
+    }
+
+    /* Warna kolom kedua (Jenis) */
+    #tabelPengajuan td:nth-child(2) {
+        background-color: #e8f1da;
+    }
+
+    /* Warna kolom ketiga (Tanggal) */
+    #tabelPengajuan td:nth-child(3) {
+        background-color: #f3f8e7;
+    }
+
+    /* Warna kolom keempat (Persetujuan) */
+    #tabelPengajuan td:nth-child(4) {
+        background-color: #e0eed0;
+    }
+
+    /* Tambahan efek hover baris */
+    #tabelPengajuan tbody tr:hover td {
+        background-color: #d5e3ba;
+        transition: 0.3s;
+    }
+
+    /* Tambahan style tabel */
+    #tabelPengajuan {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    #tabelPengajuan th,
+    #tabelPengajuan td {
+        border: 1px solid #8b9a70;
+        text-align: center;
+        padding: 10px;
+    }

@@ -1,0 +1,143 @@
+ * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #4e5e31a6;
+      background-image: url(../image/download.jpg);
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      line-height: 1.6;
+    }
+
+    .background {
+      background-color: #4e5e31a6;  
+      padding: 30px;
+    }
+
+    .card-baru {
+      font-size: 18px;
+      background-color: #acbe8db4;
+      padding: 30px;
+      border-radius: 15px;
+    }
+
+    .judul {
+      background-color: rgba(0, 0, 0, 0.959);
+      color: white;
+      padding: 15px;
+      font-size: 1.8rem;
+      text-align: center;
+    }
+
+    .container {
+      background-color: #4e5e31a6;
+      min-height: 100vh;
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .form-kiri {
+      background-color: #98A77C;
+      padding: 20px;
+      flex: 1 1 650px;
+      border-radius: 10px;
+    }
+
+    .kotak-form {
+      background-color: #B6C99B;
+      padding: 15px;
+      margin-top: 30px;
+      border-radius: 10px;
+    }
+
+    input[type=text],
+    input[type=email],
+    input[type=password],
+    input[type=file],
+    input[type=date],
+    select {
+      font-size: 14px;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .tombol {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      background-color: #88976C;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 50px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #6f8054;
+    }
+
+    .foto-kanan {
+      background-color: #a2b48a;
+      flex: 0 1 300px;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .kotak-foto {
+      background-color: #cfd9b7;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .ikon {
+      font-size: 70px;
+      margin-bottom: 10px;
+    }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 992px) {
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .form-kiri,
+      .foto-kanan {
+        width: 100%;
+      }
+
+      .foto-kanan {
+        margin-top: 20px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .judul {
+        font-size: 1.5rem;
+      }
+
+      .kotak-form h3 {
+        font-size: 1rem;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
