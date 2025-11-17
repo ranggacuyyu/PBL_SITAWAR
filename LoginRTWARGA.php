@@ -1,3 +1,8 @@
+<?php
+session_start();
+include "koneksi.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,6 +15,18 @@
 </head>
 
 <body class="terang">
+    <?php
+    if (isset($_POST['name'])) {
+        $name  = $_POST['name'];
+        $nik   = $_POST['nik'];
+        $sk    = $_POST['sk'];
+        $hp    = $_POST['hp'];
+        $query = mysqli_query($koneksi, "SELECT*FROM user_rt where nama_rt = '$name' and nik_rt ='$nik' and sk_rt = '$sk' and ");
+
+
+        $data  = mysqli_fetch_array($query);
+    }
+    ?>
     <header>
         <nav class="navbar">
             <a href="#">
@@ -44,26 +61,26 @@
 
             <div class="form-box-login">
                 <h2>LOGIN WARGA</h2>
-                <form action="#">
+                <form method="POST">
                     <div class="input-box">
                         <span class="ikon"><i class="fa-solid fa-envelope"></i></span>
-                        <input type="text" id="userName" required>
+                        <input type="text" id="userName" required name="nama">
                         <label for="">NAMA</label>
                     </div>
                     <div class="input-box">
                         <span class="ikon"><i class="fa-solid fa-lock"></i></span>
-                        <input type="password" id="password" required>
+                        <input type="password" id="password" required name="sandi">
                         <label for="">NIK</label>
                     </div>
                     <div class="input-box">
                         <span class="ikon"><i class="fa-solid fa-lock"></i></span>
-                        <input type="password" required>
+                        <input type="number" required required name="nohp">
                         <label for="">NO HP</label>
                     </div>
                     <div class="remember-forgot">
                         <a href=""></a>
                     </div>
-                    <button type="submit" class="btn-forgot" id="login1">Login</button>
+                    <button type="submit" class="btn-forgot" id="login1" name="login">Login</button>
                     <div class="login-register">
                         <p><a href="#" class="login-link">login Sebagai RT?</a></p>
                     </div>
@@ -76,28 +93,28 @@
                     <form action="#">
                         <div class="input-box">
                             <span class="ikon"><i class="fa-solid fa-user"></i></span>
-                            <input type="text" required id="userName1">
+                            <input type="text" required id="userName1" name="name">
                             <label for="">NAMA</label>
                         </div>
                         <div class="input-box">
                             <span class="ikon"><i class="fa-solid fa-envelope"></i></span>
-                            <input type="text" required>
+                            <input type="text" required name="nik">
                             <label for="">NIK</label>
                         </div>
                         <div class="input-box">
                             <span class="ikon"><i class="fa-solid fa-lock"></i></span>
-                            <input type="password" required>
+                            <input type="password" required name="sk">
                             <label for="">SK RT</label>
                         </div>
                         <div class="input-box">
                             <span class="ikon"><i class="fa-solid fa-lock"></i></span>
-                            <input type="password" required>
+                            <input type="password" required name="hp">
                             <label for="">NO HP</label>
                         </div>
                         <div class="remember-forgot">
                             <a href=""></a>
                         </div>
-                        <button type="submit" class="btn-forgot" id="daftar23">Login</button>
+                        <button type="submit" class="btn-forgot" id="daftar23" name="submit">Login</button>
                         <div class="login-register">
                             <p><a href="#" class="register-link">Login Sebagai Warga?</a></p>
                         </div>
@@ -144,7 +161,7 @@
     <!-- bagian layanan -->
     <section id="layanannn">
         <div class="layanan">
-            <div class="list-layanan" >
+            <div class="list-layanan">
                 <div class="penjelasanCard" onmouseover="tombolLayanan1()" onmouseout="kembali()">
                     <img src="image/OIP.jpg" alt="" id="foto1">
                     <h3>Pengelolaan data</h3>
@@ -155,7 +172,7 @@
                 </div>
             </div>
 
-            <div class="list-layanan" >
+            <div class="list-layanan">
                 <div class="penjelasanCard" onmouseover="tombolLayanan2()" onmouseout="kembali()">
                     <img src="image/lapor.jpeg" alt="" id="foto2">
                     <h3> pengajuan pelaporan</h3>
@@ -167,7 +184,7 @@
             </div>
 
             <div class="list-layanan">
-                <div class="penjelasanCard"  onmouseover="tombolLayanan3()" onmouseout="kembali()">
+                <div class="penjelasanCard" onmouseover="tombolLayanan3()" onmouseout="kembali()">
                     <img src="image/dokumen.jpeg" alt="" id="foto3">
                     <h3>pembuatan dokumen</h3>
                 </div>
@@ -237,38 +254,43 @@
         const akhirnya1 = document.getElementById('akhirnyaCard1')
         const akhirnya2 = document.getElementById('akhirnyaCard2')
         const akhirnya3 = document.getElementById('akhirnyaCard3')
+
         function tombolLayanan1() {
             cardLayanan1.style.scale = '1.2';
             cardLayanan1.style.transition = 'all 0.2s ease-in-out';
-            akhirnya1.style.opacity ='1'
+            akhirnya1.style.opacity = '1'
             akhirnya1.style.transition = 'all 0.4s ease-in-out';
         }
+
         function tombolLayanan2() {
             cardLayanan2.style.scale = '1.2'
             cardLayanan2.style.transition = 'all 0.2s ease-in-out';
-            akhirnya2.style.opacity ='1'
+            akhirnya2.style.opacity = '1'
             akhirnya2.style.transition = 'all 0.4s ease-in-out';
         }
+
         function tombolLayanan3() {
             cardLayanan3.style.scale = '1.2';
             cardLayanan3.style.transition = 'all 0.2s ease-in-out';
-            akhirnya3.style.opacity ='1'
+            akhirnya3.style.opacity = '1'
             akhirnya3.style.transition = 'all 0.4s ease-in-out';
         }
+
         function kembali() {
             cardLayanan1.style.removeProperty('scale')
             cardLayanan2.style.removeProperty('scale')
             cardLayanan3.style.removeProperty('scale')
-            akhirnya1.style.opacity ='0'
-            akhirnya2.style.opacity ='0'
-            akhirnya3.style.opacity ='0'
+            akhirnya1.style.opacity = '0'
+            akhirnya2.style.opacity = '0'
+            akhirnya3.style.opacity = '0'
         }
 
 
 
         const tombol = document.getElementById('tombol-login')
+
         function warna() {
-            tombol.style.backgroundColor = '#fff'
+            tombol.style.backgroundColor = '#ffffffc0'
             tombol.style.color = '#88976c'
         }
 
@@ -298,7 +320,7 @@
             tombol.style.removeProperty('color')
         });
 
-        document.getElementById('daftar23').addEventListener('click', function () {
+        document.getElementById('daftar23').addEventListener('click', function() {
             const jenisnama = document.getElementById('userName1').value;
 
             if (jenisnama === "RT") {
