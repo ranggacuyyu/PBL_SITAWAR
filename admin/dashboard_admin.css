@@ -26,14 +26,18 @@
             justify-content: space-between;
         }
 
-        .btn-close {
-            background: #85ad75;
+        .alur {
+            background: #010201;
             border: none;
             padding: 7px 14px;
             border-radius: 5px;
             color: white;
             cursor: pointer;
             scale: 90%;
+        }
+
+        .torik button:hover{
+            background-color: #404739 !important;
         }
 
         hr {

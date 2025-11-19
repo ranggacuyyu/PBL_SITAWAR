@@ -13,7 +13,6 @@ include "koneksi.php";
     <link rel="stylesheet" href="LoginRTWARGA.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
-
 <body class="terang">
     <?php
     if (isset($_POST['name'])) {
@@ -21,10 +20,18 @@ include "koneksi.php";
         $nik   = $_POST['nik'];
         $sk    = $_POST['sk'];
         $hp    = $_POST['hp'];
-        $query = mysqli_query($koneksi, "SELECT*FROM user_rt where nama_rt = '$name' and nik_rt ='$nik' and sk_rt = '$sk' and ");
+        $query = mysqli_query($koneksi, "SELECT*FROM user_rt where nama_rt = '$name' and nik_rt ='$nik' and sk_rt = '$sk' and nohp_rt = '$hp'");
 
-
-        $data  = mysqli_fetch_array($query);
+        if(mysqli_num_rows($query) > 0) {
+            $data  = mysqli_fetch_array($query);
+            $_SESSION['user_rt'] = $data;
+            echo 
+            '<script> alert("selamat datang");
+            window.location.href="RT/Dashboard_RT.php";
+            </script>';
+        } else{
+            echo '<script>alert("gagal login")</script>';
+        }
     }
     ?>
     <header>
@@ -80,7 +87,7 @@ include "koneksi.php";
                     <div class="remember-forgot">
                         <a href=""></a>
                     </div>
-                    <button type="submit" class="btn-forgot" id="login1" name="login">Login</button>
+                    <button type="submit" class="btn-forgot" id="login1" name="submit" value="login">Login</button>
                     <div class="login-register">
                         <p><a href="#" class="login-link">login Sebagai RT?</a></p>
                     </div>
@@ -90,7 +97,7 @@ include "koneksi.php";
             <div class="daftar-regis">
                 <div class="form-box-login">
                     <h2>LOGIN RT</h2>
-                    <form action="#">
+                    <form method="POST">
                         <div class="input-box">
                             <span class="ikon"><i class="fa-solid fa-user"></i></span>
                             <input type="text" required id="userName1" name="name">
@@ -319,17 +326,7 @@ include "koneksi.php";
             tombol.style.removeProperty('background-color')
             tombol.style.removeProperty('color')
         });
-
-        document.getElementById('daftar23').addEventListener('click', function() {
-            const jenisnama = document.getElementById('userName1').value;
-
-            if (jenisnama === "RT") {
-                window.location.href = 'sign in rt.html'
-            } else {
-                window.location.href = 'sign in warga.html'
-            }
-        });
-
+        
         const menuToggle = document.querySelector('.menu-toggle');
         const navbar = document.querySelector('.navbar');
 

@@ -1,6 +1,7 @@
 <?php
 session_start();
 include "../koneksi.php";
+mysqli_report(MYSQLI_REPORT_OFF);
 
 $nik_rt      = "";
 $nama_rt     = "";
@@ -29,6 +30,8 @@ if (isset($_POST["submit"])) {
         } else {
             $error = "gagal";
         }
+    } else{
+        $error = "silahkan masukkan semua data";
     }
 }
 ?>
@@ -58,7 +61,7 @@ if (isset($_POST["submit"])) {
                     <?php
                     if ($error) {
                     ?>
-                        <div style="width: 100%; height:50px; background-color:tomato;">
+                        <div style="width: 100%; height:50px; background-color:tomato;" role="alert">
                             <?php echo $error ?>
                         </div>
                     <?php
@@ -68,7 +71,7 @@ if (isset($_POST["submit"])) {
 
                     if ($sukses) {
                     ?>
-                        <div style="width: 100%; height:50px; background-color:#404739; color:white; font-size:20px;">
+                        <div style="width: 100%; height:50px; background-color:#404739; color:white; font-size:20px;" role="alert">
                             <?php echo $sukses ?>
                         </div>
                     <?php

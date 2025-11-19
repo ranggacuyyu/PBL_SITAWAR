@@ -1,3 +1,11 @@
+<?php 
+session_start();
+if(!isset($_SESSION['user_rt'])){
+    header('location:login_admin.php');
+}
+    
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
