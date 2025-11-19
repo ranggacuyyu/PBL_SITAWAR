@@ -13,6 +13,7 @@ include "koneksi.php";
     <link rel="stylesheet" href="LoginRTWARGA.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
+
 <body class="terang">
     <?php
     if (isset($_POST['name'])) {
@@ -22,18 +23,41 @@ include "koneksi.php";
         $hp    = $_POST['hp'];
         $query = mysqli_query($koneksi, "SELECT*FROM user_rt where nama_rt = '$name' and nik_rt ='$nik' and sk_rt = '$sk' and nohp_rt = '$hp'");
 
-        if(mysqli_num_rows($query) > 0) {
+        if (mysqli_num_rows($query) > 0) {
             $data  = mysqli_fetch_array($query);
             $_SESSION['user_rt'] = $data;
-            echo 
+            echo
             '<script> alert("selamat datang");
             window.location.href="RT/Dashboard_RT.php";
             </script>';
-        } else{
+        } else {
             echo '<script>alert("gagal login")</script>';
         }
     }
     ?>
+
+    <!-- Bagian Winda -->
+    <?php
+    if (isset($_POST['nama'])) {
+        $nama = $_POST['nama'];
+        $sandi   = $_POST['sandi'];
+        $nohp    = $_POST['nohp'];
+        $query = mysqli_query($koneksi, "SELECT*FROM user_warga where nama_warga = '$nama' and nik_warga ='$sandi' and hp_warga = '$nohp'");
+
+        if (mysqli_num_rows($query) > 0) {
+            $data  = mysqli_fetch_array($query);
+            $_SESSION['user_warga'] = $data;
+            echo
+            '<script> alert("selamat datang");
+            window.location.href="Warga/sign-in_Warga.php";
+            </script>';
+        } else {
+            echo '<script>alert("gagal login")</script>';
+        }
+    }
+    ?>
+    <!-- Bagian Winda End -->
+
     <header>
         <nav class="navbar">
             <a href="#">
@@ -326,7 +350,7 @@ include "koneksi.php";
             tombol.style.removeProperty('background-color')
             tombol.style.removeProperty('color')
         });
-        
+
         const menuToggle = document.querySelector('.menu-toggle');
         const navbar = document.querySelector('.navbar');
 
