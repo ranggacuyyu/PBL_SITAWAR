@@ -38,12 +38,13 @@ if (!isset($_SESSION['admin_user'])) {
                             <h2>DASHBOARD ADMIN</h2>
                             <p>Bagian pendataan akun RT</p>
                         </div>
-                        <button class="alur" class="btn-close">Keluar</button>
+                        <button class="alur">Keluar</button>
                     </div>
                     <hr>
                     <h3>Daftar RT Terdaftar</h3>
                     <table>
-                        <thead>
+                        <thead>git add .
+
                             <tr>
                                 <th>ID</th>
                                 <th>Nama</th>
