@@ -15,6 +15,7 @@ if (!isset($_SESSION['admin_user'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Halaman_admin</title>
     <link rel="stylesheet" href="dashboard_admin.css">
+    <style></style>
 </head>
 
 <body>
