@@ -1,3 +1,7 @@
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,9 +30,10 @@
       melakukan proses pengiriman data, dan tunggu hingga muncul notifikasi bahwa proses pengisian dan pengiriman data
       berhasil dilakukan.</div>
   </div>
+  
   <div class="container">
     <!-- BAGIAN KIRI -->
-    <div class="form-kiri">
+    <form id="form-kiri" class="form-kiri">
       <h2>DAFTARKAN AKUN ANDA</h2>
 
       <div class="kotak-form">
@@ -132,7 +137,7 @@
           <button type="submit" id="kirimBtn">Submit</button>
         </div>
       </div>
-    </div>
+    </form>
 
     <!-- BAGIAN KANAN -->
     <div class="foto-kanan">
@@ -183,7 +188,7 @@
       localStorage.setItem('kata', `${katakata} ${kirimRT}`);
       localStorage.setItem('RTRW', `${kirimRT} / ${kirimRW}`);
       alert('Apakah anda sudah yakin dalam mengisi formulir?');
-      window.location.href = 'datasiWarga.html';
+      window.location.href = 'data_Warga.php';
     });
   </script>
 </body>
