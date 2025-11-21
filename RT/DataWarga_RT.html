@@ -28,7 +28,7 @@
             © 2025 RT Smart System
         </div>
     </aside>
-    <div class="home">
+    <div class="home" style="height: 100vh; ">
         <h2>Data Warga</h2>
         <div class="card-home">
             <h3>RT 01 RW 02</h3>
@@ -60,7 +60,9 @@
                     <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody id="dataWarga"></tbody>
+            <tbody>
+                
+            </tbody>
         </table>
 
         <!-- Modal Detail -->
@@ -157,7 +159,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const warga = [
+/*         const warga = [
             { nama: "Andi", nik: "1001", status: "Kepala Keluarga", kk: "111", usia: 35, gender: "Laki-laki", ttl: "Jakarta, 10 Mei 1989", agama: "Islam", rt: "01", rw: "02", perkawinan: "Menikah", pekerjaan: "Karyawan", hp: "0812345678" },
             { nama: "Citra", nik: "1003", status: "Kepala Keluarga", kk: "222", usia: 40, gender: "Perempuan", ttl: "Bogor, 11 Maret 1985", agama: "Kristen", rt: "02", rw: "03", perkawinan: "Menikah", pekerjaan: "Guru", hp: "0812349999" },
             { nama: "Gilang", nik: "1007", status: "Kepala Keluarga", kk: "444", usia: 28, gender: "Laki-laki", ttl: "Jakarta, 2 Des 1996", agama: "Islam", rt: "04", rw: "01", perkawinan: "Menikah", pekerjaan: "Programmer", hp: "0812555555" },
@@ -182,7 +184,7 @@
             { nama: "Rizky", nik: "1018", status: "Kepala Keluarga", kk: "1000", usia: 32, gender: "Laki-laki", ttl: "Depok, 5 Jun 1992", agama: "Islam", rt: "09", rw: "02", perkawinan: "Menikah", pekerjaan: "Wiraswasta", hp: "0812344005" },
             { nama: "Siti", nik: "1019", status: "Anggota Keluarga", kk: "1000", usia: 30, gender: "Perempuan", ttl: "Depok, 9 Feb 1994", agama: "Islam", rt: "09", rw: "02", perkawinan: "Menikah", pekerjaan: "Karyawan", hp: "0812344006" },
             { nama: "Tono", nik: "1020", status: "Kepala Keluarga", kk: "1011", usia: 65, gender: "Laki-laki", ttl: "Bekasi, 3 Mar 1959", agama: "Islam", rt: "10", rw: "03", perkawinan: "Menikah", pekerjaan: "Pensiunan", hp: "0812344007" },
-        ];
+        ]; */
 
         let selectedNik = null;
         let modeAksi = ""; // "hapus" atau "edit"

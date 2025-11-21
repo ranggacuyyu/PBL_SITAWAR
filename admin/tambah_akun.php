@@ -9,7 +9,7 @@ $no_rt       = "";
 $nohp_rt     = "";
 $sk_rt       = "";
 $alamat_rt   = "";
-$password_rt = "";
+$pass        = "";
 $error       = "";
 $sukses      = "";
 
@@ -24,9 +24,9 @@ if (isset($_POST["submit"])) {
     $sk     = $_POST["sk"];
     $alamat = $_POST["alamat"];
 
-    if ($nik && $pass && $nama && $nohp && $sk && $alamat) {
-        $sql1 = "INSERT INTO user_rt(sk_rt,nik_rt,nama_rt,nohp_rt,alamat_rt,password,admin) 
-                 VALUES ('$sk','$nik','$nama','$nohp','$alamat','$pass',$id_admin)";
+    if ($nik && $pass && $no_rt && $nama && $nohp && $sk && $alamat) {
+        $sql1 = "INSERT INTO user_rt( sk_rt, nik_rt, no_rt, nama_rt, nohp_rt, alamat_rt, password, admin) 
+                 VALUES ('$sk', '$nik', '$no_rt', '$nama', '$nohp', '$alamat', '$pass', '$id_admin')";
         $q1 = mysqli_query($koneksi, $sql1);
 
         if ($q1) {
@@ -46,7 +46,7 @@ if (isset($_POST["submit"])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="tambahAkun.css">
+    <link rel="stylesheet" href="tambah_akun.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -90,6 +90,11 @@ if (isset($_POST["submit"])) {
                     <div class="form-floating">
                         <input type="text" class="form-control" placeholder="sk" required name="sk">
                         <label for="sk">SK Akun RT</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" placeholder="Nomor RT" required name="no_rt">
+                        <label for="no_rt">No RT</label>
                     </div>
 
                     <div class="form-floating">

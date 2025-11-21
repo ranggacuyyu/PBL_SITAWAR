@@ -41,6 +41,7 @@ if (isset($_POST['update'])) {
     $stmt->close();
 }
 
+
 ?>
 
 <!DOCTYPE html>
@@ -235,7 +236,9 @@ if (isset($_POST['update'])) {
                             <h2>DASHBOARD ADMIN</h2>
                             <p>Bagian pendataan akun RT</p>
                         </div>
-                        <button class="alur">Keluar</button>
+                        <form action="logout.php" method="post" style="padding: 0; width:80px; height:70px">
+                            <button class="alur" style="height: 50px; font-size:20px;">Keluar</button>
+                        </form>
                     </div>
                     <hr>
                     <h3>Daftar RT Terdaftar</h3>
@@ -273,7 +276,7 @@ if (isset($_POST['update'])) {
                                     <td><?= $data['alamat_rt']; ?></td>
                                     <td><?= $data['password']; ?></td>
                                     <td>
-                                        <a href="hapus(admin).php?sk_rt=<?= $data['sk_rt']; ?>"
+                                        <a href="hapus_admin.php?sk_rt=<?= $data['sk_rt']; ?>"
                                             class="hapus"
                                             onclick="return confirm('Yakin ingin menghapus data ini?')">
                                             HAPUS
