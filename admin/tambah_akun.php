@@ -5,6 +5,7 @@ mysqli_report(MYSQLI_REPORT_OFF);
 
 $nik_rt      = "";
 $nama_rt     = "";
+$no_rt       = "";
 $nohp_rt     = "";
 $sk_rt       = "";
 $alamat_rt   = "";
@@ -14,28 +15,30 @@ $sukses      = "";
 
 $id_admin = $_SESSION['admin_user']['id_admin'];
 
-if (isset($_POST["submit"])) {
+if (isset($_POST["submit"])) {  
     $nik    = $_POST["nik"];
     $pass   = $_POST["pass"];
+    $no_rt   = $_POST["no_rt"];
     $nama   = $_POST["nama"];
     $nohp   = $_POST["nohp"];
     $sk     = $_POST["sk"];
     $alamat = $_POST["alamat"];
 
     if ($nik && $pass && $nama && $nohp && $sk && $alamat) {
-        $sql1 = "insert into user_rt(sk_rt,nik_rt,nama_rt,nohp_rt,alamat_rt,password,admin) values ('$sk','$nik','$nama','$nohp','$alamat','$pass',$id_admin)";
+        $sql1 = "INSERT INTO user_rt(sk_rt,nik_rt,nama_rt,nohp_rt,alamat_rt,password,admin) 
+                 VALUES ('$sk','$nik','$nama','$nohp','$alamat','$pass',$id_admin)";
         $q1 = mysqli_query($koneksi, $sql1);
+
         if ($q1) {
-            $sukses = "berhasil";
+            $sukses = "Data berhasil ditambahkan!";
         } else {
-            $error = "gagal";
+            $error = "Data gagal ditambahkan!";
         }
-    } else{
-        $error = "silahkan masukkan semua data";
+    } else {
+        $error = "Silakan masukkan semua data.";
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -44,52 +47,89 @@ if (isset($_POST["submit"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="tambahAkun.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
     <main style="height: 100vh;">
         <aside>
-            <h2>SITAWAR ADMIN</h2>
-            <ul>
+            <h2 style="font-size: 24px; font-weight: 700; margin-bottom:0;">SITAWAR ADMIN</h2>
+            <ul style="padding: 0;">
                 <li onclick="window.location.href='dashborad_admin.php'">Daftar RT</li>
                 <li>Tambah RT</li>
             </ul>
         </aside>
+
         <section>
             <div id="tambahRT" class="section hidden">
-                <form id="formTambahRT" method="POST">
-                    <?php
-                    if ($error) {
-                    ?>
-                        <div style="width: 100%; height:50px; background-color:tomato;" role="alert">
-                            <?php echo $error ?>
-                        </div>
-                    <?php
-                    }
-                    ?>
-                    <?php
+                <form id="formTambahRT" method="POST" class="d-flex flex-column gap-3">
 
-                    if ($sukses) {
-                    ?>
-                        <div style="width: 100%; height:50px; background-color:#404739; color:white; font-size:20px;" role="alert">
-                            <?php echo $sukses ?>
+                    <!-- ALERT ERROR -->
+                    <?php if ($error) { ?>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong><?php echo $error ?></strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
-                    <?php
-                    }
-                    ?>
+                    <?php } ?>
+
+                    <!-- ALERT SUKSES -->
+                    <?php if ($sukses) { ?>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong><?php echo $sukses ?></strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <?php } ?>
+
                     <h3>Tambah Akun RT</h3>
-                    <input type="number" id="nik" placeholder="NIK (16 digit)" maxlength="16" required name="nik" value="<?php echo $nik_rt ?>">
-                    <input type="password" id="pass" placeholder="Password" maxlength="16" required name="pass" value="<?php echo $password_rt ?>">
-                    <input type="text" id="nama" placeholder="Nama Lengkap" required name="nama" value="<?php echo $nama_rt ?>">
-                    <input type="text" id="nohp" placeholder="Nomor HP" maxlength="13" required name="nohp" value="<?php echo $nohp_rt ?>">
-                    <input type="text" id="sk" placeholder="Nomor SK Pengangkatan" required name="sk" value="<?php echo $sk_rt ?>">
-                    <input type="text" id="alamat" placeholder="Alamat" required name="alamat" value="<?php echo $alamat_rt ?>">
-                    <button type="submit" name="submit">Tambah RT</button>
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" placeholder="nama" required name="nama">
+                        <label for="email">Nama Akun RT</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" placeholder="sk" required name="sk">
+                        <label for="sk">SK Akun RT</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" placeholder="nik" required name="nik">
+                        <label for="nik">NIK AKUN RT</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" placeholder="hp" required name="nohp">
+                        <label for="hp">No HP Akun RT</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" placeholder="pass" required name="pass">
+                        <label for="pass">Password Akun RT</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" placeholder="alamat" required name="alamat">
+                        <label for="alamat">Alamat Akun RT</label>
+                    </div>
+
+                    <button type="submit" name="submit" class="btn btn-success w-100 btn-modern">Tambah RT</button>
                 </form>
-                <div id="pesan"></div>
             </div>
         </section>
     </main>
-</body>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ALERT AUTO CLOSE -->
+    <script>
+        setTimeout(() => {
+            const alert = document.querySelector('.alert');
+            if (alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }
+        }, 3000); // auto close 3 detik
+    </script>
+
+</body>
 </html>
