@@ -50,7 +50,7 @@
             <option value="Konghucu">Konghucu</option>
           </select>
 
-          <p>Nomor ketua RT?</p>
+          <p>Nomor SK RT</p>
           <input type="text" id="anggotaRT" name="anggotaRT" placeholder="Contoh: RT01" required>
           
           <p>RW</p>
@@ -77,22 +77,22 @@
             <option value="BUMN">BUMN</option>
             <option value="PNS">PNS</option>
             <option value="Wirausaha">Wirausaha</option>
-            <option value="Tidak Bekerja">Tidak Bekerja</option>
+            <option value="Tidak-Bekerja">Tidak Bekerja</option>
           </select>
 
           <p>Status Perkawinan:</p>
           <select id="pilihkawin" name="pilihkawin" required>
             <option disabled selected hidden>- Pilih -</option>
-            <option value="Sudah Kawin">Sudah Kawin</option>
-            <option value="Belum Kawin">Belum Kawin</option>
-            <option value="Cerai Hidup">Cerai Hidup</option>
-            <option value="Cerai Mati">Cerai Mati</option>
+            <option value="kawin">Sudah Kawin</option> 
+            <option value="belum-kawin">Belum Kawin</option>
+            <option value="cerai-hidup">Cerai Hidup</option>
+            <option value="cerai-mati">Cerai Mati</option>
           </select>
 
           <p>Pendidikan Terakhir:</p>
           <select id="pilihpendidikan" name="pilihpendidikan">
             <option disabled selected hidden>- Pilih -</option>
-            <option value="Tidak Bersekolah">Tidak Bersekolah</option>
+            <option value="Tidak-Bersekolah">Tidak Bersekolah</option>
             <option value="SD">SD</option>
             <option value="SMP">SMP</option>
             <option value="SMA/SMK/MA">SMA/SMK/MA</option>

@@ -122,25 +122,25 @@ mysqli_close($koneksi);
                             </td>
                         </tr>
                         
-                        <tr>
+                       <tr>
                             <td>Pendidikan Terakhir</td>
                             <td>:</td>
                             <td>
-                                <p id="tampilpendidikan">N/A (Tidak Tersimpan di DB)</p>
+                                <p id="tampilpendidikan"><?php echo htmlspecialchars($data_warga['pendidikan'] ?? 'N/A'); ?></p>
                             </td>
                         </tr>
                         <tr>
                             <td>Pekerjaan</td>
                             <td>:</td>
                             <td>
-                                <p id="tampilkerja">N/A (Tidak Tersimpan di DB)</p>
+                                <p id="tampilkerja"><?php echo htmlspecialchars($data_warga['pekerjaan'] ?? 'N/A'); ?></p>
                             </td>
                         </tr>
                         <tr>
                             <td>No Telepon</td>
                             <td>:</td>
                             <td>
-                                <p id="tampilnomor">N/A (Tidak Tersimpan di DB)</p>
+                                <p id="tampilnomor"><?php echo htmlspecialchars($data_warga['no_hp'] ?? 'N/A'); ?></p>
                             </td>
                         </tr>
                         
@@ -159,7 +159,7 @@ mysqli_close($koneksi);
                             </td>
                         </tr>
                         <tr>
-                            <td>RT dan RW</td>
+                            <td>RT</td>
                             <td>:</td>
                             <td>
                                 <p id="tampilRTRW"><?php echo htmlspecialchars($data_warga['rt'] ?? 'N/A'); ?></p>

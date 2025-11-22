@@ -25,6 +25,11 @@ $kecamatan = mysqli_real_escape_string($koneksi, $_POST['inputKecamatan']);
 $kelurahan = mysqli_real_escape_string($koneksi, $_POST['inputkelurahan']);
 $domisili_gabung = $provinsi . ", " . $kota . ", " . $kecamatan . ", " . $kelurahan;
 
+// Ambil data baru
+$pendidikan = mysqli_real_escape_string($koneksi, $_POST['pilihpendidikan']);
+$pekerjaan = mysqli_real_escape_string($koneksi, $_POST['inputpekerjaan']);
+$nomorhp = mysqli_real_escape_string($koneksi, $_POST['inputnomorhp']);
+
 
 // Kolom NOT NULL yang harus diisi di tabel user_warga
 $dokumen_default = 0; 
