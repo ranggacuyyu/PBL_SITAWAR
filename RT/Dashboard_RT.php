@@ -1,11 +1,50 @@
-<?php 
+<?php
 session_start();
-if(!isset($_SESSION['user_rt'])){
-    header('location:login_admin.php');
+include "../koneksi.php";
+if (!isset($_SESSION['user_rt'])) {
+    header('location:../LoginRTWARGA.php');
 }
-    
-?>
 
+$sk_rt = $_SESSION['user_rt']['sk_rt'];
+$rt    = $_SESSION['user_rt']['no_rt'];
+$rw    = $_SESSION['user_rt']['no_rw'];
+
+$query = mysqli_query($koneksi, "SELECT COUNT(*) as user_warga FROM user_warga");
+$user  = mysqli_fetch_assoc($query);
+
+$query1 = mysqli_query($koneksi, "SELECT COUNT(ibu_hamil) as hamil FROM user_warga");
+$user1  = mysqli_fetch_assoc($query1);
+
+$query2 = mysqli_query($koneksi, "SELECT COUNT(keluarga) as kepala_keluarga FROM user_warga");
+$user2  = mysqli_fetch_assoc($query2);
+
+$query3 = mysqli_query($koneksi, "SELECT COUNT(*) as balita FROM user_warga WHERE kategori='Balita' and rt = $sk_rt");
+$user3  = mysqli_fetch_assoc($query3);
+
+
+if (isset($_POST['simpan'])) {
+    $nama = $_POST['nama'];
+    $nik  = $_POST['nik'];
+    $hp   = $_POST['hp'];
+
+    $query = "INSERT INTO user_warga (nama_warga, nik_warga, hp, no_rt, no_rw, rt)
+    VALUES ('$nama', '$nik', '$hp', '$rt', '$rw', '$sk_rt')";
+}
+
+$data_per_bulan = array_fill(1, 12, 0); // buat 12 bulan isi 0
+
+$query4 = mysqli_query($koneksi, "SELECT MONTH(tanggal_input) AS bulan, COUNT(*) AS total
+    FROM user_rt
+    WHERE YEAR(tanggal_input) = YEAR(CURDATE())
+    GROUP BY MONTH(tanggal_input)");
+
+while ($row = mysqli_fetch_assoc($query4)) {
+    $bulan = (int)$row['bulan'];
+    $data_per_bulan[$bulan] = $row['total'];
+}
+
+$chart_data = json_encode(array_values($data_per_bulan));
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -27,9 +66,9 @@ if(!isset($_SESSION['user_rt'])){
             </div>
             <nav class="nav">
                 <a href="#">Dashboard</a>
-                <a href="DataWarga_RT.html">Data Warga</a>
-                <a href="Dokumen_RT.html">Dokumen</a>
-                <a href="Laporan_ RT.html">Laporan</a>
+                <a href="DataWarga_RT.php">Data Warga</a>
+                <a href="Dokumen_RT.php">Dokumen</a>
+                <a href="Laporan_ RT.php">Laporan</a>
             </nav>
         </div>
         <div class="sidebar-footer">© 2025 RT Smart System</div>
@@ -65,26 +104,26 @@ if(!isset($_SESSION['user_rt'])){
             <section class="stats">
                 <div class="card">
                     <h3>Jumlah Warga</h3>
-                    <p class="blue">120</p>
+                    <p class="blue"><?= $user['user_warga']; ?></p>
                 </div>
                 <div class="card">
                     <h3>Warga Hamil</h3>
-                    <p class="pink">7</p>
+                    <p class="pink"><?= $user1['hamil']; ?></p>
                 </div>
                 <div class="card">
                     <h3>Kepala Keluarga</h3>
-                    <p class="green">40</p>
+                    <p class="green"><?= $user2['kepala_keluarga']; ?></p>
                 </div>
                 <div class="card">
                     <h3>Balita</h3>
-                    <p class="yellow">15</p>
+                    <p class="yellow"><?= $user3['balita']; ?></p>
                 </div>
             </section>
 
             <!-- Grafik -->
             <section class="chart-section">
                 <h3>Grafik Perkembangan Data Warga</h3>
-                <canvas id="grafikWarga" height="100"></canvas>
+                <canvas id="chartWarga" height="100"></canvas>
             </section>
         </main>
     </div>
@@ -94,19 +133,22 @@ if(!isset($_SESSION['user_rt'])){
         <div class="modal-content">
             <span class="close-btn" id="closeModal">&times;</span>
             <h3>Tambah Data Warga</h3>
-            <label for="nama">Nama</label>
-            <input type="text" id="nama" placeholder="Masukkan nama lengkap">
+            <form action="tambah_warga.php" method="POST">
+                <label for="nama">Nama</label>
+                <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap" required>
 
-            <label for="nik">NIK</label>
-            <input type="text" id="nik" placeholder="Masukkan NIK">
+                <label for="nik">NIK</label>
+                <input type="text" id="nik" name="nik" placeholder="Masukkan NIK">
 
-            <label for="hp">Nomor HP</label>
-            <input type="text" id="hp" placeholder="Masukkan nomor HP">
+                <label for="hp">Nomor HP</label>
+                <input type="text" id="hp" name="hp" placeholder="Masukkan nomor HP">
 
-            <button onclick="simpanWarga()">Simpan</button>
+                <button type="submit" name="simpan" onclick="simpanWarga()">Simpan</button>
+            </form>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Modal logika
         const modal = document.getElementById("modalTambah");
@@ -115,7 +157,9 @@ if(!isset($_SESSION['user_rt'])){
 
         btnTambah.onclick = () => modal.style.display = "flex";
         closeModal.onclick = () => modal.style.display = "none";
-        window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
+        window.onclick = (e) => {
+            if (e.target === modal) modal.style.display = "none";
+        };
 
         // Simpan data (dummy alert)
         function simpanWarga() {
@@ -131,21 +175,28 @@ if(!isset($_SESSION['user_rt'])){
         }
 
         // Grafik chart
-        const ctx = document.getElementById('grafikWarga').getContext('2d');
+        const dataWarga = <?= $chart_data ?>;
+        const ctx = document.getElementById('chartWarga').getContext('2d');
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt'],
+                labels: [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+                    'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+                ],
                 datasets: [{
-                    label: 'Penambahan Warga',
-                    data: [2, 5, 3, 6, 8, 10, 7, 9, 5, 11],
-                    borderColor: '#2563eb',
-                    backgroundColor: 'rgba(37,99,235,0.2)',
-                    tension: 0.4,
-                    fill: true
-                }]
+                label: 'Penambahan Warga per Bulan',
+                data: dataWarga,
+            }]
             },
-            options: { responsive: true, plugins: { legend: { position: 'top' } } }
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
         });
     </script>
 </body>

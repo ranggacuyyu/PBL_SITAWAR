@@ -13,33 +13,27 @@
   <div class="background">
     <div class="card-baru">Silakan isi formulir data diri warga dengan lengkap dan benar...</div>
   </div>
-  
+
   <div class="container">
     <div class="form-kiri">
       <h2>DAFTARKAN AKUN ANDA</h2>
-      
+
       <form action="proses_pendaftaran.php" method="POST">
-      
+
         <div class="kotak-form">
           <h3>Masukkan data diri anda</h3>
 
-          <p>Nama (sesuai NIK)</p>
-          <input type="text" id="namaInput" name="namaInput" required>
-
-          <p>NIK pengguna</p>
-          <input type="text" id="NIKInput" name="NIKInput" required>
-
-          <p>No. KK</p>
+          <p>No. KK*</p>
           <input type="text" id="Nokkinput" name="Nokkinput" required>
 
-          <p>Tempat/Tanggal Lahir</p>
+          <p>Tempat/Tanggal Lahir*</p>
           <input type="text" id="tempatlahir" name="tempatlahir" required>
           <input type="date" id="tanggallahir" name="tanggallahir" required>
 
-          <p>Alamat (sesuai KTP)</p>
+          <p>Alamat (sesuai KTP)*</p>
           <input type="text" id="alamatinput" name="alamatinput">
 
-          <p>Agama</p>
+          <p>Agama*</p>
           <select id="pilihan" name="pilihan" required>
             <option disabled selected hidden>- Pilih -</option>
             <option value="Islam">Islam</option>
@@ -50,18 +44,8 @@
             <option value="Konghucu">Konghucu</option>
           </select>
 
-          <p>Nomor ketua RT?</p>
+          <p>Nomor RT*</p>
           <input type="text" id="anggotaRT" name="anggotaRT" placeholder="Contoh: RT01" required>
-          
-          <p>RW</p>
-          <input type="text" id="anggotaRW" name="anggotaRW" placeholder="Contoh: RW01" required>
-        </div>
-
-        <div class="kotak-form">
-          <h3>Masukkan data profil</h3>
-
-          <p>Nama panggilan</p>
-          <input type="text" id="panggilan" name="panggilan">
 
           <p>Email</p>
           <input type="email" id="emaill" name="emaill">
@@ -71,7 +55,7 @@
           <label><input type="radio" name="jk" value="Perempuan" required> Perempuan</label>
 
           <p>Status Pekerjaan</p>
-          <select id="inputpekerjaan" name="inputpekerjaan">
+          <select id="inputpekerjaan" name="inputpekerjaan" required>
             <option disabled selected hidden>- Pilih -</option>
             <option value="Swasta">Swasta</option>
             <option value="BUMN">BUMN</option>
@@ -90,7 +74,7 @@
           </select>
 
           <p>Pendidikan Terakhir:</p>
-          <select id="pilihpendidikan" name="pilihpendidikan">
+          <select id="pilihpendidikan" name="pilihpendidikan" required>
             <option disabled selected hidden>- Pilih -</option>
             <option value="Tidak Bersekolah">Tidak Bersekolah</option>
             <option value="SD">SD</option>
@@ -102,32 +86,20 @@
             <option value="S3">S3</option>
           </select>
 
-          <p>Provinsi</p>
-          <input type="text" id="inputprovinsi" name="inputprovinsi" placeholder="kepulauan Riau">
-
-          <p>Kota/Kabupaten</p>
-          <input type="text" id="inputkota" name="inputkota" placeholder="Batam">
-
-          <p>Kecamatan</p>
-          <input type="text" id="inputKecamatan" name="inputKecamatan" placeholder="kecamatan">
-
           <p>Kelurahan</p>
-          <input type="text" id="inputkelurahan" name="inputkelurahan" placeholder="kelurahan">
-
-          <p>No Handphone</p>
-          <input type="text" id="inputnomorhp" name="inputnomorhp" placeholder="08-****-****-****">
+          <input type="text" id="inputkelurahan" name="inputkelurahan" placeholder="kelurahan" required>
 
           <div class="tombol">
             <button type="reset">Reset</button>
             <button type="submit">Submit</button>
           </div>
         </div>
-        
+
       </form>
-      </div>
+    </div>
 
     <div class="foto-kanan">
-      </div>
+    </div>
   </div>
 
   <script>
@@ -135,4 +107,5 @@
     // Anda hanya perlu menyisakan kode untuk fungsi UI lain (jika ada).
   </script>
 </body>
+
 </html>

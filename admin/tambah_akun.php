@@ -6,27 +6,27 @@ mysqli_report(MYSQLI_REPORT_OFF);
 $nik_rt      = "";
 $nama_rt     = "";
 $no_rt       = "";
+$no_rw       = "";
 $nohp_rt     = "";
 $sk_rt       = "";
-$alamat_rt   = "";
-$pass        = "";
+$wilayah     = "";
 $error       = "";
 $sukses      = "";
 
 $id_admin = $_SESSION['admin_user']['id_admin'];
 
-if (isset($_POST["submit"])) {  
-    $nik    = $_POST["nik"];
-    $pass   = $_POST["pass"];
-    $no_rt   = $_POST["no_rt"];
-    $nama   = $_POST["nama"];
-    $nohp   = $_POST["nohp"];
-    $sk     = $_POST["sk"];
-    $alamat = $_POST["alamat"];
+if (isset($_POST["submit"])) {
+    $nik_rt     = $_POST["nik"];
+    $no_rt      = $_POST["no_rt"];
+    $no_rw      = $_POST["no_rw"];
+    $nama_rt    = $_POST["nama"];
+    $nohp_rt    = $_POST["nohp"];
+    $sk_rt      = $_POST["sk"];
+    $wilayah    = $_POST["wilayah"];
 
-    if ($nik && $pass && $no_rt && $nama && $nohp && $sk && $alamat) {
-        $sql1 = "INSERT INTO user_rt( sk_rt, nik_rt, no_rt, nama_rt, nohp_rt, alamat_rt, password, admin) 
-                 VALUES ('$sk', '$nik', '$no_rt', '$nama', '$nohp', '$alamat', '$pass', '$id_admin')";
+    if ($nik_rt && $no_rt && $no_rw && $nama_rt && $nohp_rt && $sk_rt && $wilayah) {
+        $sql1 = "INSERT INTO user_rt( sk_rt, nik_rt, no_rt, no_rw, nama_rt, nohp_rt, wilayah_rt, admin) 
+                 VALUES ('$sk_rt', '$nik_rt', '$no_rt', '$no_rw', '$nama_rt', '$nohp_rt', '$wilayah', '$id_admin')";
         $q1 = mysqli_query($koneksi, $sql1);
 
         if ($q1) {
@@ -48,6 +48,14 @@ if (isset($_POST["submit"])) {
     <title>Document</title>
     <link rel="stylesheet" href="tambah_akun.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-floating>.form-control.small {
+            height: 10px !important;
+            /* kecilkan tinggi */
+            padding: 0.25rem 0.5rem !important;
+            /* kecilkan padding */
+        }
+    </style>
 </head>
 
 <body>
@@ -81,10 +89,29 @@ if (isset($_POST["submit"])) {
                     <?php } ?>
 
                     <h3>Tambah Akun RT</h3>
+                    <!-- CARD PETUNJUK PENGISIAN FORM (WARNA MATCHA) -->
+                    <div class="card mb-3" style="border: 2px solid #92B79F; border-radius: 10px; overflow: hidden;">
+                        <div class="card-header" style="background-color: #A8C4AC; color: #2E4D3D; font-weight: 600;">
+                            Petunjuk Pengisian Form Akun RT
+                        </div>
+                        <div class="card-body" style="background-color: #EEF4EF; color: #2E4D3D;">
+                            <ul class="mb-0" style="font-size: 15px; padding-left: 18px;">
+                                <li><strong>Nama Akun RT:</strong> Isi dengan nama lengkap ketua RT.</li>
+                                <li><strong>SK Akun RT:</strong> Isi nomor SK resmi ketua RT.</li>
+                                <li><strong>No RT & No RW:</strong> Masukkan angka saja tanpa titik.</li>
+                                <li><strong>NIK Akun RT:</strong> Wajib 16 digit angka.</li>
+                                <li><strong>No HP:</strong> Isi dengan nomor aktif (contoh: 08123456789).</li>
+                                <li><strong>Password:</strong> Minimal 6 karakter (huruf/angka).</li>
+                                <li><strong>Alamat Akun RT:</strong> Tulis alamat lengkap.</li>
+                                <li><strong>Semua kolom wajib diisi</strong> sebelum menekan tombol <em>Tambah RT</em>.</li>
+                            </ul>
+                        </div>
+                    </div>
+
 
                     <div class="form-floating">
                         <input type="text" class="form-control" placeholder="nama" required name="nama">
-                        <label for="email">Nama Akun RT</label>
+                        <label for="nama">Nama Akun RT</label>
                     </div>
 
                     <div class="form-floating">
@@ -92,28 +119,28 @@ if (isset($_POST["submit"])) {
                         <label for="sk">SK Akun RT</label>
                     </div>
 
-                    <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Nomor RT" required name="no_rt">
+                    <div class="form-floating ">
+                        <input type="number" class="form-control" placeholder="Nomor RT" required name="no_rt">
                         <label for="no_rt">No RT</label>
                     </div>
 
+                    <div class="form-floating ">
+                        <input type="number" class="form-control" placeholder="Nomor RW" required name="no_rw">
+                        <label for="no_rw">No RW</label>
+                    </div>
+
                     <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="nik" required name="nik">
+                        <input type="number" class="form-control" placeholder="nik" required name="nik">
                         <label for="nik">NIK AKUN RT</label>
                     </div>
 
                     <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="hp" required name="nohp">
+                        <input type="number" class="form-control" placeholder="hp" required name="nohp">
                         <label for="hp">No HP Akun RT</label>
                     </div>
 
                     <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="pass" required name="pass">
-                        <label for="pass">Password Akun RT</label>
-                    </div>
-
-                    <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="alamat" required name="alamat">
+                        <input type="text" class="form-control" placeholder="alamat" required name="wilayah">
                         <label for="alamat">Alamat Akun RT</label>
                     </div>
 
@@ -137,4 +164,5 @@ if (isset($_POST["submit"])) {
     </script>
 
 </body>
+
 </html>

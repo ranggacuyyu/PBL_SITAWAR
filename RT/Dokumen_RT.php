@@ -17,10 +17,10 @@
                 <p>Sistem Terpadu Administrasi Warga</p>
             </div>
             <nav class="nav">
-                <a href="Dashboard_RT.html">Dashboard</a>
-                <a href="DataWarga_RT.html">Data Warga</a>
+                <a href="Dashboard_RT.php">Dashboard</a>
+                <a href="DataWarga_RT.php">Data Warga</a>
                 <a href="#" style="padding-top: 7px;">Dokumen</a>
-                <a href="Laporan_ RT.html">Laporan</a>
+                <a href="Laporan_ RT.php">Laporan</a>
             </nav>
         </div>
         <div class="sidebar-footer">
