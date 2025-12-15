@@ -1,22 +1,23 @@
 <?php
+session_start();
 include "../koneksi.php";
 
 if (isset($_GET['sk_rt'])) {
     $sk_rt = $_GET['sk_rt'];
+    $id_admin = $_SESSION['admin_user']['id_admin'];
 
-    $query = "DELETE FROM user_rt WHERE sk_rt = '$sk_rt'";
-    $hapus = mysqli_query($koneksi, $query);
+    $query = "DELETE FROM user_rt WHERE sk_rt = ? AND admin = ?";
+    $stmt = mysqli_prepare($koneksi, $query);
+    mysqli_stmt_bind_param($stmt, "ss", $sk_rt, $id_admin);
 
-    if ($hapus) {
-        echo "<script>
-                alert('Data berhasil dihapus!');
-                window.location='dashborad_admin.php';
-              </script>";
+    if (mysqli_stmt_execute($stmt)) {
+        $_SESSION['alert'] = 'Data berhasil dihapus';
+        header("Location: dashborad_admin.php");
+        exit();
     } else {
-        echo "<script>
-                alert('Gagal menghapus data!');
-                window.location='dashborad_admin.php';
-              </script>";
+        $_SESSION['alert'] = 'Gagal menghapus data';
+        header("Location: dashborad_admin.php");
+        exit() ;
     }
 } else {
     header("Location: dashborad_admin.php");

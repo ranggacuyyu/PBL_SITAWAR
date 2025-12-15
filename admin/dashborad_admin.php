@@ -3,49 +3,75 @@ session_start();
 include '../koneksi.php';
 if (!isset($_SESSION['admin_user'])) {
     header('location:login_admin.php');
+    exit();
 }
-$query = mysqli_query($koneksi, "SELECT * FROM user_rt");
+
+if (isset($_SESSION['alert'])) {
+    echo "<script>
+            alert('{$_SESSION['alert']}');
+          </script>";
+    unset($_SESSION['alert']);
+}
+
+
+$ambilData = $_SESSION['admin_user']['id_admin'];
+$sql = "SELECT * FROM user_rt WHERE admin=? ";
+$stmt = mysqli_prepare($koneksi, $sql);
+mysqli_stmt_bind_param($stmt, "i", $ambilData);
+mysqli_stmt_execute($stmt);
+$query = mysqli_stmt_get_result($stmt);
 
 if (isset($_POST['update'])) {
-    $nama    = $_POST['nama_rt'];
-    $nik     = $_POST['nik_rt'];
-    $nohp    = $_POST['nohp_rt'];
-    $no_rw   = $_POST['no_rw'];
+    $nama = $_POST['nama_rt'];
+    $nik = $_POST['nik_rt'];
+    $nohp = $_POST['nohp_rt'];
+    $no_rw = $_POST['no_rw'];
     $sk_baru = $_POST['sk_rt'];
-    $wilayah  = $_POST['wilayah'];
-    $no_rt   = $_POST["no_rt"];
+    $wilayah = $_POST['wilayah'];
+    $no_rt = $_POST["no_rt"];
     $sk_lama = $_POST['sk_rt_lama'];
 
-    $stmt = $koneksi->prepare("UPDATE user_rt 
+    if ($nama == '' || $nik == '' || $nohp == '' || $no_rw == '' || $sk_baru == '' || $wilayah == '' || $no_rt == '') {
+        echo "<script>alert('Data tidak boleh ada yang kosong'); window.location='dashborad_admin.php';</script>";
+        exit();
+    } elseif ($nik == 16) {
+        echo "<script>alert('NIK harus 16 angka'); window.location='dashborad_admin.php';</script>";
+        exit();
+    } elseif ($nohp <= 10 or $nohp >= 13) {
+        echo "<script>alert('No HP harus 10 hingga 13 angka'); window.location='dashborad_admin.php';</script>";
+        exit(); 
+    } else {
+        $stmt = $koneksi->prepare("UPDATE user_rt 
             SET nama_rt=?, nik_rt=?, no_rt=?, no_rw=?, nohp_rt=?, sk_rt=?, wilayah_rt=? 
             WHERE sk_rt=?");
 
-    $stmt->bind_param(
-        "ssssssss",
-        $nama,
-        $nik,
-        $no_rt,
-        $no_rw,
-        $nohp,
-        $sk_baru,
-        $wilayah,
-        $sk_lama
-    );
+        $stmt->bind_param(
+            "ssssssss",
+            $nama,
+            $nik,
+            $no_rt,
+            $no_rw,
+            $nohp,
+            $sk_baru,
+            $wilayah,
+            $sk_lama
+        );
 
-    if ($stmt->execute()) {
-        echo "<script>alert('Data berhasil diupdate'); window.location='dashborad_admin.php';</script>";
-    } else {
-        echo "Gagal update: " . $stmt->error;
+        if ($stmt->execute()) {
+            echo "<script>alert('Data berhasil diupdate'); window.location='dashborad_admin.php';</script>";
+        } else {
+            echo "Gagal update: " . $stmt->error;
+        }
+
+        $stmt->close();
     }
-
-    $stmt->close();
 }
 
 
 ?>
 
 <!DOCTYPE html>
-<html  lang="en">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -84,7 +110,7 @@ if (isset($_POST['update'])) {
 
                                 <label>NO RT</label>
                                 <input type="text" id="no_rt" name="no_rt">
-                                
+
                                 <label>NO RW</label>
                                 <input type="text" id="no_rw" name="no_rw">
 
@@ -107,7 +133,7 @@ if (isset($_POST['update'])) {
                             <p>Bagian pendataan akun RT</p>
                         </div>
                         <form action="logout.php" method="post" style="padding: 0; width:80px; height:70px">
-                            <button class="alur" style="height: 50px; font-size:20px;">Keluar</button>
+                            <button class="alur" style="height: 50px; font-size:20px;" onclick="return confirm('Yakin ingin keluar?')">Keluar</button>
                         </form>
                     </div>
                     <hr>
@@ -135,30 +161,29 @@ if (isset($_POST['update'])) {
                             <?php
                             $no = 1;
                             while ($data = mysqli_fetch_assoc($query)) {
-                            ?>
+                                ?>
                                 <tr>
                                     <td><?= $no++; ?></td>
-                                    <td><?= $data['nama_rt']; ?></td>
-                                    <td><?= $data['nik_rt']; ?></td>
-                                    <td><?= $data['no_rt']; ?></td>
-                                    <td><?= $data['no_rw']; ?></td>
-                                    <td><?= $data['nohp_rt']; ?></td>
-                                    <td><?= $data['sk_rt']; ?></td>
+                                    <td><?= htmlspecialchars($data['nama_rt']); ?></td>
+                                    <td><?= htmlspecialchars($data['nik_rt']); ?></td>
+                                    <td><?= htmlspecialchars($data['no_rt']); ?></td>
+                                    <td><?= htmlspecialchars($data['no_rw']); ?></td>
+                                    <td><?= htmlspecialchars($data['nohp_rt']); ?></td>
+                                    <td><?= htmlspecialchars($data['sk_rt']); ?></td>
                                     <td><?= $data['wilayah_rt']; ?></td>
                                     <td>
-                                        <a href="hapus_admin.php?sk_rt=<?= $data['sk_rt']; ?>"
-                                            class="hapus"
+                                        <a href="hapus_admin.php?sk_rt=<?= $data['sk_rt']; ?>" class="hapus"
                                             onclick="return confirm('Yakin ingin menghapus data ini?')">
                                             HAPUS
                                         </a>
                                         <button class="update" onclick="openModal(
-                                            '<?= $data['nama_rt']; ?>',
-                                            '<?= $data['nik_rt']; ?>',
-                                            '<?= $data['no_rt']; ?>',
-                                            '<?= $data['no_rw']; ?>',
-                                            '<?= $data['nohp_rt']; ?>',
-                                            '<?= $data['sk_rt']; ?>',
-                                            '<?= $data['wilayah_rt']; ?>')">
+                                            '<?= htmlspecialchars($data['nama_rt']); ?>',
+                                            '<?= htmlspecialchars($data['nik_rt']); ?>',
+                                            '<?= htmlspecialchars($data['no_rt']); ?>',
+                                            '<?= htmlspecialchars($data['no_rw']); ?>',
+                                            '<?= htmlspecialchars($data['nohp_rt']); ?>',
+                                            '<?= htmlspecialchars($data['sk_rt']); ?>',
+                                            '<?= htmlspecialchars($data['wilayah_rt']); ?>')">
                                             UPDATE
                                         </button>
                                     </td>
@@ -191,7 +216,7 @@ if (isset($_POST['update'])) {
         document.getElementById("modalUpdate").style.display = "none";
     }
 
-    document.getElementById("btnFilter").addEventListener("click", function() {
+    document.getElementById("btnFilter").addEventListener("click", function () {
         let keyword = document.getElementById("filterInput").value.toLowerCase();
         let rows = document.querySelectorAll("tbody tr");
 
@@ -215,7 +240,7 @@ if (isset($_POST['update'])) {
         });
     });
 
-    document.getElementById("btnReset").addEventListener("click", function() {
+    document.getElementById("btnReset").addEventListener("click", function () {
         document.getElementById("filterInput").value = "";
         let rows = document.querySelectorAll("tbody tr");
         rows.forEach(row => (row.style.display = ""));

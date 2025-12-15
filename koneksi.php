@@ -2,6 +2,6 @@
 $host       = "localhost";
 $user       = "root";
 $pass       = "";
-$database   = "pbl";
+$database   = "pbl1";
 
 $koneksi = mysqli_connect($host, $user, $pass, $database);

@@ -1,15 +1,78 @@
+<?php
+session_start();
+include "../koneksi.php";
+if (!isset($_SESSION['user_rt'])) {
+    header('location:../LoginRTWARGA.php');
+}
+// Ambil ID RT dari session
+$id_rt = $_SESSION['user_rt']['sk_rt'];
+
+// Ambil semua data pengajuan dokumen + data warga
+$query = mysqli_query($koneksi, "SELECT 
+        d.id_dokumen,
+        d.tanggal,
+        d.warga,
+        d.status,
+        w.nama_warga,
+        TIMESTAMPDIFF(YEAR, w.tanggal_lahir, CURDATE()) AS usia,
+        w.jenis_kelamin,
+        w.hp,
+        w.alamat,
+        w.dokumen
+    FROM dokumen d
+    INNER JOIN user_warga w 
+        ON d.warga = w.nik_warga
+    WHERE w.rt = '$id_rt'
+    ORDER BY d.id_dokumen DESC
+");
+// Proses persetujuan atau penolakan
+if (isset($_GET['aksi']) && isset($_GET['id'])) {
+    $aksi = $_GET['aksi'];
+    $id_dokumen = $_GET['id'];
+
+    if ($aksi === 'setuju') {
+        mysqli_query($koneksi, "UPDATE dokumen SET status='setuju' WHERE id_dokumen='$id_dokumen'");
+    } elseif ($aksi === 'tolak') {
+        mysqli_query($koneksi, "UPDATE dokumen SET status='tolak' WHERE id_dokumen='$id_dokumen'");
+    }
+
+    // Redirect kembali ke halaman dokumen RT setelah aksi
+    header('Location: Dokumen_RT.php');
+    exit();
+}
+?>
+
+<style>
+    .tanda_setuju {
+        background-color: green !important;
+        color: white !important;
+        border: none !important;
+        font-weight: bold;
+        border-radius: 8px;
+    }
+
+    .tanda_tolak {
+        background-color: red !important;
+        color: white !important;
+        border: none;
+        font-weight: bold;
+        border-radius: 8px;
+    }
+</style>
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SITAWAR - Pengajuan</title>
+    <title>SITAWAR - Pengajuan Dokumen</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="Dokumen_RT.css">
 </head>
 
 <body>
+
+    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div>
             <div class="sidebar-header">
@@ -18,8 +81,9 @@
             </div>
             <nav class="nav">
                 <a href="Dashboard_RT.php">Dashboard</a>
+                <a href="kepala_keluarga.php">Kepala Keluarga</a>
                 <a href="DataWarga_RT.php">Data Warga</a>
-                <a href="#" style="padding-top: 7px;">Dokumen</a>
+                <a href="Dokumen_RT.php">Dokumen</a>
                 <a href="Laporan_ RT.php">Laporan</a>
             </nav>
         </div>
@@ -27,132 +91,111 @@
             © 2025 RT Smart System
         </div>
     </aside>
+
+    <!-- MAIN -->
     <div class="bungkus">
         <div class="datatambahan">
-            <div class="filter-bar" id="filterBar">
-                <label for="filterJenis" class="form-label">Filter Jenis Surat :</label>
-                <select id="filterJenis" class="form-select" style="width:200px;">
-                    <option value="all">Semua</option>
-                    <option value="Domisili">Domisili</option>
-                    <option value="Pengantar RT">Pengantar RT</option>
-                </select>
-            </div>
-            <span id="menuPengajuan" style="display: none;"></span>
             <div class="main-content">
-                <div class="card">
+                <div class="card p-4">
                     <h5>Menu Pengajuan</h5>
                     <p>Panduan:<br>
-                        1. Klik nama warga untuk melihat rincian<br>F
-                        2. Klik “Setuju” atau “Tolak” untuk meninjau pengajuan</p>
+                        1. Klik nama warga untuk melihat rincian<br>
+                        2. Klik “Setuju” atau “Tolak” untuk meninjau pengajuan
+                    </p>
 
-                    <table class="table table-bordered bg-success " id="tabelPengajuan">
+                    <table class="table table-bordered bg-success" id="tabelPengajuan">
                         <thead>
                             <tr>
                                 <th>Nama Warga</th>
-                                <th>Jenis</th>
                                 <th>Tanggal Pengajuan</th>
+                                <th>Jenis Dokumen</th>
                                 <th>Persetujuan</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+
+                            <?php while ($row = mysqli_fetch_assoc($query)) { ?>
+                                <tr>
+                                    <!-- Nama, bisa diklik -->
+                                    <td style="cursor:pointer"
+                                        onclick='lihatDetail(<?= json_encode([
+                                            "nama" => $row['nama_warga'],
+                                            "usia" => $row['usia'],
+                                            "jenis_kelamin" => $row['jenis_kelamin'],
+                                            "kategori" => $row['dokumen'],
+                                            "alamat" => $row['alamat'],
+                                            "hp" => $row['hp'],
+                                            "tanggal" => $row['tanggal']
+                                        ]); ?>)'>
+                                        <?= $row['nama_warga'] ?>
+                                    </td>
+                                    <td><?= $row['tanggal'] ?></td>
+                                    <td><?= $row['dokumen'] ?></td>
+                                    <td>
+                                        <?php if ($row['status'] === 'pending') { ?>
+                                            <a href="Dokumen_RT.php?aksi=setuju&id=<?= $row['id_dokumen']; ?>"
+                                                class="btn btn-sm btn-success">
+                                                Setuju
+                                            </a>
+                                            <a href="Dokumen_RT.php?aksi=tolak&id=<?= $row['id_dokumen']; ?>"
+                                                class="btn btn-sm btn-danger">
+                                                Tolak
+                                            </a>
+                                        <?php } elseif ($row['status'] === 'setuju') { ?>
+                                            <button class="tanda_setuju" style="padding: 5px 10px 5px 10px;" disabled>Disetujui</button>
+                                        <?php } elseif ($row['status'] === 'tolak') { ?>
+                                            <button class="tanda_tolak" style="padding: 5px 16px 5px 16px;" disabled>Ditolak</button>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+
+                        </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Modal -->
+            <!-- MODAL DETAIL -->
             <div class="modal fade" id="modalDetail" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
+
                         <div class="modal-header">
                             <h5 class="modal-title">Rincian Data Warga</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="modal-body" id="detailBody">
-                        </div>
+
+                        <div class="modal-body" id="detailBody"></div>
+
                         <div class="modal-footer">
                             <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                            <button class="btn btn" data-bs-dismiss="modal">Konfirmasi</button>
                         </div>
+
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SCRIPT MODAL -->
     <script>
-        const dataWarga = [
-            { nama: "Rahmawati", jenis: "Domisili", tanggal: "2025-10-10", umur: 27, jk: "Perempuan", blok: "A1", nohp: "081234567890" },
-            { nama: "Ahmad Yusuf", jenis: "Pengantar RT", tanggal: "2025-10-12", umur: 34, jk: "Laki-laki", blok: "B3", nohp: "081234567891" },
-            { nama: "Siti Aminah", jenis: "Domisili", tanggal: "2025-10-13", umur: 30, jk: "Perempuan", blok: "C2", nohp: "081234567892" },
-            { nama: "Dewi Lestari", jenis: "Domisili", tanggal: "2025-10-14", umur: 25, jk: "Perempuan", blok: "B2", nohp: "081234567893" },
-            { nama: "Budi Santoso", jenis: "Pengantar RT", tanggal: "2025-10-14", umur: 40, jk: "Laki-laki", blok: "D1", nohp: "081234567894" },
-            { nama: "Andi Pratama", jenis: "Domisili", tanggal: "2025-10-15", umur: 29, jk: "Laki-laki", blok: "E1", nohp: "081234567895" },
-            { nama: "Rina Oktaviani", jenis: "Pengantar RT", tanggal: "2025-10-15", umur: 26, jk: "Perempuan", blok: "A2", nohp: "081234567896" },
-            { nama: "Yoga Saputra", jenis: "Domisili", tanggal: "2025-10-16", umur: 33, jk: "Laki-laki", blok: "B5", nohp: "081234567897" },
-            { nama: "Dina Kartika", jenis: "Pengantar RT", tanggal: "2025-10-16", umur: 31, jk: "Perempuan", blok: "C1", nohp: "081234567898" },
-            { nama: "Eko Wibowo", jenis: "Domisili", tanggal: "2025-10-17", umur: 35, jk: "Laki-laki", blok: "D4", nohp: "081234567899" },
-            { nama: "Sri Wahyuni", jenis: "Domisili", tanggal: "2025-10-18", umur: 38, jk: "Perempuan", blok: "A3", nohp: "081234567900" },
-            { nama: "Teguh Raharjo", jenis: "Pengantar RT", tanggal: "2025-10-18", umur: 37, jk: "Laki-laki", blok: "B1", nohp: "081234567901" },
-            { nama: "Nina Rahma", jenis: "Domisili", tanggal: "2025-10-19", umur: 23, jk: "Perempuan", blok: "E3", nohp: "081234567902" },
-            { nama: "Ardiansyah", jenis: "Pengantar RT", tanggal: "2025-10-19", umur: 28, jk: "Laki-laki", blok: "C4", nohp: "081234567903" },
-            { nama: "Putri Melati", jenis: "Domisili", tanggal: "2025-10-20", umur: 32, jk: "Perempuan", blok: "D2", nohp: "081234567904" },
-            { nama: "Yudi Prabowo", jenis: "Pengantar RT", tanggal: "2025-10-20", umur: 36, jk: "Laki-laki", blok: "A4", nohp: "081234567905" },
-            { nama: "Citra Anggraini", jenis: "Domisili", tanggal: "2025-10-21", umur: 27, jk: "Perempuan", blok: "B6", nohp: "081234567906" },
-            { nama: "Fajar Hidayat", jenis: "Pengantar RT", tanggal: "2025-10-21", umur: 29, jk: "Laki-laki", blok: "C6", nohp: "081234567907" },
-            { nama: "Lina Marlina", jenis: "Domisili", tanggal: "2025-10-22", umur: 31, jk: "Perempuan", blok: "E4", nohp: "081234567908" },
-            { nama: "Rio Saputra", jenis: "Pengantar RT", tanggal: "2025-10-23", umur: 28, jk: "Laki-laki", blok: "D5", nohp: "081234567909" }
-        ];
-
-        const tbody = document.querySelector("#tabelPengajuan tbody");
-        const menuPengajuan = document.getElementById("menuPengajuan");
-        const filterBar = document.getElementById("filterBar");
-        const filterSelect = document.getElementById("filterJenis");
-
-        function tampilkanData(filter = "all") {
-            tbody.innerHTML = "";
-            const filtered = filter === "all" ? dataWarga : dataWarga.filter(d => d.jenis === filter);
-
-            filtered.forEach(warga => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-        <td>${warga.nama}</td>
-        <td>${warga.jenis}</td>
-        <td>${warga.tanggal}</td>
-        <td>
-          <button class="btn btn-success btn-sm" onclick="lihatDetail('${warga.nama}')">Setuju</button>
-          <button class="btn btn-danger btn-sm" onclick="lihatDetail('${warga.nama}')">Tolak</button>
-        </td>
-      `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function lihatDetail(nama) {
-            const warga = dataWarga.find(w => w.nama === nama);
-            const body = `
-      <p><b>Nama:</b> ${warga.nama}</p>
-      <p><b>Umur:</b> ${warga.umur} tahun</p>
-      <p><b>Jenis Kelamin:</b> ${warga.jk}</p>
-      <p><b>Blok Rumah:</b> ${warga.blok}</p>
-      <p><b>Nomor HP:</b> ${warga.nohp}</p>
-      <p><b>Jenis Surat:</b> ${warga.jenis}</p>
-      <p><b>Tanggal Pengajuan:</b> ${warga.tanggal}</p>
-    `;
-            document.getElementById("detailBody").innerHTML = body;
+        function lihatDetail(data) {
+            let html = `
+                <p><b>Nama:</b> ${data.nama}</p>
+                <p><b>Usia:</b> ${data.usia}</p>
+                <p><b>Jenis Kelamin:</b> ${data.jenis_kelamin}</p>
+                <p><b>Kategori:</b> ${data.kategori}</p>
+                <p><b>Alamat:</b> ${data.alamat}</p>
+                <p><b>No HP:</b> ${data.hp}</p>
+                <p><b>Tanggal Pengajuan:</b> ${data.tanggal}</p>
+            `;
+            document.getElementById("detailBody").innerHTML = html;
             new bootstrap.Modal(document.getElementById("modalDetail")).show();
         }
-
-        menuPengajuan.addEventListener("click", () => {
-            filterBar.style.display = filterBar.style.display === "none" ? "block" : "none";
-        });
-
-        filterSelect.addEventListener("change", e => {
-            tampilkanData(e.target.value);
-        });
-
-        // tampilkan data awal
-        tampilkanData();
     </script>
 
 </body>

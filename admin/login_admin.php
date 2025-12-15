@@ -16,10 +16,14 @@ include "../koneksi.php";
 <body>
   <?php 
     if(isset($_POST['username'])){
-      $username = $_POST['username'];
-      $password = md5($_POST['password']);
+      $username = trim($_POST['username']);
+      $password = trim(($_POST['password']));
 
-      $query = mysqli_query($koneksi,"SELECT*FROM admin_user where nama = '$username' and password_admin ='$password'");
+      $sql = "SELECT*FROM admin_user where nama =? and password_admin =?";
+      $stmt = mysqli_prepare($koneksi, $sql);
+      mysqli_stmt_bind_param($stmt, "ss", $username, $password);
+      mysqli_stmt_execute($stmt);
+      $query = mysqli_stmt_get_result($stmt);
       
       if(mysqli_num_rows($query) > 0){
         $data = mysqli_fetch_array($query);
@@ -39,9 +43,9 @@ include "../koneksi.php";
     <h2>Login Admin</h2>
     <form id="loginForm" method="post">
       <label>Username</label>
-      <input type="text" placeholder="Masukkan username" name="username">
+      <input type="text" placeholder="Masukkan username" name="username" required>
       <label>Kata Sandi</label>
-      <input type="password" placeholder="Masukkan kata sandi"  name="password">
+      <input type="password" placeholder="Masukkan kata sandi"  name="password" required>
       <button type="submit" name="submit" value="login">Masuk</button>
     </form>
   </div>

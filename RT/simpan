@@ -1,3 +1,0 @@
-<?php 
-                    $statistik1 = mysqli_query($koneksi, "SELECT COUNT(*) as balita from")
-                    ?>

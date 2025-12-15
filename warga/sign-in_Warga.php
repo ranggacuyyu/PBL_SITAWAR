@@ -1,3 +1,23 @@
+<?php
+session_start();
+include "../koneksi.php";
+
+// Pastikan login
+if (!isset($_SESSION['user_warga']['nik_warga'])) {
+  header("Location: data_Warga.php");
+  exit();
+}
+
+$nik = $_SESSION['user_warga']['nik_warga'];
+
+// Cek apakah sudah mengisi
+$cek = mysqli_query($koneksi, "SELECT sudah_lengkap FROM user_warga WHERE nik_warga='$nik'");
+$data = mysqli_fetch_assoc($cek);
+if ((int)$data['sudah_lengkap'] === 1) {
+  header("Location: data_Warga.php");
+  exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,14 +31,26 @@
 <body>
   <h1 class="judul">SITAWAR</h1>
   <div class="background">
-    <div class="card-baru">Silakan isi formulir data diri warga dengan lengkap dan benar...</div>
+    <div class="card-baru">
+      <div class="panduan-form" style="color: #333; padding-left: 40px;">
+        <h3> Panduan Pengisian Data</h3>
+        <ul>
+          <li>Pastikan seluruh data yang diisi <b>sesuai dengan KTP dan KK</b>.</li>
+          <li>Data ini digunakan <b>khusus untuk administrasi RT</b>.</li>
+          <li><b>Hanya Ketua RT dan pengurus resmi</b> di komunitas Anda yang dapat melihat data ini.</li>
+          <li>Data Anda <b>tidak akan disebarluaskan</b> ke pihak luar.</li>
+          <li>Kolom bertanda (*) <b>wajib diisi</b>.</li>
+        </ul>
+      </div>
+
+    </div>
   </div>
 
   <div class="container">
     <div class="form-kiri">
       <h2>DAFTARKAN AKUN ANDA</h2>
 
-      <form action="proses_pendaftaran.php" method="POST">
+      <form action="aksi/proses_pendaftaran.php" method="POST">
 
         <div class="kotak-form">
           <h3>Masukkan data diri anda</h3>
@@ -44,17 +76,19 @@
             <option value="Konghucu">Konghucu</option>
           </select>
 
-          <p>Nomor RT*</p>
-          <input type="text" id="anggotaRT" name="anggotaRT" placeholder="Contoh: RT01" required>
-
-          <p>Email</p>
+          <p>Email*</p>
           <input type="email" id="emaill" name="emaill">
 
-          <p>Jenis Kelamin:</p>
-          <label><input type="radio" name="jk" value="Laki-laki" required> Laki-laki</label>
-          <label><input type="radio" name="jk" value="Perempuan" required> Perempuan</label>
+          <p>NO HP*</p>
+          <input type="text" id="nohp" name="nohp" required>
 
-          <p>Status Pekerjaan</p>
+          <p>Jenis Kelamin*</p>
+          <select name="jk">
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+          </select>
+
+          <p>Status Pekerjaan*</p>
           <select id="inputpekerjaan" name="inputpekerjaan" required>
             <option disabled selected hidden>- Pilih -</option>
             <option value="Swasta">Swasta</option>
@@ -64,16 +98,16 @@
             <option value="Tidak Bekerja">Tidak Bekerja</option>
           </select>
 
-          <p>Status Perkawinan:</p>
+          <p>Status Perkawinan*</p>
           <select id="pilihkawin" name="pilihkawin" required>
             <option disabled selected hidden>- Pilih -</option>
-            <option value="Sudah Kawin">Sudah Kawin</option>
-            <option value="Belum Kawin">Belum Kawin</option>
-            <option value="Cerai Hidup">Cerai Hidup</option>
-            <option value="Cerai Mati">Cerai Mati</option>
+            <option value="Kawin">Sudah Kawin</option>
+            <option value="belum-Kawin">Belum Kawin</option>
+            <option value="cerai-hidup">Cerai Hidup</option>
+            <option value="cerai-mati">Cerai Mati</option>
           </select>
 
-          <p>Pendidikan Terakhir:</p>
+          <p>Pendidikan Terakhir*</p>
           <select id="pilihpendidikan" name="pilihpendidikan" required>
             <option disabled selected hidden>- Pilih -</option>
             <option value="Tidak Bersekolah">Tidak Bersekolah</option>
@@ -86,8 +120,13 @@
             <option value="S3">S3</option>
           </select>
 
-          <p>Kelurahan</p>
+          <p>Kecamatan*</p>
+          <input type="text" id="inputkelurahan" name="inputkecamatan" placeholder="kelurahan" required>
+
+          <p>Kelurahan*</p>
           <input type="text" id="inputkelurahan" name="inputkelurahan" placeholder="kelurahan" required>
+
+          <input type="checkbox" required> Saya menyatakan bahwa data yang saya isi adalah benar dan setuju jika RT dapat melihat data saya
 
           <div class="tombol">
             <button type="reset">Reset</button>

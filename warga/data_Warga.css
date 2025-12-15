@@ -40,6 +40,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            position: fixed;
+            width: 100%;
+            z-index: 10;
         }
 
         .logo {
@@ -50,7 +53,8 @@
 
         /* NAVBAR SAMPING */
         .navbar {
-            min-height: 87vh;
+            min-height: 100vh;
+            width: 100%;
             background-color: #88976cce;
         }
 
@@ -82,155 +86,49 @@
             transform: translateY(3px);
         }
 
-        /* ISI KONTEN */
-        .content {
-            flex: 1;
-            margin-left: 240px;
+        /* Konten utama */
+        .konten {
+            margin-left: 220px;
+            margin-top: 60px;
             padding: 20px;
             display: flex;
-            flex-wrap: wrap;
             gap: 20px;
-            justify-content: center;
-            align-items: flex-start;
         }
 
-        .card {
-            background-color: white;
-            padding: 20px;
-            width: 280px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .card h1 {
-            font-size: 100px;
-        }
-
-        .card h2 {
-            font-size: 22px;
-            margin-top: 10px;
-        }
-
-        .card2 {
-            background-color: white;
-            border-radius: 14px;
-            padding: 15px;
-            width: 600px;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .card2 h2 {
-            margin-bottom: 10px;
-        }
-
-        .table-wrapper {
-            max-height: 370px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            padding: 5px;
-        }
-
-        table {
+        .gambar{
             width: 100%;
-            border-collapse: collapse;
+            align-items: center;
+            justify-content: center;
         }
 
-        td {
-            padding: 8px 5px;
-            font-size: 1em;
-            vertical-align: top;
+        .konten img{
+            max-width: 200px;
+            max-height: 200px;
         }
 
-        td:first-child {
-            font-weight: bold;
-            width: 40%;
+        .profile-card img {
+            width: 100%;
+            border-radius: 50%;
         }
 
-        /* RESPONSIVE */
-        @media screen and (max-width: 992px) {
-            .content {
-                margin-left: 230px;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .card,
-            .card2 {
-                width: 90%;
-            }
-
-            .table-wrapper {
-                max-height: 400px;
-            }
+        .profile-card p,
+        .profile-card h4 {
+            margin: 5px 0;
         }
 
-        @media screen and (max-width: 768px) {
-            .navigasi-navbar {
-                position: relative;
-                width: 100%;
-                height: auto;
-                z-index: 10;
-                transform: translateY(-130px);
-            }
-
-            .navbar {
-                flex-direction: column;
-                padding-top: 0;
-            }
-
-            .content {
-                margin-left: 0;
-                margin-top: 120px;
-                z-index: 1;
-                padding: 0;
-            }
-
-            .card,
-            .card2 {
-                width: 95%;
-            }
-
-            .list-navbar {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-
-            }
-
-            .list-navbar h2 {
-                margin: 5px;
-                font-size: 16px;
-            }
+        .badge-custom {
+            font-size: 0.85em;
         }
 
-        @media screen and (max-width: 480px) {
-            .logo {
-                font-size: 22px;
-            }
-
-            .card h1 {
-                font-size: 70px;
-            }
-
-            td {
-                font-size: 0.9em;
-            }
+        .upload-label {
+            cursor: pointer;
         }
 
-        .btn-success {
-            background-color: #3f492d93;
-            border: none;
-            color: white;
-            transition: all 0.3s;
-        }
-
-        .btn-success:hover {
-            background-color: #ffffff;
-            color: rgb(142, 167, 84);
-        }
-
-        .modal-header {
+        .upload-label:hover {
             background-color: #738B67;
+            color: white;
+        }
+
+        .file-input {
+            display: none;
         }

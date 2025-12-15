@@ -18,6 +18,118 @@
             width: 100%;
         }
 
+        .overlay {
+            position: fixed;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background-color: #292e1fa8;
+        }
+
+        .modal_profile {
+            width: 800px;
+            height: 500px;
+            background-color: #6c7a52ff;
+            border-radius: 15px;
+            padding: 20px;
+            color: #d8e5beff;
+        }
+
+        .modal-body {
+            display: flex;
+            align-items: center;
+            height: 90%;
+        }
+
+        .keluar-button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-left {
+            width: 260px;
+            height: 100%;
+            padding: 20px;
+            background-color: #616d4aff;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center
+        }
+
+        .modal-right {
+            min-height: 100%;
+            font-size: 18px;
+            padding: 27px;
+            width: 100%;
+        }
+
+        .avatar-large {
+            width: 220px;
+            height: 220px;
+            border-radius: 16px;
+            overflow: hidden
+        }
+
+        .avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .row {
+            display: flex;
+            gap: 15px
+        }
+
+        .label {
+            width: 110px;
+            color: var(--muted);
+            font-size: 15px
+        }
+
+        .value {
+            font-weight: 600
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 10px
+        }
+
+        input[type=password] {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: transparent;
+            color: #e6eef6
+        }
+
+        .btn_prumaary {
+            width: 100%;
+            height: 38px;
+            border-radius: 10px;
+            border: 0;
+            background-color: #616d4aff;
+            color: white;
+        }
+
+        .btn_prumaary:hover {
+            background-color: #93a376ff;
+        }
+
         /* SIDEBAR */
         .sidebar {
             width: 250px;
@@ -86,6 +198,9 @@
 
         .welcome {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .welcome h2 {
@@ -95,6 +210,7 @@
 
         .welcome p {
             color: #ffffff;
+            
         }
 
         /* CARD INFO TAMBAH WARGA */
@@ -185,6 +301,14 @@
             border: 1px solid #ccc;
         }
 
+        .modal-content select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
         .modal-content button {
             width: 100%;
             margin-top: 15px;
@@ -245,3 +369,5 @@
             margin-top: 30px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
+
+        

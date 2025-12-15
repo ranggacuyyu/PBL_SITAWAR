@@ -2,38 +2,85 @@
 session_start();
 include "../koneksi.php";
 mysqli_report(MYSQLI_REPORT_OFF);
+if (!isset($_SESSION['admin_user'])) {
+    header("Location: login_admin.php");
+    exit();
+}
 
-$nik_rt      = "";
-$nama_rt     = "";
-$no_rt       = "";
-$no_rw       = "";
-$nohp_rt     = "";
-$sk_rt       = "";
-$wilayah     = "";
-$error       = "";
-$sukses      = "";
+$nik_rt = "";
+$nama_rt = "";
+$no_rt = "";
+$no_rw = "";
+$nohp_rt = "";
+$sk_rt = "";
+$wilayah = "";
+$error = "";
+$sukses = "";
 
 $id_admin = $_SESSION['admin_user']['id_admin'];
 
-if (isset($_POST["submit"])) {
-    $nik_rt     = $_POST["nik"];
-    $no_rt      = $_POST["no_rt"];
-    $no_rw      = $_POST["no_rw"];
-    $nama_rt    = $_POST["nama"];
-    $nohp_rt    = $_POST["nohp"];
-    $sk_rt      = $_POST["sk"];
-    $wilayah    = $_POST["wilayah"];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $nik_rt = trim($_POST["nik"]);
+    $no_rt = trim($_POST["no_rt"]);
+    $no_rw = trim($_POST["no_rw"]);
+    $nama_rt = trim($_POST["nama"]);
+    $nohp_rt = trim($_POST["nohp"]);
+    $sk_rt = trim($_POST["sk"]);
+    $wilayah = trim($_POST["wilayah"]);
+    $password_hash = password_hash($sk_rt, PASSWORD_DEFAULT);
+
+
 
     if ($nik_rt && $no_rt && $no_rw && $nama_rt && $nohp_rt && $sk_rt && $wilayah) {
-        $sql1 = "INSERT INTO user_rt( sk_rt, nik_rt, no_rt, no_rw, nama_rt, nohp_rt, wilayah_rt, admin) 
-                 VALUES ('$sk_rt', '$nik_rt', '$no_rt', '$no_rw', '$nama_rt', '$nohp_rt', '$wilayah', '$id_admin')";
-        $q1 = mysqli_query($koneksi, $sql1);
-
-        if ($q1) {
-            $sukses = "Data berhasil ditambahkan!";
+        if (!preg_match('/^[0-9]{16}$/', $nik_rt)) {
+            $error = "NIK harus 16 digit angka!";
+        } elseif (!preg_match('/^[0-9]{10,13}$/', $nohp_rt)) {
+            $error = "No HP tidak valid!";
         } else {
-            $error = "Data gagal ditambahkan!";
-        }
+            // Cek duplikat NIK
+            $stmt_cek = $koneksi->prepare("SELECT sk_rt FROM user_rt WHERE nik_rt = ?");
+            $stmt_cek->bind_param("s", $nik_rt);
+            $stmt_cek->execute();
+            $result_cek = $stmt_cek->get_result();
+
+            if ($result_cek->num_rows > 0) {
+                $error = "NIK RT sudah terdaftar di sistem!";
+                $stmt_cek->close();
+            } else {
+                $stmt_cek->close();
+
+                // 👇 TAMBAHKAN CEK DUPLIKAT SK DI SINI
+                // Cek duplikat SK RT
+                $stmt_cek_sk = $koneksi->prepare("SELECT nik_rt FROM user_rt WHERE sk_rt = ?");
+                $stmt_cek_sk->bind_param("s", $sk_rt);
+                $stmt_cek_sk->execute();
+                $result_cek_sk = $stmt_cek_sk->get_result();
+
+                if ($result_cek_sk->num_rows > 0) {
+                    $error = "SK RT sudah terdaftar di sistem!";
+                    $stmt_cek_sk->close();
+                } else {
+                    $stmt_cek_sk->close();
+
+                    // Hash password
+                    $password_hash = password_hash($sk_rt, PASSWORD_DEFAULT);
+
+                    // Insert dengan prepared statement
+                    $stmt = $koneksi->prepare("INSERT INTO user_rt(sk_rt, nik_rt, no_rt, no_rw, nama_rt, nohp_rt, wilayah_rt, admin, password) 
+                                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    $stmt->bind_param("sssssssss", $sk_rt, $nik_rt, $no_rt, $no_rw, $nama_rt, $nohp_rt, $wilayah, $id_admin, $password_hash);
+
+                    if ($stmt->execute()) {
+                        $sukses = "Data berhasil ditambahkan!";
+                        // Reset form
+                        $nik_rt = $nama_rt = $no_rt = $no_rw = $nohp_rt = $sk_rt = $wilayah = "";
+                    } else {
+                        $error = "Data gagal ditambahkan! Error: " . $stmt->error;
+                    }
+                    $stmt->close();
+                }
+            }
+        } 
     } else {
         $error = "Silakan masukkan semua data.";
     }
@@ -101,9 +148,9 @@ if (isset($_POST["submit"])) {
                                 <li><strong>No RT & No RW:</strong> Masukkan angka saja tanpa titik.</li>
                                 <li><strong>NIK Akun RT:</strong> Wajib 16 digit angka.</li>
                                 <li><strong>No HP:</strong> Isi dengan nomor aktif (contoh: 08123456789).</li>
-                                <li><strong>Password:</strong> Minimal 6 karakter (huruf/angka).</li>
                                 <li><strong>Alamat Akun RT:</strong> Tulis alamat lengkap.</li>
-                                <li><strong>Semua kolom wajib diisi</strong> sebelum menekan tombol <em>Tambah RT</em>.</li>
+                                <li><strong>Semua kolom wajib diisi</strong> sebelum menekan tombol <em>Tambah RT</em>.
+                                </li>
                             </ul>
                         </div>
                     </div>

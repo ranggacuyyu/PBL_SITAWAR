@@ -1,7 +1,9 @@
 <?php
 session_start();
 include "koneksi.php";
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,58 +12,11 @@ include "koneksi.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dasboard SITAWAR</title>
-    <link rel="stylesheet" href="LoginRTWARGA.css">
+    <link rel="stylesheet" href="LoginRTWARGA.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
 
 <body class="terang">
-    <?php
-    if (isset($_POST['name'])) {
-        $name  = $_POST['name'];
-        $nik   = $_POST['nik'];
-        $sk    = $_POST['sk'];
-        $hp    = $_POST['hp'];
-        $query = mysqli_query($koneksi, "SELECT*FROM user_rt where nama_rt = '$name' and nik_rt ='$nik' and sk_rt = '$sk' and nohp_rt = '$hp'");
-
-        if (mysqli_num_rows($query) > 0) {
-            $data  = mysqli_fetch_array($query);
-            $_SESSION['user_rt'] = [
-            'sk_rt'  => $data['sk_rt'],
-            'no_rt'  => $data['no_rt'],
-            'no_rw'  => $data['no_rw'],
-            'nama_rt' => $data['nama_rt']];
-            echo
-            '<script> alert("selamat datang");
-            window.location.href="RT/Dashboard_RT.php";
-            </script>';
-        } else {
-            echo '<script>alert("gagal login")</script>';
-        }
-    }
-    ?>
-
-    <!-- Bagian Winda -->
-    <?php
-    if (isset($_POST['nama'])) {
-        $nama = $_POST['nama'];
-        $sandi   = $_POST['sandi'];
-        $nohp    = $_POST['nohp'];
-        $query = mysqli_query($koneksi, "SELECT*FROM user_warga where nama_warga = '$nama' and nik_warga ='$sandi' and hp = '$nohp'");
-
-        if (mysqli_num_rows($query) > 0) {
-            $data  = mysqli_fetch_array($query);
-            $_SESSION['user_warga'] = $data;
-            echo
-            '<script> alert("selamat datang");
-            window.location.href="Warga/sign-in_Warga.php";
-            </script>';
-        } else {
-            echo '<script>alert("gagal login")</script>';
-        }
-    }
-    ?>
-    <!-- Bagian Winda End -->
-
     <header>
         <nav class="navbar">
             <a href="#">
@@ -95,64 +50,79 @@ include "koneksi.php";
             </div>
 
             <div class="form-box-login">
-                <h2>LOGIN WARGA</h2>
-                <form method="POST">
+                <h2 style="padding-bottom: 20px;">LOGIN WARGA</h2>
+                <form method="POST" action="aset_login/login_warga.php">
+
+                    <!-- ALERT -->
+                    <?php if (isset($_SESSION['alert'])): ?>
+                        <div class="alert-box">
+                            <?= htmlspecialchars($_SESSION['alert']) ?>
+                        </div>
+                        <?php
+                        echo '<script>alert("' . $_SESSION['alert'] . '")</script>';
+                        unset($_SESSION['alert']);
+                        ?>
+                    <?php endif; ?>
+
                     <div class="input-box">
-                        <span class="ikon"><i class="fa-solid fa-envelope"></i></span>
                         <input type="text" id="userName" required name="nama">
-                        <label for="">NAMA</label>
+                        <label>Nama</label>
                     </div>
+
                     <div class="input-box">
-                        <span class="ikon"><i class="fa-solid fa-lock"></i></span>
-                        <input type="number" id="password" required name="sandi">
-                        <label for="">NIK</label>
+                        <input type="text" id="password" required name="sandi">
+                        <label>Password</label>
                     </div>
-                    <div class="input-box">
-                        <span class="ikon"><i class="fa-solid fa-lock"></i></span>
-                        <input type="number" required required name="nohp">
-                        <label for="">NO HP</label>
-                    </div>
-                    <div class="remember-forgot">
-                        <a href=""></a>
-                    </div>
-                    <button type="submit" class="btn-forgot" id="login1" name="submit" value="login">Login</button>
+
+                    <footer style="font-size:15.5px; margin-top:10px; color:#495336" align="center">
+                        Gunakan NIK sebagai password Anda
+                    </footer>
+
+                    <button type="submit" class="btn-forgot" name="submit" value="login">
+                        Login
+                    </button>
+
                     <div class="login-register">
-                        <p><a href="#" class="login-link">login Sebagai RT?</a></p>
+                        <p>ATAU <a href="#" class="login-link">login Sebagai RT?</a></p>
                     </div>
+
                 </form>
+
             </div>
 
             <div class="daftar-regis">
                 <div class="form-box-login">
-                    <h2>LOGIN RT</h2>
-                    <form method="POST">
+                    <h2 style="padding-bottom: 20px;">LOGIN RT</h2>
+                    <form method="POST" action="aset_login/login-rt.php">
+                        <?php if (isset($_SESSION['alertrt'])): ?>
+                            <div class="alert-box">
+                                <?= htmlspecialchars($_SESSION['alertrt']) ?>
+                            </div>
+                            <?php
+                            echo '<script>alert("' . $_SESSION['alertrt'] . '")</script>';
+                            unset($_SESSION['alertrt']);
+                            ?>
+                        <?php endif; ?>
                         <div class="input-box">
-                            <span class="ikon"><i class="fa-solid fa-user"></i></span>
                             <input type="text" required id="userName1" name="name">
-                            <label for="">NAMA</label>
+                            <label for="">Nama</label>
                         </div>
                         <div class="input-box">
-                            <span class="ikon"><i class="fa-solid fa-envelope"></i></span>
-                            <input type="number" required name="nik">
-                            <label for="">NIK</label>
-                        </div>
-                        <div class="input-box">
-                            <span class="ikon"><i class="fa-solid fa-lock"></i></span>
                             <input type="text" required name="sk">
-                            <label for="">SK RT</label>
+                            <label for="">Password</label>
                         </div>
-                        <div class="input-box">
-                            <span class="ikon"><i class="fa-solid fa-lock"></i></span>
-                            <input type="number" required name="hp">
-                            <label for="">NO HP</label>
-                        </div>
+                        <footer style="font-size:15.5px; margin-top:10px; color:#495336" align="center"> Gunakan SK_RT
+                            sebagai password Anda
+                        </footer>
                         <div class="remember-forgot">
                             <a href=""></a>
                         </div>
                         <button type="submit" class="btn-forgot" id="daftar23" name="submit">Login</button>
+
                         <div class="login-register">
-                            <p><a href="#" class="register-link">Login Sebagai Warga?</a></p>
+                            <p>KEMBALI <a href="#" class="register-link">Login Sebagai Warga?</a></p>
                         </div>
+
                     </form>
                 </div>
             </div>
@@ -162,7 +132,7 @@ include "koneksi.php";
     <!-- bagian foto -->
     <section id="home">
         <div class="foto">
-            <img src="image/apa.png" alt="" class="foto-img">
+            <img src="image/apa.png" alt="" class="foto-img" style="border-radius: 30px;">
         </div>
     </section>
 

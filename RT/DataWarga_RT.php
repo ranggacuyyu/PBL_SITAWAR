@@ -2,8 +2,17 @@
 session_start();
 include '../koneksi.php';
 
+if (!isset($_SESSION['user_rt'])) {
+    echo "<script>
+        alert('Silahkan login terlebih dahulu!');
+        window.location.href='../LoginRTWARGA.php';
+    </script>";
+    exit;
+}
 
-$result = mysqli_query($koneksi, "SELECT * FROM user_warga");
+$validasi_RT = $_SESSION['user_rt']['sk_rt'];
+
+$result = mysqli_query($koneksi, "SELECT * FROM user_warga WHERE rt = '$validasi_RT'");
 $warga_list = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $warga_list[] = $row;
@@ -117,6 +126,13 @@ if (isset($_POST['update'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="DataWarga_RT.css?v=<?php echo time(); ?>">
+    <!-- SheetJS untuk Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <!-- jsPDF & AutoTable untuk PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
 </head>
 
 <body>
@@ -128,7 +144,8 @@ if (isset($_POST['update'])) {
             </div>
             <nav class="nav">
                 <a href="Dashboard_RT.php">Dashboard</a>
-                <a href="#">Data Warga</a>
+                <a href="kepala_keluarga.php">Kepala Keluarga</a>
+                <a href="DataWarga_RT.php">Data Warga</a>
                 <a href="Dokumen_RT.php">Dokumen</a>
                 <a href="Laporan_ RT.php">Laporan</a>
             </nav>
@@ -148,9 +165,9 @@ if (isset($_POST['update'])) {
         </div>
         <!-- BAGIAN EDIT PHP -->
         <div class="filter-bar">
-            <input type="text" id="searchNama" placeholder="Cari Nama..." class="form-control" style="width: 250px;">
-            <input type="text" id="searchKK" placeholder="Cari No KK..." class="form-control" style="width: 250px;">
-            <select id="filterGender" class="form-select" style="width: 200px;">
+            <input type="text" id="searchNama" placeholder="Cari Nama..." class="form-control" style="width: 215px;">
+            <input type="text" id="searchKK" placeholder="Cari No KK..." class="form-control" style="width: 215px;">
+            <select id="filterGender" class="form-select" style="width: 215px;">
                 <option value="">Jenis Kelamin</option>
                 <option value="Laki-laki">Laki-laki</option>
                 <option value="Perempuan">Perempuan</option>
@@ -158,6 +175,9 @@ if (isset($_POST['update'])) {
             <button class="btn btn-green" onclick="applyFilter()">Filter</button>
             <button class="btn btn-green" onclick="resetFilter()">Reset</button>
             <button class="btn btn-green" onclick="tampilStatistik()">📊 Statistik</button>
+            <button class="btn btn-green" data-bs-toggle="modal" data-bs-target="#modalExport">
+                Export
+            </button>
         </div>
 
         <table id="tabelWarga">
@@ -174,7 +194,6 @@ if (isset($_POST['update'])) {
             </thead>
             <tbody id="kolom">
                 <?php
-                $result = mysqli_query($koneksi, "SELECT * FROM user_warga");
                 $no = 1;
                 while ($data = mysqli_fetch_assoc($result)) {
                 ?>
@@ -216,7 +235,7 @@ if (isset($_POST['update'])) {
         <div class="modal fade" id="modalPassword" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form action="" method="POSt">
+                    <form action="" method="POST">
                         <input type="hidden" name="nik_warga" id="nikHidden">
 
                         <div class="modal-header">
@@ -311,6 +330,38 @@ if (isset($_POST['update'])) {
         </div>
     </div>
 
+    <div class="modal fade" id="modalExport" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Pilih Kolom Export</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <label><input type="checkbox" class="kolomExport" value="nama_warga" checked> Nama</label><br>
+                    <label><input type="checkbox" class="kolomExport" value="nik_warga" checked> NIK</label><br>
+                    <label><input type="checkbox" class="kolomExport" value="keluarga" checked> Status Keluarga</label><br>
+                    <label><input type="checkbox" class="kolomExport" value="jenis_kelamin" checked> Jenis Kelamin</label><br>
+                    <label><input type="checkbox" class="kolomExport" value="no_kk" checked> No KK</label><br>
+                    <label><input type="checkbox" class="kolomExport" value="alamat"> Alamat</label><br>
+                    <label><input type="checkbox" class="kolomExport" value="usia"> Usia</label><br>
+                    <label><input type="checkbox" class="kolomExport" value="agama"> Agama</label><br>
+                    <label><input type="checkbox" class="kolomExport" value="ibu_hamil"> Ibu Hamil</label><br>
+                    <label><input type="checkbox" class="kolomExport" value="warga_wafat"> Warga Wafat</label><br>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-success" onclick="exportExcel()">Excel</button>
+                    <button class="btn btn-danger" onclick="exportPDF()">PDF</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let warga = [
@@ -329,10 +380,18 @@ if (isset($_POST['update'])) {
                     agama        : '" . $data['agama'] . "',
                     status_kawin : '" . $data['status_kawin'] . "',
                     alamat       : '" . $data['alamat'] . "',
-                    email        : '" . $data['email'] . "',
+                    email        : '" . $data['email'] . "', 
                     pekerjaan    : '" . $data['pekerjaan'] . "',
-                    pendidikan   : '" . $data['pendidikan'] . "',
+                    pendidikan   : '" . $data['pendidikan'] . "', 
                     hp           : '" . $data['hp'] . "',
+                    ibu_hamil    : '" . (mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM laporan 
+                        WHERE nik_pelapor = '" . $data['nik_warga'] . "' 
+                        AND jenis_laporan = 'ibu-hamil'
+                        LIMIT 1")))  . "',
+                    warga_wafat  : '" . (mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM laporan 
+                        WHERE nik_pelapor = '" . $data['nik_warga'] . "' 
+                        AND jenis_laporan = 'warga-meninggal'
+                        LIMIT 1")))  . "'
                 },";
             }
             ?>
@@ -545,6 +604,53 @@ if (isset($_POST['update'])) {
         }
 
         tampilkanData(warga);
+
+        function exportExcel() {
+            let kolomDipilih = [];
+            document.querySelectorAll(".kolomExport:checked").forEach(cb => {
+                kolomDipilih.push(cb.value);
+            });
+
+            let hasil = warga.map(row => {
+                let obj = {};
+                kolomDipilih.forEach(k => obj[k] = row[k]);
+                return obj;
+            });
+
+            let worksheet = XLSX.utils.json_to_sheet(hasil);
+            let workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Data Warga");
+
+            XLSX.writeFile(workbook, "data_warga_rt.xlsx");
+        }
+
+        function exportPDF() {
+            const {
+                jsPDF
+            } = window.jspdf;
+            let doc = new jsPDF();
+
+            let kolomDipilih = [];
+            document.querySelectorAll(".kolomExport:checked").forEach(cb => {
+                kolomDipilih.push(cb.value);
+            });
+
+            let head = [kolomDipilih.map(k => k.toUpperCase())];
+
+            let body = warga.map(row => {
+                return kolomDipilih.map(k => row[k]);
+            });
+
+            doc.text("DATA WARGA RT", 14, 15);
+
+            doc.autoTable({
+                startY: 20,
+                head: head,
+                body: body
+            });
+
+            doc.save("data_warga_rt.pdf");
+        }
     </script>
 </body>
 
