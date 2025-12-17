@@ -55,10 +55,10 @@ if ((int)$data['sudah_lengkap'] === 1) {
         <div class="kotak-form">
           <h3>Masukkan data diri anda</h3>
 
-          <p>No. KK*</p>
+          <label for="Nokkinput">No. KK*</label>
           <input type="text" id="Nokkinput" name="Nokkinput" required>
 
-          <p>Tempat/Tanggal Lahir*</p>
+          <label for="tempatlahir">Tempat/Tanggal Lahir*</label>
           <input type="text" id="tempatlahir" name="tempatlahir" required>
           <input type="date" id="tanggallahir" name="tanggallahir" required>
 
@@ -91,6 +91,7 @@ if ((int)$data['sudah_lengkap'] === 1) {
           <p>Status Pekerjaan*</p>
           <select id="inputpekerjaan" name="inputpekerjaan" required>
             <option disabled selected hidden>- Pilih -</option>
+            <option value="Pelajar/Mahasiswa">Pelajar/Mahasiswa</option>
             <option value="Swasta">Swasta</option>
             <option value="BUMN">BUMN</option>
             <option value="PNS">PNS</option>

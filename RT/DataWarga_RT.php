@@ -660,7 +660,29 @@ if (isset($_POST['update'])) {
 
             let hasil = warga.map(row => {
                 let obj = {};
-                kolomDipilih.forEach(k => obj[k] = row[k]);
+
+                kolomDipilih.forEach(k => {
+                    let value = row[k];
+
+                    // KHUSUS kolom ibu_hamil
+                    if (k === 'ibu_hamil') {
+                        obj[k] = value == 1 ? 'Hamil' : 'Tidak Hamil';
+                    } else if (k === 'warga_wafat') {
+                        obj[k] = value == 1 ? 'Wafat' : 'Hidup';
+                    } else if (k == 'usia') {
+                        if (value === null || value === '' || Number.isNaN(value)) {
+                            obj[k] = '-';
+                        } else {
+                            obj[k] = value;
+                        }
+                    } else {
+                        // default kolom lain
+                        obj[k] = (value === null || value === '' || value === 0) ?
+                            '-' :
+                            value;
+                    }
+                });
+
                 return obj;
             });
 
@@ -670,6 +692,7 @@ if (isset($_POST['update'])) {
 
             XLSX.writeFile(workbook, "data_warga_rt.xlsx");
         }
+
 
         function exportPDF() {
             const {

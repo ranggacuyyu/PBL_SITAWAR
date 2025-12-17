@@ -193,14 +193,14 @@ $kk = mysqli_query($koneksi, "SELECT * FROM user_warga
                         );
                         $count = mysqli_fetch_assoc($anggota);
                         $jumlah = $count['total'];
-                    ?>
-                        <tr onclick="openModal(
-                            <?= json_encode($row['no_kk']) ?>,
-                            <?= json_encode($row['nik_warga']) ?>,
-                            <?= json_encode($row['nama_warga']) ?>,
-                            <?= json_encode($jumlah) ?>,
-                            <?= json_encode($row['keluarga']) ?> 
-                        )">
+                        ?>
+                        <tr onclick='openModal(
+                            <?= json_encode($row["no_kk"], JSON_HEX_QUOT | JSON_HEX_APOS) ?>,
+                            <?= json_encode($row["nik_warga"], JSON_HEX_QUOT | JSON_HEX_APOS) ?>,
+                            <?= json_encode($row["nama_warga"], JSON_HEX_QUOT | JSON_HEX_APOS) ?>,
+                            <?= json_encode($jumlah, JSON_HEX_QUOT | JSON_HEX_APOS) ?>,
+                            <?= json_encode($row["keluarga"], JSON_HEX_QUOT | JSON_HEX_APOS) ?> 
+                        )'>
 
                             <td><?= $row['no_kk'] ?></td>
                             <td><?= $row['nama_warga'] ?></td>

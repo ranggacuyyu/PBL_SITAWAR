@@ -125,7 +125,7 @@ if (!empty($_SESSION['flash'])) {
     </header>
 
     <nav class="navbar">
-        <div class="navigasi-navbar">
+        <div class="navigasi-navbar" style="position: fixed;">
             <div class="list-navbar">
                 <a href="#">
                     <h2>Data Pribadi</h2>
