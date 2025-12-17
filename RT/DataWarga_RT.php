@@ -12,16 +12,25 @@ if (!isset($_SESSION['user_rt'])) {
 
 $validasi_RT = $_SESSION['user_rt']['sk_rt'];
 
+// Cek status welcome animation
+$show_welcome = false;
+if (!isset($_SESSION['welcome_shown'])) {
+    $show_welcome = true;
+    $_SESSION['welcome_shown'] = true;
+}
+
 $result = mysqli_query($koneksi, "SELECT * FROM user_warga WHERE rt = '$validasi_RT'");
 $warga_list = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $warga_list[] = $row;
 }
 
+
+
 if (isset($_POST['verifikasi'])) {
-    $nik   = $_POST['nik_warga'];
-    $pass  = $_POST['pass'];
-    $sk    = $_SESSION['user_rt']['sk_rt'];
+    $nik = $_POST['nik_warga'];
+    $pass = $_POST['pass'];
+    $sk = $_SESSION['user_rt']['sk_rt'];
 
     // cek password admin RT
     $query = mysqli_query(
@@ -48,11 +57,11 @@ if (isset($_POST['verifikasi'])) {
 
 if (isset($_POST['update'])) {
 
-    $nik       = $_POST['nik_edit'];
-    $kolom     = $_POST['kolom_edit'];
+    $nik = $_POST['nik_edit'];
+    $kolom = $_POST['kolom_edit'];
     $nilai_baru = $_POST['nilai_baru'];
-    $pass       = $_POST['pass_edit'];
-    $sk         = $_SESSION['user_rt']['sk_rt'];
+    $pass = $_POST['pass_edit'];
+    $sk = $_SESSION['user_rt']['sk_rt'];
 
     // Validasi password RT
     $cekPass = mysqli_query(
@@ -80,17 +89,17 @@ if (isset($_POST['update'])) {
 
         // Map kolom dropdown → nama kolom di database
         $mapKolom = [
-            "Nama"             => "nama_warga",
-            "NIK"              => "nik_warga",
-            "Tanggal_lahir"    => "tanggal_lahir",
-            "Tempat_lahir"     => "tempat_lahir",
-            "Agama"            => "agama",
-            "Status Keluarga"  => "keluarga",
-            "Jenis Kelamin"    => "jenis_kelamin",
-            "NO KK"            => "no_kk",
-            "Alamat"           => "alamat",
-            "Pekerjaan"        => "pekerjaan",
-            "Pendidikan"       => "pendidikan",
+            "Nama" => "nama_warga",
+            "NIK" => "nik_warga",
+            "Tanggal_lahir" => "tanggal_lahir",
+            "Tempat_lahir" => "tempat_lahir",
+            "Agama" => "agama",
+            "Status Keluarga" => "keluarga",
+            "Jenis Kelamin" => "jenis_kelamin",
+            "NO KK" => "no_kk",
+            "Alamat" => "alamat",
+            "Pekerjaan" => "pekerjaan",
+            "Pendidikan" => "pendidikan",
             "Status Perkawinan" => "status_kawin"
         ];
 
@@ -133,9 +142,52 @@ if (isset($_POST['update'])) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
+    <style>
+        @keyframes contentSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-home {
+            animation: contentSlideUp 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .filter-bar {
+            animation: contentSlideUp 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        table {
+            animation: contentSlideUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+        }
+
+        .content-animate {
+            padding-left: 0;
+            margin-left: 250px;
+        }
+    </style>
 </head>
 
 <body>
+    <?php if ($show_welcome): ?>
+        <!-- Welcome Overlay -->
+        <div id="welcome-overlay">
+            <div class="welcome-content">
+                <h1 class="welcome-title">Selamat Datang, <?php echo htmlspecialchars($_SESSION['user_rt']['nama_rt']); ?>
+                </h1>
+                <div class="welcome-divider"></div>
+                <p class="welcome-subtitle">Sistem Informasi Tata Warga (SITAWAR)</p>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <aside class="sidebar">
         <div>
             <div class="sidebar-header">
@@ -154,7 +206,7 @@ if (isset($_POST['update'])) {
             © 2025 RT Smart System
         </div>
     </aside>
-    <div class="home">
+    <div class="home content-animate">
         <h2>Data Warga</h2>
         <div class="card-home">
             <h3>RT 01 RW 02</h3>
@@ -180,7 +232,7 @@ if (isset($_POST['update'])) {
             </button>
         </div>
 
-        <table id="tabelWarga">
+        <table id="tabelWarga" class="tabelWarga">
             <thead>
                 <tr>
                     <th>No</th>
@@ -204,7 +256,8 @@ if (isset($_POST['update'])) {
                         <td><?php echo $data['keluarga']; ?></td>
                         <td><?php echo $data['jenis_kelamin']; ?></td>
                         <td><?php echo $data['no_kk']; ?></td>
-                        <td><button class="btn btn-green btn-sm" onclick="lihatDetail('<?php echo $data['nik_warga']; ?>')">Kelola Data</button></td>
+                        <td><button class="btn btn-green btn-sm"
+                                onclick="lihatDetail('<?php echo $data['nik_warga']; ?>')">Kelola Data</button></td>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -244,7 +297,8 @@ if (isset($_POST['update'])) {
                         </div>
                         <div class="modal-body">
                             <p>Masukkan password untuk melanjutkan:</p>
-                            <input type="password" name="pass" id="inputPassword" class="form-control" placeholder="Password...">
+                            <input type="password" name="pass" id="inputPassword" class="form-control"
+                                placeholder="Password...">
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -316,7 +370,7 @@ if (isset($_POST['update'])) {
 
 
         <!-- Modal Statistik -->
-        <div class="modal fade" id="modalStatistik" tabindex="-1">
+        <div class="modal fade" id="modalStatistik" tabindex="1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -342,8 +396,10 @@ if (isset($_POST['update'])) {
                 <div class="modal-body">
                     <label><input type="checkbox" class="kolomExport" value="nama_warga" checked> Nama</label><br>
                     <label><input type="checkbox" class="kolomExport" value="nik_warga" checked> NIK</label><br>
-                    <label><input type="checkbox" class="kolomExport" value="keluarga" checked> Status Keluarga</label><br>
-                    <label><input type="checkbox" class="kolomExport" value="jenis_kelamin" checked> Jenis Kelamin</label><br>
+                    <label><input type="checkbox" class="kolomExport" value="keluarga" checked> Status
+                        Keluarga</label><br>
+                    <label><input type="checkbox" class="kolomExport" value="jenis_kelamin" checked> Jenis
+                        Kelamin</label><br>
                     <label><input type="checkbox" class="kolomExport" value="no_kk" checked> No KK</label><br>
                     <label><input type="checkbox" class="kolomExport" value="alamat"> Alamat</label><br>
                     <label><input type="checkbox" class="kolomExport" value="usia"> Usia</label><br>
@@ -366,6 +422,12 @@ if (isset($_POST['update'])) {
     <script>
         let warga = [
             <?php
+            $laporan = [];
+            $qLap = mysqli_query($koneksi, "SELECT nik_pelapor, jenis_laporan FROM laporan");
+            while ($l = mysqli_fetch_assoc($qLap)) {
+                $laporan[$l['nik_pelapor']][$l['jenis_laporan']] = true;
+            }
+
             mysqli_data_seek($result, 0);
             while ($data = mysqli_fetch_assoc($result)) {
                 echo "{ 
@@ -384,14 +446,8 @@ if (isset($_POST['update'])) {
                     pekerjaan    : '" . $data['pekerjaan'] . "',
                     pendidikan   : '" . $data['pendidikan'] . "', 
                     hp           : '" . $data['hp'] . "',
-                    ibu_hamil    : '" . (mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM laporan 
-                        WHERE nik_pelapor = '" . $data['nik_warga'] . "' 
-                        AND jenis_laporan = 'ibu-hamil'
-                        LIMIT 1")))  . "',
-                    warga_wafat  : '" . (mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM laporan 
-                        WHERE nik_pelapor = '" . $data['nik_warga'] . "' 
-                        AND jenis_laporan = 'warga-meninggal'
-                        LIMIT 1")))  . "'
+                    'ibu_hamil' : '" . (isset($laporan[$data['nik_warga']]['ibu-hamil']) ? 1 : 0) . "',
+                    'warga_wafat' : '" . (isset($laporan[$data['nik_warga']]['warga-meninggal']) ? 1 : 0) . "'
                 },";
             }
             ?>
@@ -518,15 +574,6 @@ if (isset($_POST['update'])) {
         `;
             }
         });
-
-
-
-        // ==== Validasi Password ====
-        document.getElementById("btnValidasi").onclick = function() {
-            const pass = document.getElementById("inputPassword").value;
-
-
-        };
 
         // ==== Filter dan Statistik ====
         function applyFilter() {

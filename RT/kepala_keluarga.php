@@ -2,11 +2,17 @@
 session_start();
 include "../koneksi.php";
 
+
+if (!isset($_SESSION['user_rt'])) {
+    header("Location: ../LoginRTWARGA.php");
+    exit;
+}
+
 $sk_rt = $_SESSION['user_rt']['sk_rt'];
 
 // Ambil semua kepala keluarga
 $kk = mysqli_query($koneksi, "SELECT * FROM user_warga 
-    WHERE keluarga = 'kepala keluarga' and rt = $sk_rt");
+    WHERE keluarga = 'kepala keluarga' and rt = '$sk_rt'");
 ?>
 
 <!DOCTYPE html>
@@ -20,12 +26,30 @@ $kk = mysqli_query($koneksi, "SELECT * FROM user_warga
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        /* Animation */
+        @keyframes contentSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-animate {
+            animation: contentSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: "Segoe UI", sans-serif;
         }
+
 
         body {
             display: flex;
@@ -76,19 +100,22 @@ $kk = mysqli_query($koneksi, "SELECT * FROM user_warga
 
         .sidebar-header {
             text-align: center;
-            padding: 20px;
+            padding: 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .sidebar-header h1 {
+            padding-top: 11px;
             font-size: 24px;
             margin-bottom: 4px;
+            font-weight: 700;
         }
 
         .sidebar-header p {
             font-size: 12px;
             color: #4b5c30;
             font-weight: bold;
+            margin-bottom: 10px;
         }
 
         .nav {
@@ -98,10 +125,11 @@ $kk = mysqli_query($koneksi, "SELECT * FROM user_warga
         .nav a {
             display: block;
             color: white;
+            width: 100%;
             text-decoration: none;
             padding: 10px 15px;
+            margin-bottom: 5px;
             border-radius: 8px;
-            margin-bottom: 10px;
             transition: background 0.2s;
             font-size: 1.35em;
         }
@@ -141,17 +169,17 @@ $kk = mysqli_query($koneksi, "SELECT * FROM user_warga
         <div class="sidebar-footer">© 2025 RT Smart System</div>
     </aside>
 
-    <div class="container " style="margin-left: 250px;padding-top:30px; background-color:#88976cce;">
+    <div class="container content-animate" style="margin-left: 250px;padding-top:30px; background-color:#88976cce;">
         <h2 class="fw-bold mb-4 text-center">Daftar Kepala Keluarga - Sitawar</h2>
 
         <div class="card p-4 shadow">
-            <table class="table table-hover align-middle" >
-                <thead class="table-success">
+            <table class="table table-hover align-middle">
+                <thead class="table">
                     <tr>
-                        <th>No KK</th>
-                        <th>Nama</th>
-                        <th>NIK</th>
-                        <th>Jumlah Anggota</th>
+                        <th style="background-color: #6b7a59; color:white;">No KK</th>
+                        <th style="background-color: #6b7a59; color:white;">Nama</th>
+                        <th style="background-color: #6b7a59; color:white;">NIK</th>
+                        <th style="background-color: #6b7a59; color:white;">Jumlah Anggota</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -167,11 +195,11 @@ $kk = mysqli_query($koneksi, "SELECT * FROM user_warga
                         $jumlah = $count['total'];
                     ?>
                         <tr onclick="openModal(
-                            '<?= $row['no_kk'] ?>',
-                            '<?= $row['nik_warga'] ?>',
-                            '<?= $row['nama_warga'] ?>',
-                            '<?= $jumlah ?>',
-                            '<?= $row['keluarga'] ?>'
+                            <?= json_encode($row['no_kk']) ?>,
+                            <?= json_encode($row['nik_warga']) ?>,
+                            <?= json_encode($row['nama_warga']) ?>,
+                            <?= json_encode($jumlah) ?>,
+                            <?= json_encode($row['keluarga']) ?> 
                         )">
 
                             <td><?= $row['no_kk'] ?></td>

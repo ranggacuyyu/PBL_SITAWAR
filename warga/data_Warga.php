@@ -13,6 +13,13 @@ $query = mysqli_query($koneksi, "SELECT * FROM user_warga WHERE nik_warga='$nik'
 $data = mysqli_fetch_assoc($query);
 $skRT = $data['rt'];
 
+// Cek status welcome animation
+$show_welcome = false;
+if (!isset($_SESSION['welcome_shown'])) {
+    $show_welcome = true;
+    $_SESSION['welcome_shown'] = true;
+}
+
 $detail_rt = mysqli_query($koneksi, "SELECT * FROM user_rt WHERE sk_rt = '$skRT'");
 $detail_rt1 = mysqli_query($koneksi, "SELECT * FROM user_rt WHERE sk_rt = '$skRT'");
 $info_rt = mysqli_fetch_assoc($detail_rt);
@@ -41,9 +48,73 @@ if (!empty($_SESSION['flash'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="data_Warga.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        /* Welcome Animation Overlay Styles */
+        #welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #455033ff 0%, #617748ff 100%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .welcome-content {
+            text-align: center;
+            overflow: hidden;
+            /* For text reveal effects */
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #c7e4a8ff 0%, #89aa55ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .welcome-subtitle {
+            font-size: 1.5rem;
+            color: #dfe6e9;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .welcome-divider {
+            width: 0%;
+            height: 2px;
+            background: #fff;
+            margin: 20px auto;
+            opacity: 0.5;
+        }
+    </style>
 </head>
 
 <body>
+    <?php if ($show_welcome): ?>
+        <!-- Welcome Overlay -->
+        <div id="welcome-overlay">
+            <div class="welcome-content">
+                <h1 class="welcome-title">Selamat Datang, <?php echo htmlspecialchars($data['nama_warga']); ?></h1>
+                <div class="welcome-divider"></div>
+                <p class="welcome-subtitle">Sistem Terpadu Administrasi Warga (SITAWAR)</p>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <header class="head">
         <h1 class="logo">SITAWAR</h1>
         <div class="waktu-uuu">
@@ -72,7 +143,7 @@ if (!empty($_SESSION['flash'])) {
             <!-- PROFILE CARD -->
             <div class="card shadow profile-card p-3" style="width: 30%;">
                 <div class="gambar" align="center">
-                    <img src="../image/download.jpg" alt="Avatar" class="mb-3">
+                    <img src="../image/unnamed.jpg" alt="Avatar" class="mb-3">
                 </div>
                 <h4>
                     <?php echo htmlspecialchars($data['nama_warga']); ?>
@@ -194,7 +265,9 @@ if (!empty($_SESSION['flash'])) {
                 </div>
                 <div class="d-flex justify-content-end gap-2 mt-3">
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalProfil"><i class="fas fa-edit"></i> Ubah Data</button>
-                    <button class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <form action="logout_warga.php" method="post">
+                        <button class="btn btn-danger" onclick="return confirm('Yakin ingin keluar?')"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -323,6 +396,86 @@ if (!empty($_SESSION['flash'])) {
                     location.reload(); // refresh data baru
                 });
         });
+
+
+        // GSAP Animation Logic
+        <?php if ($show_welcome): ?>
+            document.addEventListener("DOMContentLoaded", () => {
+                const overlay = document.getElementById('welcome-overlay');
+                // Make visible immediately for animation
+                gsap.set(overlay, {
+                    autoAlpha: 1
+                });
+
+                const tl = gsap.timeline({
+                    onComplete: () => {
+                        gsap.to(overlay, {
+                            duration: 0.8,
+                            yPercent: -100,
+                            ease: "power2.inOut",
+                            onComplete: () => {
+                                overlay.style.display = 'none';
+                            }
+                        });
+
+                        // Animate page elements in
+                        gsap.from(".head", {
+                            duration: 1,
+                            y: -50,
+                            opacity: 0,
+                            ease: "power2.out",
+                            delay: 0.2
+                        });
+                        gsap.from(".navbar", {
+                            duration: 1,
+                            x: -50,
+                            opacity: 0,
+                            ease: "power2.out",
+                            delay: 0.3
+                        });
+                        gsap.from(".konten", {
+                            duration: 0.8,
+                            y: 30,
+                            opacity: 0,
+                            ease: "power2.out",
+                            delay: 0.5
+                        });
+                    }
+                });
+
+                tl.to(".welcome-title", {
+                        duration: 1,
+                        y: 0,
+                        opacity: 1,
+                        ease: "back.out(1.7)"
+                    })
+                    .to(".welcome-divider", {
+                        duration: 0.8,
+                        width: "50%",
+                        ease: "power2.out"
+                    }, "-=0.5")
+                    .to(".welcome-subtitle", {
+                        duration: 0.8,
+                        y: 0,
+                        opacity: 1,
+                        ease: "power2.out"
+                    }, "-=0.6")
+                    .to({}, {
+                        duration: 2
+                    }); // Pause for reading
+            });
+        <?php else: ?>
+            // Simple entrance animation for non-first visits
+            document.addEventListener("DOMContentLoaded", () => {
+                // Optional GSAP entrance
+                gsap.from(".konten", {
+                    duration: 0.6,
+                    y: 20,
+                    opacity: 0,
+                    ease: "power1.out"
+                });
+            });
+        <?php endif; ?>
     </script>
 
 </body>

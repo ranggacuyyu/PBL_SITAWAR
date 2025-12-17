@@ -58,6 +58,23 @@ if (isset($_GET['aksi']) && isset($_GET['id'])) {
         font-weight: bold;
         border-radius: 8px;
     }
+
+    /* Animation */
+    @keyframes contentSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .content-animate {
+        animation: contentSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
 </style>
 <!DOCTYPE html>
 <html lang="id">
@@ -93,7 +110,7 @@ if (isset($_GET['aksi']) && isset($_GET['id'])) {
     </aside>
 
     <!-- MAIN -->
-    <div class="bungkus">
+    <div class="bungkus content-animate">
         <div class="datatambahan">
             <div class="main-content">
                 <div class="card p-4">
@@ -117,16 +134,15 @@ if (isset($_GET['aksi']) && isset($_GET['id'])) {
                             <?php while ($row = mysqli_fetch_assoc($query)) { ?>
                                 <tr>
                                     <!-- Nama, bisa diklik -->
-                                    <td style="cursor:pointer"
-                                        onclick='lihatDetail(<?= json_encode([
-                                            "nama" => $row['nama_warga'],
-                                            "usia" => $row['usia'],
-                                            "jenis_kelamin" => $row['jenis_kelamin'],
-                                            "kategori" => $row['dokumen'],
-                                            "alamat" => $row['alamat'],
-                                            "hp" => $row['hp'],
-                                            "tanggal" => $row['tanggal']
-                                        ]); ?>)'>
+                                    <td style="cursor:pointer" onclick='lihatDetail(<?= json_encode([
+                                        "nama" => $row['nama_warga'],
+                                        "usia" => $row['usia'],
+                                        "jenis_kelamin" => $row['jenis_kelamin'],
+                                        "kategori" => $row['dokumen'],
+                                        "alamat" => $row['alamat'],
+                                        "hp" => $row['hp'],
+                                        "tanggal" => $row['tanggal']
+                                    ]); ?>)'>
                                         <?= $row['nama_warga'] ?>
                                     </td>
                                     <td><?= $row['tanggal'] ?></td>
@@ -142,9 +158,11 @@ if (isset($_GET['aksi']) && isset($_GET['id'])) {
                                                 Tolak
                                             </a>
                                         <?php } elseif ($row['status'] === 'setuju') { ?>
-                                            <button class="tanda_setuju" style="padding: 5px 10px 5px 10px;" disabled>Disetujui</button>
+                                            <button class="tanda_setuju" style="padding: 5px 10px 5px 10px;"
+                                                disabled>Disetujui</button>
                                         <?php } elseif ($row['status'] === 'tolak') { ?>
-                                            <button class="tanda_tolak" style="padding: 5px 16px 5px 16px;" disabled>Ditolak</button>
+                                            <button class="tanda_tolak" style="padding: 5px 16px 5px 16px;"
+                                                disabled>Ditolak</button>
                                         <?php } ?>
                                     </td>
                                 </tr>

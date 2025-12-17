@@ -74,6 +74,24 @@ $adaPengajuan_laporan = mysqli_num_rows($cekAktif_laporan);
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SITAWAR - Dokumen Warga</title>
   <link rel="stylesheet" href="dokumen_Warga.css" />
+  <style>
+    .cetak_button {
+      background-color: #687e4cff;
+      border: 1px solid #94ac76ff;
+      padding: 6px 16px;
+      color: #efffd9ff;
+      cursor: pointer;
+      transition: background-color 0.3s ease; 
+      color: 0.3s ease;
+      transform: 0.3s ease;
+    }
+
+    .cetak_button:hover {
+      background-color: #d0e7b1ff;
+      color: #5a6947ff;
+      transform: translateY(-1px);
+    }
+  </style>
 </head>
 
 <body>
@@ -275,7 +293,7 @@ $adaPengajuan_laporan = mysqli_num_rows($cekAktif_laporan);
                 echo "<td>$tanggal</td>";
                 echo "<td>$status</td>";
                 echo "<td class='validasi'>$validasi</td>";
-                echo "<td><button onclick=\"cekValidasi(this, '$id_dokumen')\">Cetak</button></td>";
+                echo "<td ><button class='cetak_button' onclick=\"cekValidasi(this, '$id_dokumen')\">Cetak</button></td>";
                 echo "</tr>";
                 $no++;
               }

@@ -3,8 +3,8 @@ session_start();
 include "../koneksi.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama = mysqli_real_escape_string($koneksi, trim($_POST['nama']));
-    $nik = mysqli_real_escape_string($koneksi, trim($_POST['sandi']));
+    $nama = trim($_POST['nama']);
+    $nik = trim($_POST['sandi']);
 
     if (empty($nama) || empty($nik)) {
         $_SESSION['alert'] = "Nama dan Password tidak boleh kosong";
@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $sql = "SELECT * FROM user_warga WHERE nama_warga=?";
+    $sql = "SELECT * FROM user_warga WHERE nik_warga=?";
     $stmt = mysqli_stmt_init($koneksi);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
 
         if (!$user || !password_verify($nik, $user['password'])) {
-            $_SESSION['alert'] = "Nama atau NIK salah";
+            $_SESSION['alert'] = "NIK atau Password salah";
             header("Location: ../LoginRTWARGA.php");
             exit();
         }

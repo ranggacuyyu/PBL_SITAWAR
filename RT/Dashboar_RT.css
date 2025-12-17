@@ -64,8 +64,8 @@
         .modal-right {
             min-height: 100%;
             font-size: 18px;
-            padding: 27px;
             width: 100%;
+            margin: 20px;
         }
 
         .avatar-large {

@@ -71,6 +71,23 @@ if (!isset($_SESSION['user_rt'])) {
             color: #ffffff;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
+
+        /* Animation */
+        @keyframes contentSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-animate {
+            animation: contentSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 
@@ -92,11 +109,12 @@ if (!isset($_SESSION['user_rt'])) {
         <div class="sidebar-footer">© 2025 RT Smart System</div>
     </aside>
 
-    <div class="main-content">
+    <div class="main-content content-animate">
         <div class="panduan">
             <b>Panduan:</b>
             Informasi Menu Laporan Warga <br>
-            Halaman ini menampilkan daftar laporan yang dikirim oleh warga, seperti laporan warga meninggal dunia dan warga melahirkan.
+            Halaman ini menampilkan daftar laporan yang dikirim oleh warga, seperti laporan warga meninggal dunia dan
+            warga melahirkan.
             Data yang ditampilkan berupa identitas pelapor, jenis laporan, serta tanggal laporan.
             Untuk melihat detail lengkap dari laporan, silakan klik tombol “Cek Detail” pada kolom aksi.
         </div>
@@ -119,7 +137,7 @@ if (!isset($_SESSION['user_rt'])) {
 
                 $query = mysqli_query($koneksi, "SELECT laporan.*  FROM laporan JOIN user_warga ON laporan.nik_pelapor = user_warga.nik_warga WHERE user_warga.rt = '$id_rt'");
                 while ($data = mysqli_fetch_assoc($query)) {
-                ?>
+                    ?>
                     <tr>
                         <td><?= $no++ ?></td>
                         <td><?= $data['nama_pelapor']; ?></td>

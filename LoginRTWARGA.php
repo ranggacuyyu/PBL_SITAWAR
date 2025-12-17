@@ -66,7 +66,7 @@ include "koneksi.php";
 
                     <div class="input-box">
                         <input type="text" id="userName" required name="nama">
-                        <label>Nama</label>
+                        <label>NIK</label>
                     </div>
 
                     <div class="input-box">
@@ -75,7 +75,7 @@ include "koneksi.php";
                     </div>
 
                     <footer style="font-size:15.5px; margin-top:10px; color:#495336" align="center">
-                        Gunakan NIK sebagai password Anda
+                        Gunakan NIK sebagai password Anda saat pertama kali Login
                     </footer>
 
                     <button type="submit" class="btn-forgot" name="submit" value="login">
@@ -105,14 +105,14 @@ include "koneksi.php";
                         <?php endif; ?>
                         <div class="input-box">
                             <input type="text" required id="userName1" name="name">
-                            <label for="">Nama</label>
+                            <label for="">Nomor SK_RT</label>
                         </div>
                         <div class="input-box">
                             <input type="text" required name="sk">
                             <label for="">Password</label>
                         </div>
                         <footer style="font-size:15.5px; margin-top:10px; color:#495336" align="center"> Gunakan SK_RT
-                            sebagai password Anda
+                            sebagai password Anda saat pertama kali Login
                         </footer>
                         <div class="remember-forgot">
                             <a href=""></a>
