@@ -248,10 +248,6 @@ include "koneksi.php";
     <div class="lari"></div>
     <div class="running-text">🌿 Selamat datang di SITAWAR - Sistem Terpadu Administrasi Warga © 2024 SITAWAR. All
         Rights Reserved.🌿</div>
-
-
-
-
     <script>
         const cardLayanan1 = document.getElementById('foto1')
         const cardLayanan2 = document.getElementById('foto2')

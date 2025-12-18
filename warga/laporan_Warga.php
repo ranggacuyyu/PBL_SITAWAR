@@ -1,4 +1,7 @@
 <?php
+
+use LDAP\Result;
+
 session_start();
 include "../koneksi.php";
 
@@ -7,15 +10,33 @@ if (!isset($_SESSION["user_warga"])) {
     header("location:../LoginRTWARGA.php");
 }
 $nik = $_SESSION["user_warga"]["nik_warga"];  
-$usia = mysqli_query($koneksi, "SELECT TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) AS usia FROM user_warga WHERE nik_warga='$nik'");
-$usia_data = mysqli_fetch_assoc($usia)['usia'];
 
-$syarat = mysqli_query($koneksi, "SELECT * FROM user_warga 
-WHERE nik_warga='$nik' and  $usia_data >= 17 and status_kawin='kawin' and jenis_kelamin='Perempuan' or keluarga = 'kepala keluarga' and nik_warga='$nik'");
-$boleh = mysqli_num_rows($syarat) > 0;
+
+$usia = "SELECT TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) AS usia FROM user_warga WHERE nik_warga=?";
+$stmt = mysqli_stmt_init($koneksi);
+if(!mysqli_stmt_prepare($stmt, $usia)){
+    echo "error";
+}else{
+    mysqli_stmt_bind_param($stmt, "s", $nik);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $usia_data = mysqli_fetch_assoc($result)['usia'];
+}
+
+
+$syarat = "SELECT * FROM user_warga WHERE keluarga = 'kepala keluarga' and nik_warga=?";
+if(!mysqli_stmt_prepare($stmt, $syarat)){
+    echo "error";
+}else{
+    mysqli_stmt_bind_param($stmt, "s", $nik);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $boleh = mysqli_num_rows($result) > 0;
+}
 
 $syarat_meninggal = mysqli_query($koneksi, "SELECT * FROM user_warga 
 WHERE nik_warga='$nik' and  keluarga = 'kepala keluarga'");
+
 $boleh_meninggal = mysqli_num_rows($syarat_meninggal) > 0;
 
 // AMBIL DATA WARGA DARI DATABASE
