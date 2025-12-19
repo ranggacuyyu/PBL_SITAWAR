@@ -145,6 +145,9 @@ $kk = mysqli_query($koneksi, "SELECT * FROM user_warga
             color: #ffffff;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
+        .container{
+            max-width: none !important;
+        }
     </style>
 
 </head>
@@ -169,7 +172,7 @@ $kk = mysqli_query($koneksi, "SELECT * FROM user_warga
         <div class="sidebar-footer">© 2025 RT Smart System</div>
     </aside>
 
-    <div class="container content-animate" style="margin-left: 250px;padding-top:30px; background-color:#88976cce;">
+    <div class="container content-animate" style=" margin-left: 250px; padding: 30px; background-color: #88976cce;">
         <h2 class="fw-bold mb-4 text-center">Daftar Kepala Keluarga - Sitawar</h2>
 
         <div class="card p-4 shadow">
