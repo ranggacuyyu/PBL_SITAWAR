@@ -222,6 +222,24 @@ header .navbar {
     padding: 25px 0;
 }
 
+.input-box {
+    position: relative;
+}
+
+.input-box input {
+    padding-right: 40px;
+}
+
+.input-box i.toggle-eye {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #88976c;
+    z-index: 20;
+}
+
 .input-box label{
     position: absolute;
     top: 50%;
