@@ -11,6 +11,7 @@ include "../koneksi.php";
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login Admin</title>
   <link rel="stylesheet" href="login_admin.css?v=<?php echo time(); ?>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
 
 <body>
@@ -45,15 +46,30 @@ include "../koneksi.php";
       <label>Username</label>
       <input type="text" placeholder="Masukkan username" name="username" required>
       <label>Kata Sandi</label>
-      <input type="password" placeholder="Masukkan kata sandi"  name="password" required>
+      <div class="password-wrapper">
+        <input type="password" placeholder="Masukkan kata sandi" name="password" class="password" required>
+        <i class="fa-solid fa-eye toggle-eye"></i>
+      </div>
       <button type="submit" name="submit" value="login">Masuk</button>
     </form>
   </div>
+
+  <script>
+    //fungsi tombol mata
+        document.querySelectorAll(".toggle-eye").forEach(eye => {
+            eye.addEventListener("click", () => {
+                const input = eye.parentElement.querySelector(".password");
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    eye.classList.replace("fa-eye", "fa-eye-slash");
+                } else {
+                    input.type = "password";
+                    eye.classList.replace("fa-eye-slash", "fa-eye");
+                }
+            });
+        });
+  </script>
+
 </body>
-
 </html>
-
-
-<?php
-
-?>
