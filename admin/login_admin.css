@@ -57,6 +57,24 @@
       font-size: 15px;
     }
 
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper input {
+      width: 100%;
+      padding-right: 40px;
+    }
+
+    .toggle-eye {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: gray;
+    }
+
     .login-container button {
       width: 100%;
       padding: 10px;
@@ -73,6 +91,4 @@
     .login-container button:hover {
       background: #273a15;
     }
-
-    /* ================= DASHBOARD ================= */
     
