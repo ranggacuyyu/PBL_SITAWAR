@@ -72,8 +72,9 @@ include "koneksi.php";
                     </div>
 
                     <div class="input-box">
-                        <input type="text" id="password" required name="sandi">
+                        <input type="password" autocomplete="off" id="password" class="pwd" required name="sandi">
                         <label>Password</label>
+                        <i class="fa-solid fa-eye toggle-eye"></i>
                     </div>
 
                     <footer style="font-size:15.5px; margin-top:10px; color:#495336" align="center">
@@ -112,6 +113,7 @@ include "koneksi.php";
                         <div class="input-box">
                             <input type="text" required name="password">
                             <label for="">Password</label>
+                            <i class="fa-solid fa-eye toggle-eye"></i>
                         </div>
                         <footer style="font-size:15.5px; margin-top:10px; color:#495336" align="center"> Gunakan SK_RT
                             sebagai password Anda saat pertama kali Login
@@ -201,8 +203,10 @@ include "koneksi.php";
                 </div>
                 <div class="bungkus-akhirnya">
                     <div class="akhirnya" id="akhirnyaCard3">
-                        <p>Fitur Pembuatan Dokumen memungkinkan warga untuk mengajukan dan mencetak dokumen administrasi,
-                            seperti surat keterangan atau permohonan, secara cepat dan terdata otomatis dalam sistem.</p>
+                        <p>Fitur Pembuatan Dokumen memungkinkan warga untuk mengajukan dan mencetak dokumen
+                            administrasi,
+                            seperti surat keterangan atau permohonan, secara cepat dan terdata otomatis dalam sistem.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -256,6 +260,10 @@ include "koneksi.php";
     <div class="lari"></div>
     <div class="running-text">🌿 Selamat datang di SITAWAR - Sistem Terpadu Administrasi Warga © 2024 SITAWAR. All
         Rights Reserved.🌿</div>
+
+
+
+
     <script>
         const akhirnya1 = document.getElementById('akhirnyaCard1')
         const akhirnya2 = document.getElementById('akhirnyaCard2')
@@ -320,10 +328,27 @@ include "koneksi.php";
         const menuToggle = document.querySelector('.menu-toggle');
         const navbar = document.querySelector('.navbar');
 
-        menuToggle.addEventListener('click', () => {
-            navbar.classList.toggle('active');
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                navbar.classList.toggle('active');
+            });
+        }
+
+
+        //fungsi tombol mata
+        document.querySelectorAll(".toggle-eye").forEach(eye => {
+            eye.addEventListener("click", () => {
+                const input = eye.parentElement.querySelector(".pwd");
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    eye.classList.replace("fa-eye", "fa-eye-slash");
+                } else {
+                    input.type = "password";
+                    eye.classList.replace("fa-eye-slash", "fa-eye");
+                }
+            });
         });
-        
     </script>
 </body>
 
