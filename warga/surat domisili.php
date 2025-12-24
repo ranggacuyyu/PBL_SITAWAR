@@ -1,14 +1,15 @@
 <?php 
 session_start();
 // Pastikan file koneksi.php berada di folder yang sama
-include '../koneksi.php'; 
+require_once '../koneksi.php';
+require_once '../db_helper.php';
+
 if (!isset($_SESSION['user_warga'])) {
     header("Location: sign-in_Warga.php");
     exit();
 }
 $warga = $_SESSION['user_warga']['nik_warga'];
-$query = mysqli_query($koneksi, "SELECT * FROM user_warga WHERE nik_warga='$warga'");
-$data = mysqli_fetch_assoc($query);
+$data = db_select_single($koneksi, "SELECT no_rt, no_rw, kecamatan, kelurahan, nama_warga, tempat_lahir, tanggal_lahir, jenis_kelamin, pekerjaan,, agama, status_kawin FROM user_warga WHERE nik_warga=?", "s", [$warga])
 ?>
 
 <!DOCTYPE html>
@@ -184,8 +185,7 @@ $data = mysqli_fetch_assoc($query);
             </table>
         </div>
         <div class="kata-penutup">
-            <p>orang tersebut diatas, adalah benar benar warga kami dan berdomisili di RT <span>..</span> RW
-                <span>..</span>
+            <p>orang tersebut diatas, adalah benar benar warga kami dan berdomisili di RT <?php echo htmlspecialchars($data['no_rt']); ?></span> RW <span><?php echo htmlspecialchars($data['no_rw']); ?></span>
                 Desa <span>..</span> Kecamatan <span>..</span> Kabupaten <span>..</span>. Surat keterangan ini dibuat
                 sebagai kelenkapan penurusan surat <span>...</span><br><br> &nbsp;&nbsp;&nbsp;&nbsp;demikian surat
                 keterangan ini kami buat, untuk

@@ -6,9 +6,14 @@
     --text-color: #333;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 * {
     padding: 0;
     margin: 0;
+    
 }
 
 .alert-box {
@@ -325,18 +330,18 @@ header .navbar {
 
 /* footoo ----------------------------------------------------------------------*/
 .foto {
-    min-height: 100vh;
+    width: 100%;
+    aspect-ratio: 2/1;
+    overflow: hidden;
+    background-color: var(--backgroud-color-image);
+    display: flex;
     justify-content: center;
     align-items: center;
-    display: flex;
-    background:  var(--backgroud-color-image);
 }
 
 .foto-img {
-    border-radius: 17px;
-    height: 60vh;
-    width: 150vh;
-    box-shadow: 5px 10px 20px #000000;
+    height: 60%;
+    object-fit: cover;
 }
 /* foto selesai ----------------------------------------------------------------------*/
 
@@ -351,14 +356,13 @@ header .navbar {
 
 .induk .section-content{
     padding-top: 10px;
-    padding-left: 140px;
+    padding-left: 70px;
     padding-right: 70px;
     display: flex;
     align-items: center;
     min-height: 100vh;
     color: white;
     justify-content: space-between;
-    gap: 14px;
 }
 
 .hero-details .title {
@@ -410,19 +414,21 @@ header .navbar {
 .layanan {
     background:  var(--backgroud-color-image);
     min-height: 100vh;
+    width: 100%;
 }
 
 .list-layanan{
-    padding: 0 40px 0 20px;
+    padding: 20px;
     justify-content: space-between;
-    width: 55vh;
     left: 0;
+    width: 100%;
 }
 
 .penjelasanCard{
     margin: 40px 40px 0 40px;
-    height: 45vh;
-    width: 45vh;
+    height: 100%;
+    padding: 40px 0 40px 0;
+    width: auto;
     border-radius: 20px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.6);
     justify-content: center;
@@ -442,6 +448,11 @@ header .navbar {
     rotate: calc(-2deg);
 }
 
+.penjelasanCard img{
+    width: 110px;
+    height: 110px;
+}
+
 .layanan {
     justify-content: space-between;
     align-items: center;
@@ -459,14 +470,6 @@ header .navbar {
     transition:0.3s ease-in;
 }
 
-.list-layanan img {
-    height: 43%;
-    width: 43%;
-    border-radius: 10px;
-    margin: 10px;
-    transition: transform 1s ease-in-out;
-}
-
 .akhirnya {
     background-color: #d1e0b3e7;
     padding: 20px 10px 20px 10px;
@@ -477,10 +480,18 @@ header .navbar {
     opacity: 0;
     z-index: 100;
     font-size: 1.07em;
-    position: relative;
+    position: absolute;
     transition: transform 2s ease-in-out;
     transform: translateY(-10px);
 }
+
+    .bungkus-akhirnya{
+        max-width: 100%;
+        height: 100px;
+        position: relative;
+        margin-right: 20px;
+        z-index: 100;
+    }
 /* layanan selesai---------------------------------------------------------------------- */
 
 
@@ -565,6 +576,7 @@ header .navbar {
       background: #495336;
       color: white;
       width: 100%;
+      max-height: 20px;
       padding: 5px;
       text-align: center;
       animation: moveText 20s linear infinite;
@@ -612,6 +624,10 @@ header .navbar {
     padding: 60px 30px;
   }
 
+  .section-content img{
+    display: none;
+  }
+
   .hero-details .title {
     font-size: 45px;
   }
@@ -653,34 +669,51 @@ header .navbar {
 
 /* --- Untuk layar HP (max 600px) --- */
 @media (max-width: 600px) {
-
-  header {
-    position: relative;
+  .foto{
+    width: 100%;
+    padding-top: 80px;
   }
 
-  .foto{
-    display: none;
+  .pop-up{
+    transform: translateX(-140px);
+    scale: 0.8;
+  }
+
+  .foto-img{
+    height: 85%;
+  }
+
+  .section-content{
+    flex-direction: column;
+    padding: 10px 40px;
+    text-align: center;
+  }
+
+  .hero-details .title {
+    font-size: 45px;
+  }
+
+  .hero-details .sub-title {
+    font-size: 28px;
   }
 
   .section-content img{
     display: none;
+    position: fixed;
   }
 
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
+  .list-navbar a{
+    display: none;
+  }
+
+  .navbar h1{
+    font-size: 30px;
   }
 
   .list-layanan{
     transform: translateY(-200px);
   }
 
-  .nav-menu {
-    flex-direction: column;
-    background-color: #495336;
-    width: 100%;
-    display: none; /* disembunyikan untuk menu toggle nanti */
-  }
 
   .navbar.active .nav-menu {
     display: flex;
@@ -690,9 +723,27 @@ header .navbar {
     width: 100%;
     text-align: left;
     padding-left: 20px;
+
   }
 
   .list-navbar a, .list-navbar button {
     font-size: 18px;
   }
+
+  .bawah {
+    padding-bottom: 20px ;
+  }
+
+  .list-layanan{
+    padding: 0;
+    margin: 0;
+    margin: 0;
+  }
+
+  .penjelasanCard{
+    margin: 0;
+  }
 }
+
+
+

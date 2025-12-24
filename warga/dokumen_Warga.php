@@ -1,24 +1,18 @@
 <?php
 session_start();
+require_once '../koneksi.php';
+require_once '../db_helper.php';
 
-include '../koneksi.php';
 if (!isset($_SESSION['user_warga'])) {
   header("Location: ../LoginRTWARGA.php");
   exit();
 }
-
-// Ambil NIK dari session
 $nik_login = $_SESSION['user_warga']['nik_warga'];
 
-$dataWarga = mysqli_query($koneksi, "SELECT * FROM user_warga 
-WHERE nik_warga='$nik_login'
-");
-
-if (mysqli_num_rows($dataWarga) == 0) {
-  die("Data warga tidak ditemukan");
-}
-
-$row = mysqli_fetch_assoc($dataWarga);
+$row = db_select_single($koneksi, 
+"SELECT nama_warga, nik_warga, rt, hp, tanggal_lahir, alamat, agama, jenis_kelamin, status_kawin, no_kk, no_rt, no_rw, kelurahan, kecamatan, dokumen FROM user_warga WHERE nik_warga =?", 
+"s", 
+[$nik_login]);
 
 $nama           = $row['nama_warga'];
 $nik            = $row['nik_warga'];
@@ -28,7 +22,7 @@ $tanggal_lahir  = $row['tanggal_lahir'];
 $alamat         = $row['alamat'];
 $agama          = $row['agama'];
 $jenis_kelamin  = $row['jenis_kelamin'];
-$status_kawin  = $row['status_kawin'];
+$status_kawin   = $row['status_kawin'];
 $no_kk          = $row['no_kk'];
 $no_rt          = $row['no_rt'];
 $no_rw          = $row['no_rw'];
@@ -44,15 +38,20 @@ if ($no_rt && $no_rw) {
   $rt_rw = $no_rt . "/" . $no_rw;
 }
 
-// Data kelurahan, kecamatan, kota (default atau dari database)
 $kelurahan = $row['kelurahan'] ?? "";
 $kecamatan = $row['kecamatan'] ?? "";
 $kota = "BATAM";
 
-$result_dokumen = mysqli_query($koneksi, "SELECT * FROM dokumen 
-WHERE warga='$nik_login'
-ORDER BY tanggal DESC
-");;
+$result_query = "SELECT * FROM dokumen WHERE warga=? ORDER BY tanggal DESC";
+$stmt = mysqli_stmt_init($koneksi);
+if(!mysqli_stmt_prepare($stmt, $result_query)){
+  echo "error";
+} else{
+  mysqli_stmt_bind_param($stmt, "s", $nik_login);
+  mysqli_stmt_execute($stmt);
+  $result_dokumen = mysqli_stmt_get_result($stmt);
+  mysqli_stmt_close($stmt);
+}
 
 $cekAktif_domisili = mysqli_query($koneksi, "SELECT * FROM dokumen 
 WHERE warga='$nik_login' 

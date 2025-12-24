@@ -14,7 +14,6 @@ function redirect($msg) {
 if (!isset($_SESSION['user_warga']['nik_warga'])) {
     redirect("⚠️ Silakan login terlebih dahulu");
 }
-
 $id_warga = $_SESSION['user_warga']['nik_warga'];
 
 // ===============================

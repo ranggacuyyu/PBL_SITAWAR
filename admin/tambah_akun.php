@@ -7,35 +7,31 @@ if (!isset($_SESSION['admin_user'])) {
     exit();
 }
 
-$nik_rt = "";
+$nik_rt  = "";
 $nama_rt = "";
-$no_rt = "";
-$no_rw = "";
+$no_rt   = "";
+$no_rw   = "";
 $nohp_rt = "";
-$sk_rt = "";
-$wilayah = "";
-$error = "";
-$sukses = "";
+$sk_rt   = "";
+$error   = "";
+$sukses  = "";
 
 $id_admin = $_SESSION['admin_user']['id_admin'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nik_rt = trim($_POST["nik"]);
-    $no_rt = trim($_POST["no_rt"]);
-    $no_rw = trim($_POST["no_rw"]);
-    $nama_rt = trim($_POST["nama"]);
-    $nohp_rt = trim($_POST["nohp"]);
-    $sk_rt = trim($_POST["sk"]);
-    $wilayah = trim($_POST["wilayah"]);
+    $nik_rt   = trim($_POST["nik"]);
+    $no_rt    = trim($_POST["no_rt"]);
+    $no_rw    = trim($_POST["no_rw"]);
+    $nama_rt  = trim($_POST["nama"]);
+    $nohp_rt  = trim($_POST["nohp"]);
+    $sk_rt    = trim($_POST["sk"]);
     $password_hash = password_hash($sk_rt, PASSWORD_DEFAULT);
 
-
-
-    if ($nik_rt && $no_rt && $no_rw && $nama_rt && $nohp_rt && $sk_rt && $wilayah) {
+    if ($nik_rt && $no_rt && $no_rw && $nama_rt && $nohp_rt && $sk_rt) {
         if (!preg_match('/^[0-9]{16}$/', $nik_rt)) {
             $error = "NIK harus 16 digit angka!";
         } elseif (!preg_match('/^[0-9]{10,13}$/', $nohp_rt)) {
-            $error = "No HP tidak valid!";
+            $error = "No HP tidak valid passtikan angka lebih dari 10 dan kurang dari 13!";
         } else {
             // Cek duplikat NIK
             $stmt_cek = $koneksi->prepare("SELECT sk_rt FROM user_rt WHERE nik_rt = ?");
@@ -66,21 +62,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $password_hash = password_hash($sk_rt, PASSWORD_DEFAULT);
 
                     // Insert dengan prepared statement
-                    $stmt = $koneksi->prepare("INSERT INTO user_rt(sk_rt, nik_rt, no_rt, no_rw, nama_rt, nohp_rt, wilayah_rt, admin, password) 
-                                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                    $stmt->bind_param("sssssssss", $sk_rt, $nik_rt, $no_rt, $no_rw, $nama_rt, $nohp_rt, $wilayah, $id_admin, $password_hash);
+                    $stmt = $koneksi->prepare("INSERT INTO user_rt(sk_rt, nik_rt, no_rt, no_rw, nama_rt, nohp_rt, admin, password) 
+                                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                    $stmt->bind_param("ssssssss", $sk_rt, $nik_rt, $no_rt, $no_rw, $nama_rt, $nohp_rt, $id_admin, $password_hash);
 
                     if ($stmt->execute()) {
                         $sukses = "Data berhasil ditambahkan!";
                         // Reset form
-                        $nik_rt = $nama_rt = $no_rt = $no_rw = $nohp_rt = $sk_rt = $wilayah = "";
+                        $nik_rt = $nama_rt = $no_rt = $no_rw = $nohp_rt = $sk_rt =  "";
                     } else {
                         $error = "Data gagal ditambahkan! Error: " . $stmt->error;
                     }
                     $stmt->close();
                 }
             }
-        } 
+        }
     } else {
         $error = "Silakan masukkan semua data.";
     }
@@ -148,7 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <li><strong>No RT & No RW:</strong> Masukkan angka saja tanpa titik.</li>
                                 <li><strong>NIK Akun RT:</strong> Wajib 16 digit angka.</li>
                                 <li><strong>No HP:</strong> Isi dengan nomor aktif (contoh: 08123456789).</li>
-                                <li><strong>Alamat Akun RT:</strong> Tulis alamat lengkap.</li>
                                 <li><strong>Semua kolom wajib diisi</strong> sebelum menekan tombol <em>Tambah RT</em>.
                                 </li>
                             </ul>
@@ -184,11 +179,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="form-floating">
                         <input type="number" class="form-control" placeholder="hp" required name="nohp">
                         <label for="hp">No HP Akun RT</label>
-                    </div>
-
-                    <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="alamat" required name="wilayah">
-                        <label for="alamat">Alamat Akun RT</label>
                     </div>
 
                     <button type="submit" name="submit" class="btn btn-success w-100 btn-modern">Tambah RT</button>

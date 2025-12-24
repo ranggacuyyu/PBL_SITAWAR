@@ -4,7 +4,6 @@ include "koneksi.php";
 
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,6 +13,9 @@ include "koneksi.php";
     <title>Dasboard SITAWAR</title>
     <link rel="stylesheet" href="LoginRTWARGA.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <style>
+
+    </style>
 </head>
 
 <body class="terang">
@@ -104,11 +106,11 @@ include "koneksi.php";
                             ?>
                         <?php endif; ?>
                         <div class="input-box">
-                            <input type="text" required id="userName1" name="name">
+                            <input type="text" required id="userName1" name="sk_rt">
                             <label for="">Nomor SK_RT</label>
                         </div>
                         <div class="input-box">
-                            <input type="text" required name="sk">
+                            <input type="text" required name="password">
                             <label for="">Password</label>
                         </div>
                         <footer style="font-size:15.5px; margin-top:10px; color:#495336" align="center"> Gunakan SK_RT
@@ -171,9 +173,11 @@ include "koneksi.php";
                     <img src="image/OIP.jpg" alt="" id="foto1">
                     <h3>Pengelolaan data</h3>
                 </div>
-                <div class="akhirnya" id="akhirnyaCard1">
-                    <p>Fitur pengelolaan data warga pada web SITAWAR berfungsi untuk menyimpan, memperbarui, dan
-                        mengatur informasi warga secara efisien guna mendukung kelancaran administrasi RT.</p>
+                <div class="bungkus-akhirnya">
+                    <div class="akhirnya" id="akhirnyaCard1">
+                        <p>Fitur pengelolaan data warga pada web SITAWAR berfungsi untuk menyimpan, memperbarui, dan
+                            mengatur informasi warga secara efisien guna mendukung kelancaran administrasi RT.</p>
+                    </div>
                 </div>
             </div>
 
@@ -182,9 +186,11 @@ include "koneksi.php";
                     <img src="image/lapor.jpeg" alt="" id="foto2">
                     <h3> pengajuan pelaporan</h3>
                 </div>
-                <div class="akhirnya" id="akhirnyaCard2">
-                    <p>Fitur Pelaporan Warga berfungsi untuk menyampaikan keluhan, usulan, atau informasi dari warga
-                        secara langsung kepada pengurus RT melalui sistem SITAWAR.</p>
+                <div class="bungkus-akhirnya">
+                    <div class="akhirnya" id="akhirnyaCard2">
+                        <p>Fitur Pelaporan Warga berfungsi untuk menyampaikan keluhan, usulan, atau informasi dari warga
+                            secara langsung kepada pengurus RT melalui sistem SITAWAR.</p>
+                    </div>
                 </div>
             </div>
 
@@ -193,9 +199,11 @@ include "koneksi.php";
                     <img src="image/dokumen.jpeg" alt="" id="foto3">
                     <h3>pembuatan dokumen</h3>
                 </div>
-                <div class="akhirnya" id="akhirnyaCard3">
-                    <p>Fitur Pembuatan Dokumen memungkinkan warga untuk mengajukan dan mencetak dokumen administrasi,
-                        seperti surat keterangan atau permohonan, secara cepat dan terdata otomatis dalam sistem.</p>
+                <div class="bungkus-akhirnya">
+                    <div class="akhirnya" id="akhirnyaCard3">
+                        <p>Fitur Pembuatan Dokumen memungkinkan warga untuk mengajukan dan mencetak dokumen administrasi,
+                            seperti surat keterangan atau permohonan, secara cepat dan terdata otomatis dalam sistem.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -249,38 +257,26 @@ include "koneksi.php";
     <div class="running-text">🌿 Selamat datang di SITAWAR - Sistem Terpadu Administrasi Warga © 2024 SITAWAR. All
         Rights Reserved.🌿</div>
     <script>
-        const cardLayanan1 = document.getElementById('foto1')
-        const cardLayanan2 = document.getElementById('foto2')
-        const cardLayanan3 = document.getElementById('foto3')
         const akhirnya1 = document.getElementById('akhirnyaCard1')
         const akhirnya2 = document.getElementById('akhirnyaCard2')
         const akhirnya3 = document.getElementById('akhirnyaCard3')
 
         function tombolLayanan1() {
-            cardLayanan1.style.scale = '1.2';
-            cardLayanan1.style.transition = 'all 0.2s ease-in-out';
             akhirnya1.style.opacity = '1'
             akhirnya1.style.transition = 'all 0.4s ease-in-out';
         }
 
         function tombolLayanan2() {
-            cardLayanan2.style.scale = '1.2'
-            cardLayanan2.style.transition = 'all 0.2s ease-in-out';
             akhirnya2.style.opacity = '1'
             akhirnya2.style.transition = 'all 0.4s ease-in-out';
         }
 
         function tombolLayanan3() {
-            cardLayanan3.style.scale = '1.2';
-            cardLayanan3.style.transition = 'all 0.2s ease-in-out';
             akhirnya3.style.opacity = '1'
             akhirnya3.style.transition = 'all 0.4s ease-in-out';
         }
 
         function kembali() {
-            cardLayanan1.style.removeProperty('scale')
-            cardLayanan2.style.removeProperty('scale')
-            cardLayanan3.style.removeProperty('scale')
             akhirnya1.style.opacity = '0'
             akhirnya2.style.opacity = '0'
             akhirnya3.style.opacity = '0'
@@ -327,6 +323,7 @@ include "koneksi.php";
         menuToggle.addEventListener('click', () => {
             navbar.classList.toggle('active');
         });
+        
     </script>
 </body>
 

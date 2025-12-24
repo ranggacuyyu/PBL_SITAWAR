@@ -15,33 +15,36 @@ include "../koneksi.php";
 
 <body>
   <?php 
-    if(isset($_POST['username'])){
+    if($_SERVER['REQUEST_METHOD'] === 'POST'){
       $username = trim($_POST['username']);
       $password = trim(($_POST['password']));
 
-      $sql = "SELECT*FROM admin_user where nama =? and password_admin =?";
+      if(empty($username) || empty($password)){
+        echo '<script>alert("Nama atau password tidak boleh diisi kosong")</script>';
+      }
+
+      $sql = "SELECT id_admin, password_admin FROM admin_user where nama =?";
       $stmt = mysqli_prepare($koneksi, $sql);
-      mysqli_stmt_bind_param($stmt, "ss", $username, $password);
+      mysqli_stmt_bind_param($stmt, "s", $username, );
       mysqli_stmt_execute($stmt);
-      $query = mysqli_stmt_get_result($stmt);
+      $dataadmin = mysqli_stmt_get_result($stmt); 
+      $query = mysqli_fetch_assoc($dataadmin);
       
-      if(mysqli_num_rows($query) > 0){
-        $data = mysqli_fetch_array($query);
-        $_SESSION['admin_user'] = $data;
+      if(!$query || !password_verify($password, $query['password_admin'])){
+        echo '<script>alert("gagal login")</script>';
+      } else{
+        $_SESSION['admin_user'] = $query;
         echo 
         '<script> alert("selamat datang");
          window.location.href="dashborad_admin.php";
         </script>';
-      } else{
-        echo '<script>alert("gagal login")</script>';
       }
-    
     }
   ?>
   <!-- LOGIN PAGE -->
   <div class="login-container">
     <h2>Login Admin</h2>
-    <form id="loginForm" method="post">
+    <form id="loginForm" method="POST">
       <label>Username</label>
       <input type="text" placeholder="Masukkan username" name="username" required>
       <label>Kata Sandi</label>
@@ -52,8 +55,3 @@ include "../koneksi.php";
 </body>
 
 </html>
-
-
-<?php
-
-?>

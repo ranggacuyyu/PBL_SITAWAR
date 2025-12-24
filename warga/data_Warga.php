@@ -1,33 +1,32 @@
 <?php
 session_start();
-include "../koneksi.php";
+require_once '../koneksi.php';
+require_once '../db_helper.php';
 
 if (!isset($_SESSION['user_warga']['nik_warga'])) {
     header("Location: ../loginRTWARGA.php");
     exit();
 }
 
-$nik = $_SESSION['user_warga']['nik_warga'];
-
-$query = mysqli_query($koneksi, "SELECT * FROM user_warga WHERE nik_warga='$nik'");
-$data = mysqli_fetch_assoc($query);
-$skRT = $data['rt'];
-
-// Cek status welcome animation
 $show_welcome = false;
 if (!isset($_SESSION['welcome_shown'])) {
-    $show_welcome = true;
+    $show_welcome              = true;
     $_SESSION['welcome_shown'] = true;
 }
 
-$detail_rt = mysqli_query($koneksi, "SELECT * FROM user_rt WHERE sk_rt = '$skRT'");
-$detail_rt1 = mysqli_query($koneksi, "SELECT * FROM user_rt WHERE sk_rt = '$skRT'");
-$info_rt = mysqli_fetch_assoc($detail_rt);
-$nama_rt = $info_rt['nama_rt'];
-$info_rt1 = mysqli_fetch_assoc($detail_rt1);
-$nama_rt1 = $info_rt1['nohp_rt'];
+$nik    = $_SESSION['user_warga']['nik_warga'];
 
+/* bagian untuk mendapatkan foregin key warga */
+$rowRT  = db_select_single($koneksi, "SELECT rt FROM user_warga WHERE nik_warga=?", "s", [$nik]);
+$skRT = $rowRT['rt'];
 
+$rowrt = db_select_single($koneksi, "SELECT nama_rt,nohp_rt FROM user_rt WHERE sk_rt =?", "s", [$skRT]);
+$nama_rt = $rowrt['nama_rt'];
+$nama_rt1 = $rowrt['nohp_rt'];
+
+$data = db_select_single($koneksi, "SELECT 
+nik_warga, nama_warga, tanggal_lahir, jenis_kelamin, agama, status_kawin, no_kk, tempat_lahir, alamat, email, pekerjaan, pendidikan, hp, no_rt, no_rw, kecamatan, kelurahan, keluarga
+FROM user_warga WHERE nik_warga = ?", "s", [$nik]);
 if (!$data) {
     echo "Data tidak ditemukan.";
     exit();
@@ -37,6 +36,8 @@ if (!empty($_SESSION['flash'])) {
     echo "<script>alert('$_SESSION[flash]');</script>";
     unset($_SESSION['flash']);
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -303,7 +304,7 @@ if (!empty($_SESSION['flash'])) {
 
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($data['email']); ?>">
+                            <input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($data['email']); ?>" required>
                         </div>
 
                         <div class="mb-3">
@@ -314,7 +315,7 @@ if (!empty($_SESSION['flash'])) {
 
                         <div class="mb-3">
                             <label class="form-label">Pekerjaan</label>
-                            <input type="text" class="form-control" name="pekerjaan" value="<?php echo htmlspecialchars($data['pekerjaan']); ?>">
+                            <input type="text" class="form-control" name="pekerjaan" value="<?php echo htmlspecialchars($data['pekerjaan']); ?>" required>
                         </div>
 
                         <button type="submit" class="btn btn-success w-100">

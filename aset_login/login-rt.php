@@ -3,10 +3,10 @@ session_start();
 include "../koneksi.php";
 
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama = trim($_POST['name']);
-    $password = trim($_POST['sk']);
+    $sk        = trim($_POST['sk_rt']);
+    $password  = trim($_POST['password']);
 
-    if(empty($nama) ||  empty($password)) {
+    if(empty($sk) ||  empty($password)) {
         $_SESSION['alertrt'] = "SK atau Password tidak boleh kosong";
         header("Location: ../LoginRTWARGA.php");
         exit();
@@ -17,7 +17,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!mysqli_stmt_prepare($stmt, $sql)) {
         echo "SQL error";
     } else {
-        mysqli_stmt_bind_param($stmt, "s", $nama);
+        mysqli_stmt_bind_param($stmt, "s", $sk);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
         $user = mysqli_fetch_assoc($result);

@@ -1,18 +1,12 @@
 <?php
 session_start();
-include '../koneksi.php';
+require_once '../koneksi.php';
+require_once '../db_helper.php';
+
 if (!isset($_SESSION['admin_user'])) {
     header('location:login_admin.php');
     exit();
 }
-
-if (isset($_SESSION['alert'])) {
-    echo "<script>
-            alert('{$_SESSION['alert']}');
-          </script>";
-    unset($_SESSION['alert']);
-}
-
 
 $ambilData = $_SESSION['admin_user']['id_admin'];
 $sql = "SELECT * FROM user_rt WHERE admin=? ";
@@ -21,39 +15,38 @@ mysqli_stmt_bind_param($stmt, "i", $ambilData);
 mysqli_stmt_execute($stmt);
 $query = mysqli_stmt_get_result($stmt);
 
-if (isset($_POST['update'])) {
-    $nama = $_POST['nama_rt'];
-    $nik = $_POST['nik_rt'];
-    $nohp = $_POST['nohp_rt'];
-    $no_rw = $_POST['no_rw'];
-    $sk_baru = $_POST['sk_rt'];
-    $wilayah = $_POST['wilayah'];
-    $no_rt = $_POST["no_rt"];
-    $sk_lama = $_POST['sk_rt_lama'];
 
-    if ($nama == '' || $nik == '' || $nohp == '' || $no_rw == '' || $sk_baru == '' || $wilayah == '' || $no_rt == '') {
+if (isset($_POST['update'])) {
+    $nama    = trim($_POST['nama_rt']);
+    $nik     = trim($_POST['nik_rt']);
+    $nohp    = trim($_POST['nohp_rt']);
+    $no_rw   = trim($_POST['no_rw']);
+    $sk_baru = trim($_POST['sk_rt']);
+    $no_rt   = trim($_POST["no_rt"]);
+    $sk_lama = trim($_POST['sk_rt_lama']);
+
+    if ($nama == '' || $nik == '' || $nohp == '' || $no_rw == '' || $sk_baru == '' || $no_rt == '') {
         echo "<script>alert('Data tidak boleh ada yang kosong'); window.location='dashborad_admin.php';</script>";
         exit();
-    } elseif ($nik == 16) {
+    } elseif (strlen($nik) !== 16) {
         echo "<script>alert('NIK harus 16 angka'); window.location='dashborad_admin.php';</script>";
         exit();
-    } elseif ($nohp <= 10 or $nohp >= 13) {
+    } elseif (strlen($nohp) <= 10 or strlen($nohp) >= 13) {
         echo "<script>alert('No HP harus 10 hingga 13 angka'); window.location='dashborad_admin.php';</script>";
         exit(); 
     } else {
         $stmt = $koneksi->prepare("UPDATE user_rt 
-            SET nama_rt=?, nik_rt=?, no_rt=?, no_rw=?, nohp_rt=?, sk_rt=?, wilayah_rt=? 
+            SET nama_rt=?, nik_rt=?, no_rt=?, no_rw=?, nohp_rt=?, sk_rt=?   
             WHERE sk_rt=?");
 
         $stmt->bind_param(
-            "ssssssss",
+            "sssssss",
             $nama,
             $nik,
             $no_rt,
             $no_rw,
             $nohp,
             $sk_baru,
-            $wilayah,
             $sk_lama
         );
 
@@ -67,6 +60,10 @@ if (isset($_POST['update'])) {
     }
 }
 
+if (isset($_SESSION['alert'])) {
+    echo "<script>alert('{$_SESSION['alert']}');</script>";
+    unset($_SESSION['alert']);
+}
 
 ?>
 
@@ -106,7 +103,7 @@ if (isset($_POST['update'])) {
                                 <input type="text" id="nama_rt" name="nama_rt">
 
                                 <label>NIK</label>
-                                <input type="number" id="nik_rt" name="nik_rt">
+                                <input type="text" id="nik_rt" name="nik_rt">
 
                                 <label>NO RT</label>
                                 <input type="text" id="no_rt" name="no_rt">
@@ -115,13 +112,10 @@ if (isset($_POST['update'])) {
                                 <input type="text" id="no_rw" name="no_rw">
 
                                 <label>No HP</label>
-                                <input type="number" id="nohp_rt" name="nohp_rt">
+                                <input type="text" id="nohp_rt" name="nohp_rt">
 
                                 <label>No SK</label>
                                 <input type="text" id="sk_rt" name="sk_rt">
-
-                                <label>Alamat</label>
-                                <input type="text" id="alamat_rt" name="wilayah">
 
                                 <button type="submit" name="update">Simpan Perubahan</button>
                             </div>
@@ -153,7 +147,6 @@ if (isset($_POST['update'])) {
                                 <th>No RW</th>
                                 <th>No HP</th>
                                 <th>Nomor SK</th>
-                                <th>Wilayah</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -170,7 +163,6 @@ if (isset($_POST['update'])) {
                                     <td><?= htmlspecialchars($data['no_rw']); ?></td>
                                     <td><?= htmlspecialchars($data['nohp_rt']); ?></td>
                                     <td><?= htmlspecialchars($data['sk_rt']); ?></td>
-                                    <td><?= $data['wilayah_rt']; ?></td>
                                     <td>
                                         <a href="hapus_admin.php?sk_rt=<?= $data['sk_rt']; ?>" class="hapus"
                                             onclick="return confirm('Yakin ingin menghapus data ini?')">
@@ -182,8 +174,7 @@ if (isset($_POST['update'])) {
                                             '<?= htmlspecialchars($data['no_rt']); ?>',
                                             '<?= htmlspecialchars($data['no_rw']); ?>',
                                             '<?= htmlspecialchars($data['nohp_rt']); ?>',
-                                            '<?= htmlspecialchars($data['sk_rt']); ?>',
-                                            '<?= htmlspecialchars($data['wilayah_rt']); ?>')">
+                                            '<?= htmlspecialchars($data['sk_rt']); ?>')">
                                             UPDATE
                                         </button>
                                     </td>
@@ -206,7 +197,6 @@ if (isset($_POST['update'])) {
         document.getElementById("no_rw").value = no_rw;
         document.getElementById("nohp_rt").value = nohp;
         document.getElementById("sk_rt").value = sk;
-        document.getElementById("alamat_rt").value = wilayah;
 
         // simpan sk lama
         document.getElementById("sk_rt_lama").value = sk;
@@ -224,13 +214,12 @@ if (isset($_POST['update'])) {
             let nama = row.children[1].innerText.toLowerCase();
             let sk = row.children[6].innerText.toLowerCase();
             let no_rw = row.children[4].innerText.toLowerCase();
-            let wilayah = row.children[7].innerText.toLowerCase();
-
+            let nik = row.children[2].innerText.toLowerCase();
 
             if (
                 nama.includes(keyword) ||
-                wilayah.includes(keyword) ||
                 sk.includes(keyword) ||
+                nik.includes(keyword) ||
                 no_rw.includes(keyword)
             ) {
                 row.style.display = "";
