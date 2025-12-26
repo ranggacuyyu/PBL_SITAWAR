@@ -1,14 +1,64 @@
 <?php
 session_start();
-include "../koneksi.php";
+require_once '../koneksi.php';
+require_once '../db_helper.php';
+
+// Validasi session login
 if (!isset($_SESSION['user_rt'])) {
-    header('location:../LoginRTWARGA.php');
+    header('Location: ../LoginRTWARGA.php');
+    exit();
 }
+
 // Ambil ID RT dari session
 $id_rt = $_SESSION['user_rt']['sk_rt'];
 
-// Ambil semua data pengajuan dokumen + data warga
-$query = mysqli_query($koneksi, "SELECT 
+// Proses persetujuan atau penolakan
+if (isset($_GET['aksi'], $_GET['id'])) {
+    $aksi = $_GET['aksi'];
+    $id_dokumen = filter_var($_GET['id'], FILTER_SANITIZE_STRING);
+
+    // Validasi aksi yang diizinkan
+    if (in_array($aksi, ['setuju', 'tolak'])) {
+        $new_status = ($aksi === 'setuju') ? 'setuju' : 'tolak';
+        $status_update = db_update(
+            $koneksi,
+            "UPDATE dokumen SET status=? WHERE id_dokumen=?",
+            "ss",
+            [$new_status, $id_dokumen]
+        );
+
+        // Set flash message menggunakan session
+        if ($status_update !== false) {
+            $_SESSION['flash_message'] = [
+                'type' => 'success',
+                'text' => 'Persetujuan berhasil diproses!'
+            ];
+        } else {
+            $_SESSION['flash_message'] = [
+                'type' => 'error',
+                'text' => 'Persetujuan gagal diproses!'
+            ];
+        }
+    }
+
+    // Redirect kembali ke halaman dokumen
+    header('Location: Dokumen_RT.php');
+    exit();
+}
+
+// Konfigurasi Pagination
+$halaman_aktif = (isset($_GET['hal'])) ? (int) $_GET['hal'] : 1;
+$limit = 10; // Jumlah data per halaman
+$offset = ($halaman_aktif - 1) * $limit;
+
+// Hitung total data untuk pagination
+$count_query = "SELECT COUNT(*) as total FROM dokumen d INNER JOIN user_warga w ON d.warga = w.nik_warga WHERE w.rt = ?";
+$total_data = db_count($koneksi, $count_query, "s", [$id_rt]);
+
+// Ambil data pengajuan dengan LIMIT dan OFFSET
+$query = db_select_no_assoc(
+    $koneksi,
+    "SELECT 
         d.id_dokumen,
         d.tanggal,
         d.warga,
@@ -22,60 +72,20 @@ $query = mysqli_query($koneksi, "SELECT
     FROM dokumen d
     INNER JOIN user_warga w 
         ON d.warga = w.nik_warga
-    WHERE w.rt = '$id_rt'
+    WHERE w.rt = ?
     ORDER BY d.id_dokumen DESC
-");
-// Proses persetujuan atau penolakan
-if (isset($_GET['aksi']) && isset($_GET['id'])) {
-    $aksi = $_GET['aksi'];
-    $id_dokumen = $_GET['id'];
+    LIMIT ? OFFSET ?",
+    "sii",
+    [$id_rt, $limit, $offset]
+);
 
-    if ($aksi === 'setuju') {
-        mysqli_query($koneksi, "UPDATE dokumen SET status='setuju' WHERE id_dokumen='$id_dokumen'");
-    } elseif ($aksi === 'tolak') {
-        mysqli_query($koneksi, "UPDATE dokumen SET status='tolak' WHERE id_dokumen='$id_dokumen'");
-    }
-
-    // Redirect kembali ke halaman dokumen RT setelah aksi
-    header('Location: Dokumen_RT.php');
-    exit();
+// Ambil flash message jika ada
+$flash_message = null;
+if (isset($_SESSION['flash_message'])) {
+    $flash_message = $_SESSION['flash_message'];
+    unset($_SESSION['flash_message']);
 }
 ?>
-
-<style>
-    .tanda_setuju {
-        background-color: green !important;
-        color: white !important;
-        border: none !important;
-        font-weight: bold;
-        border-radius: 8px;
-    }
-
-    .tanda_tolak {
-        background-color: red !important;
-        color: white !important;
-        border: none;
-        font-weight: bold;
-        border-radius: 8px;
-    }
-
-    /* Animation */
-    @keyframes contentSlideUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .content-animate {
-        animation: contentSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-</style>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -113,6 +123,17 @@ if (isset($_GET['aksi']) && isset($_GET['id'])) {
     <div class="bungkus content-animate">
         <div class="datatambahan">
             <div class="main-content">
+
+                <!-- Flash Message -->
+                <?php if ($flash_message): ?>
+                    <div class="alert alert-<?= $flash_message['type'] === 'success' ? 'success' : 'danger' ?> alert-dismissible fade show"
+                        role="alert" id="flashMessage">
+                        <strong><?= $flash_message['type'] === 'success' ? '✓' : '✗' ?></strong>
+                        <?= htmlspecialchars($flash_message['text']) ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
                 <div class="card p-4">
                     <h5>Menu Pengajuan</h5>
                     <p>Panduan:<br>
@@ -132,37 +153,35 @@ if (isset($_GET['aksi']) && isset($_GET['id'])) {
                         <tbody>
 
                             <?php while ($row = mysqli_fetch_assoc($query)) { ?>
-                                <tr>
+                                <tr onclick='lihatDetail(<?= json_encode([
+                                    "nama" => htmlspecialchars($row['nama_warga']),
+                                    "usia" => htmlspecialchars($row['usia']),
+                                    "jenis_kelamin" => htmlspecialchars($row['jenis_kelamin']),
+                                    "kategori" => htmlspecialchars($row['dokumen']),
+                                    "alamat" => htmlspecialchars($row['alamat']),
+                                    "hp" => htmlspecialchars($row['hp']),
+                                    "tanggal" => htmlspecialchars($row['tanggal'])
+                                ]); ?>)'>
                                     <!-- Nama, bisa diklik -->
-                                    <td style="cursor:pointer" onclick='lihatDetail(<?= json_encode([
-                                        "nama" => $row['nama_warga'],
-                                        "usia" => $row['usia'],
-                                        "jenis_kelamin" => $row['jenis_kelamin'],
-                                        "kategori" => $row['dokumen'],
-                                        "alamat" => $row['alamat'],
-                                        "hp" => $row['hp'],
-                                        "tanggal" => $row['tanggal']
-                                    ]); ?>)'>
-                                        <?= $row['nama_warga'] ?>
+                                    <td>
+                                        <?= htmlspecialchars($row['nama_warga']) ?>
                                     </td>
-                                    <td><?= $row['tanggal'] ?></td>
-                                    <td><?= $row['dokumen'] ?></td>
+                                    <td><?= htmlspecialchars($row['tanggal']) ?></td>
+                                    <td><?= htmlspecialchars($row['dokumen']) ?></td>
                                     <td>
                                         <?php if ($row['status'] === 'pending') { ?>
                                             <a href="Dokumen_RT.php?aksi=setuju&id=<?= $row['id_dokumen']; ?>"
-                                                class="btn btn-sm btn-success">
+                                                class="btn btn-sm btn-success" onclick="event.stopPropagation()">
                                                 Setuju
                                             </a>
                                             <a href="Dokumen_RT.php?aksi=tolak&id=<?= $row['id_dokumen']; ?>"
-                                                class="btn btn-sm btn-danger">
+                                                class="btn btn-sm btn-danger" onclick="event.stopPropagation()">
                                                 Tolak
                                             </a>
                                         <?php } elseif ($row['status'] === 'setuju') { ?>
-                                            <button class="tanda_setuju" style="padding: 5px 10px 5px 10px;"
-                                                disabled>Disetujui</button>
+                                            <button class="tanda_setuju" disabled>Disetujui</button>
                                         <?php } elseif ($row['status'] === 'tolak') { ?>
-                                            <button class="tanda_tolak" style="padding: 5px 16px 5px 16px;"
-                                                disabled>Ditolak</button>
+                                            <button class="tanda_tolak" disabled>Ditolak</button>
                                         <?php } ?>
                                     </td>
                                 </tr>
@@ -170,38 +189,55 @@ if (isset($_GET['aksi']) && isset($_GET['id'])) {
 
                         </tbody>
                     </table>
-                </div>
-            </div>
 
-            <!-- MODAL DETAIL -->
-            <div class="modal fade" id="modalDetail" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h5 class="modal-title">Rincian Data Warga</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-
-                        <div class="modal-body" id="detailBody"></div>
-
-                        <div class="modal-footer">
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                        </div>
-
+                    <!-- PAGINATION LINKS -->
+                    <div class="mt-3">
+                        <?= db_pagination_links($total_data, $limit, $halaman_aktif, 'Dokumen_RT.php'); ?>
                     </div>
                 </div>
             </div>
+
+
 
         </div>
     </div>
 
 
+    <!-- MODAL DETAIL (Dipindahkan keluar agar tidak kena efek transform/z-index parent) -->
+    <div class="modal fade" id="modalDetail" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Rincian Data Warga</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detailBody"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- SCRIPT MODAL -->
     <script>
-        function lihatDetail(data) {
+        // Auto-hide flash message setelah 3 detik
+        const flashMessage = document.getElementById('flashMessage');
+        if (flashMessage) {
+            setTimeout(() => {
+                const bsAlert = bootstrap.Alert.getOrCreateInstance(flashMessage);
+                bsAlert.close();
+            }, 3000);
+        }
+
+        // Fungsi untuk menampilkan detail warga
+        function lihatDetail(data, event) {
+            // Stop propagation jika dipanggil dari child element
+            if (event) {
+                event.stopPropagation();
+            }
             let html = `
                 <p><b>Nama:</b> ${data.nama}</p>
                 <p><b>Usia:</b> ${data.usia}</p>

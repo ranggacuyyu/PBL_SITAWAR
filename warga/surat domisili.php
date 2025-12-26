@@ -186,8 +186,8 @@ $data = db_select_single($koneksi, "SELECT no_rt, no_rw, kecamatan, kelurahan, n
         </div>
         <div class="kata-penutup">
             <p>orang tersebut diatas, adalah benar benar warga kami dan berdomisili di RT <?php echo htmlspecialchars($data['no_rt']); ?></span> RW <span><?php echo htmlspecialchars($data['no_rw']); ?></span>
-                Desa <span>..</span> Kecamatan <span>..</span> Kabupaten <span>..</span>. Surat keterangan ini dibuat
-                sebagai kelenkapan penurusan surat <span>...</span><br><br> &nbsp;&nbsp;&nbsp;&nbsp;demikian surat
+                Desa <span><?php echo htmlspecialchars($data['kelurahan']); ?></span></h2><h2>Kecamatan <span><?php echo htmlspecialchars($data['kecamatan']); ?> Kota <span>BATAM</span>. Surat keterangan ini dibuat
+                sebagai kelenkapan penurusan surat <span>Keterangan Domisili</span><br><br> &nbsp;&nbsp;&nbsp;&nbsp;demikian surat
                 keterangan ini kami buat, untuk
                 dapat digunakan sebagaimana semestinya.
             </p>

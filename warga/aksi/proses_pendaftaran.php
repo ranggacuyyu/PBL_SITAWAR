@@ -8,8 +8,8 @@ if (!isset($_SESSION['user_warga']['nik_warga'])) {
     exit();
 }
 
-$nik = $_SESSION['user_warga']['nik_warga'];
-$data = db_select_single($koneksi, "SELECT sudah_lengkap FROM user_warga WHERE nik_warga=?", "s", [$nik]);
+$nik   = $_SESSION['user_warga']['nik_warga'];
+$data  = db_select_single($koneksi, "SELECT sudah_lengkap FROM user_warga WHERE nik_warga=?", "s", [$nik]);
 
 if ((int)$data['sudah_lengkap'] === 1) {
     header("Location: ../data_Warga.php");
@@ -49,7 +49,9 @@ $update = db_update($koneksi, "UPDATE user_warga
     kecamatan       =?,
     kelurahan       =?,
     sudah_lengkap   =1
-    WHERE nik_warga =? ", "ssssssssssssss", [$kk, $tempat, $tanggal, $alamat, $agama, $email, $hp, $jk, $pekerjaan, $kawin, $pendidikan, $kecamatan, $kelurahan, $nik]);
+    WHERE nik_warga =? ",
+    "ssssssssssssss", 
+    [$kk, $tempat, $tanggal, $alamat, $agama, $email, $hp, $jk, $pekerjaan, $kawin, $pendidikan, $kecamatan, $kelurahan, $nik]);
 
 // Redirect ke halaman data warga
 header("Location: ../data_Warga.php");

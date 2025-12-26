@@ -14,7 +14,44 @@
             min-height: 100vh;
         }
 
-                /* SIDEBAR */
+        .tanda_setuju {
+            background-color: green !important;
+            color: white !important;
+            border: none !important;
+            font-weight: bold !important;
+            border-radius: 8px !important;
+            padding: 5px !important;
+            width: 100px !important;
+        }
+
+        .tanda_tolak {
+            background-color: red !important;
+            color: white !important;
+            border: none !important;
+            padding: 5px !important;
+            width: 100px !important;
+            font-weight: bold !important;
+            border-radius: 8px !important;
+        }
+
+        /* Animation */
+        @keyframes contentSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-animate {
+            animation: contentSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* SIDEBAR */
         .sidebar {
             width: 250px;
             background-color: #8da070;
@@ -124,7 +161,7 @@
             text-align: center;
         }
 
-        #tabelPengajuan th{
+        #tabelPengajuan th {
             background-color: #7f8f62;
             color: white;
         }
@@ -142,46 +179,48 @@
         }
 
         #tabelPengajuan th {
-        background-color: #5c7040; /* header hijau tua */
-        color: white;
-    }
+            background-color: #5c7040;
+            /* header hijau tua */
+            color: white;
+        }
 
-    /* Warna kolom pertama (Nama) */
-    #tabelPengajuan td:nth-child(1) {
-        background-color: #dee9d1;
-        font-weight: 600;
-    }
+        /* Warna kolom pertama (Nama) */
+        #tabelPengajuan td:nth-child(1) {
+            background-color: #dee9d1;
+            font-weight: 600;
+        }
 
-    /* Warna kolom kedua (Jenis) */
-    #tabelPengajuan td:nth-child(2) {
-        background-color: #e8f1da;
-    }
+        /* Warna kolom kedua (Jenis) */
+        #tabelPengajuan td:nth-child(2) {
+            background-color: #e8f1da;
+        }
 
-    /* Warna kolom ketiga (Tanggal) */
-    #tabelPengajuan td:nth-child(3) {
-        background-color: #f3f8e7;
-    }
+        /* Warna kolom ketiga (Tanggal) */
+        #tabelPengajuan td:nth-child(3) {
+            background-color: #f3f8e7;
+        }
 
-    /* Warna kolom keempat (Persetujuan) */
-    #tabelPengajuan td:nth-child(4) {
-        background-color: #e0eed0;
-    }
+        /* Warna kolom keempat (Persetujuan) */
+        #tabelPengajuan td:nth-child(4) {
+            background-color: #e0eed0;
+        }
 
-    /* Tambahan efek hover baris */
-    #tabelPengajuan tbody tr:hover td {
-        background-color: #d5e3ba;
-        transition: 0.3s;
-    }
+        /* Tambahan efek hover baris */
+        #tabelPengajuan tbody tr:hover td {
+            background-color: #d5e3ba;
+            transition: 0.3s;
+            cursor: pointer;
+        }
 
-    /* Tambahan style tabel */
-    #tabelPengajuan {
-        border-radius: 10px;
-        overflow: hidden;
-    }
+        /* Tambahan style tabel */
+        #tabelPengajuan {
+            border-radius: 10px;
+            overflow: hidden;
+        }
 
-    #tabelPengajuan th,
-    #tabelPengajuan td {
-        border: 1px solid #8b9a70;
-        text-align: center;
-        padding: 10px;
-    }
+        #tabelPengajuan th,
+        #tabelPengajuan td {
+            border: 1px solid #8b9a70;
+            text-align: center;
+            padding: 10px;
+        }

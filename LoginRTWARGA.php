@@ -106,18 +106,22 @@ include "koneksi.php";
                             unset($_SESSION['alertrt']);
                             ?>
                         <?php endif; ?>
+
                         <div class="input-box">
                             <input type="text" required id="userName1" name="sk_rt">
                             <label for="">Nomor SK_RT</label>
                         </div>
+
                         <div class="input-box">
-                            <input type="text" required name="password">
-                            <label for="">Password</label>
+                            <input type="password" autocomplete="off" id="password" class="pwd" required name="password">
+                            <label>Password</label>
                             <i class="fa-solid fa-eye toggle-eye"></i>
                         </div>
+
                         <footer style="font-size:15.5px; margin-top:10px; color:#495336" align="center"> Gunakan SK_RT
                             sebagai password Anda saat pertama kali Login
                         </footer>
+                        
                         <div class="remember-forgot">
                             <a href=""></a>
                         </div>

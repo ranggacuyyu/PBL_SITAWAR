@@ -1,6 +1,7 @@
 <?php
 session_start();
-include "../koneksi.php";
+require_once '../koneksi.php';
+require_once '../db_helper.php';
 
 // ===============================
 // 1. WAJIB LOGIN RT
@@ -22,11 +23,7 @@ $type = ($_GET['type'] === 'kk') ? 'foto_kk' : 'foto_ktp';
 // ===============================
 // 3. AMBIL DATA DARI DB
 // ===============================
-$stmt = $koneksi->prepare("SELECT foto_kk, foto_ktp FROM dokumen_wargart WHERE id_dokumen=?");
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$data = $stmt->get_result()->fetch_assoc();
-
+$data = db_select_single($koneksi, "SELECT foto_kk, foto_ktp FROM dokumen_wargart WHERE id_dokumen=?", "i", [$id]);
 if (!$data || empty($data[$type])) {
     exit("File tidak ditemukan");
 }

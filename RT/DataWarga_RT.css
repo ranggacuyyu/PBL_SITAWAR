@@ -12,6 +12,35 @@
             display: flex;
         }
 
+        @keyframes contentSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-home {
+            animation: contentSlideUp 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .filter-bar {
+            animation: contentSlideUp 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        table {
+            animation: contentSlideUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+        }
+
+        .content-animate {
+            padding-left: 0;
+        }
+
         .sidebar {
             width: 250px;
             background-color: #8da070;

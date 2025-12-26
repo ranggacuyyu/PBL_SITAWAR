@@ -1,6 +1,7 @@
 <?php
 session_start();
-include '../koneksi.php';
+require_once '../koneksi.php';
+require_once '../db_helper.php';
 if (!isset($_SESSION['user_rt'])) {
     header('location:../LoginRTWARGA.php');
 }
@@ -132,34 +133,59 @@ if (!isset($_SESSION['user_rt'])) {
             </thead>
             <tbody id="kolom">
                 <?php
-                $no = 1;
                 $id_rt = $_SESSION['user_rt']['sk_rt'];
 
-                $query = mysqli_query($koneksi, "SELECT laporan.*  FROM laporan JOIN user_warga ON laporan.nik_pelapor = user_warga.nik_warga WHERE user_warga.rt = '$id_rt'");
-                while ($data = mysqli_fetch_assoc($query)) {
-                    ?>
-                    <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= $data['nama_pelapor']; ?></td>
-                        <td><?= $data['blok_pelapor']; ?></td>
-                        <td><?= $data['nohp_pelapor']; ?></td>
-                        <td><?= $data['nik_pelapor']; ?></td>
-                        <td>
-                            <button onclick="lihatDetail(
-                                '<?= $data['nama_subjek']; ?>',
-                                '<?= $data['nohp_pelapor']; ?>',
-                                '<?= $data['blok_subjek']; ?>',
-                                '<?= $data['umur_subjek']; ?>',
-                                '<?= $data['jenis_laporan']; ?>'
-                            )">
-                                Cek Terlapor
-                            </button>
-                        </td>
-                    </tr>
+                // Konfigurasi Pagination
+                $halaman_aktif = (isset($_GET['hal'])) ? (int) $_GET['hal'] : 1;
+                $limit = 10;
+                $offset = ($halaman_aktif - 1) * $limit;
 
-                <?php } ?>
+                // Hitung total data
+                $count_query = "SELECT COUNT(*) FROM laporan JOIN user_warga ON laporan.nik_pelapor = user_warga.nik_warga WHERE user_warga.rt = ?";
+                $total_data = db_count($koneksi, $count_query, "s", [$id_rt]);
+
+                // Query Data dengan Limit & Offset
+                $query_str = "SELECT laporan.*  FROM laporan JOIN user_warga ON laporan.nik_pelapor = user_warga.nik_warga WHERE user_warga.rt = ? LIMIT ? OFFSET ?";
+                $query = db_select_no_assoc($koneksi, $query_str, "sii", [$id_rt, $limit, $offset]);
+
+                $no = $offset + 1;
+
+                if ($query) {
+                    while ($data = mysqli_fetch_assoc($query)) {
+                        ?>
+                        <tr>
+                            <td><?= $no++ ?></td>
+                            <td><?= htmlspecialchars($data['nama_pelapor']); ?></td>
+                            <td><?= htmlspecialchars($data['blok_pelapor']); ?></td>
+                            <td><?= htmlspecialchars($data['nohp_pelapor']); ?></td>
+                            <td><?= htmlspecialchars($data['nik_pelapor']); ?></td>
+                            <td>
+                                <button onclick="lihatDetail(
+                                    '<?= htmlspecialchars($data['nama_subjek']); ?>',
+                                    '<?= htmlspecialchars($data['nohp_pelapor']); ?>',
+                                    '<?= htmlspecialchars($data['blok_subjek']); ?>',
+                                    '<?= htmlspecialchars($data['umur_subjek']); ?>',
+                                    '<?= htmlspecialchars($data['jenis_laporan']); ?>'
+                                )">
+                                    Cek Terlapor
+                                </button>
+                            </td>
+                        </tr>
+                    <?php }
+                } ?>
             </tbody>
         </table>
+
+        <!-- PAGINATION LINKS -->
+        <div style="margin-top: 20px;">
+            <?php
+            // Kita perlu include db_helper jika belum ada fungsi pagination di global scope
+            // Asumsi db_helper.php sudah di-include via koneksi.php atau harus manual
+            if (function_exists('db_pagination_links')) {
+                echo db_pagination_links($total_data, $limit, $halaman_aktif, 'Laporan_ RT.php');
+            }
+            ?>
+        </div>
     </div>
 
     <div class="popup" id="popup">

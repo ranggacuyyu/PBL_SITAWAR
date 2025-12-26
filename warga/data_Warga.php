@@ -10,14 +10,14 @@ if (!isset($_SESSION['user_warga']['nik_warga'])) {
 
 $show_welcome = false;
 if (!isset($_SESSION['welcome_shown'])) {
-    $show_welcome              = true;
+    $show_welcome = true;
     $_SESSION['welcome_shown'] = true;
 }
 
-$nik    = $_SESSION['user_warga']['nik_warga'];
+$nik = $_SESSION['user_warga']['nik_warga'];
 
 /* bagian untuk mendapatkan foregin key warga */
-$rowRT  = db_select_single($koneksi, "SELECT rt FROM user_warga WHERE nik_warga=?", "s", [$nik]);
+$rowRT = db_select_single($koneksi, "SELECT rt FROM user_warga WHERE nik_warga=?", "s", [$nik]);
 $skRT = $rowRT['rt'];
 
 $rowrt = db_select_single($koneksi, "SELECT nama_rt,nohp_rt FROM user_rt WHERE sk_rt =?", "s", [$skRT]);
@@ -25,7 +25,7 @@ $nama_rt = $rowrt['nama_rt'];
 $nama_rt1 = $rowrt['nohp_rt'];
 
 $data = db_select_single($koneksi, "SELECT 
-nik_warga, nama_warga, tanggal_lahir, jenis_kelamin, agama, status_kawin, no_kk, tempat_lahir, alamat, email, pekerjaan, pendidikan, hp, no_rt, no_rw, kecamatan, kelurahan, keluarga
+nik_warga, nama_warga, tanggal_lahir, jenis_kelamin, agama, status_kawin, no_kk, tempat_lahir, alamat, email, pekerjaan, pendidikan, hp, no_rt, no_rw, kecamatan, kelurahan, keluarga, foto_profile
 FROM user_warga WHERE nik_warga = ?", "s", [$nik]);
 if (!$data) {
     echo "Data tidak ditemukan.";
@@ -51,57 +51,6 @@ if (!empty($_SESSION['flash'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <!-- GSAP CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <style>
-        /* Welcome Animation Overlay Styles */
-        #welcome-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #455033ff 0%, #617748ff 100%);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .welcome-content {
-            text-align: center;
-            overflow: hidden;
-            /* For text reveal effects */
-        }
-
-        .welcome-title {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(to right, #c7e4a8ff 0%, #89aa55ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .welcome-subtitle {
-            font-size: 1.5rem;
-            color: #dfe6e9;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .welcome-divider {
-            width: 0%;
-            height: 2px;
-            background: #fff;
-            margin: 20px auto;
-            opacity: 0.5;
-        }
-    </style>
 </head>
 
 <body>
@@ -144,7 +93,20 @@ if (!empty($_SESSION['flash'])) {
             <!-- PROFILE CARD -->
             <div class="card shadow profile-card p-3" style="width: 30%;">
                 <div class="gambar" align="center">
-                    <img src="../image/unnamed.jpg" alt="Avatar" class="mb-3">
+                    <?php
+                    $foto_path_warga = !empty($data['foto_profile']) ? 'profile/' . $data['foto_profile'] : 'profile/default.jpg';
+                    ?>
+                    <img id="fotoProfilWarga" src="<?php echo $foto_path_warga; ?>" alt="Avatar" class="mb-3">
+
+                    <!-- Form Upload Foto Profil -->
+                    <form id="formUploadFotoWarga" enctype="multipart/form-data" class="mb-3">
+                        <label for="fileAvatarWarga" class="btn btn-sm btn-outline-primary w-75">
+                            <i class="fas fa-camera"></i> Ganti Foto Profil
+                        </label>
+                        <input id="fileAvatarWarga" type="file" name="foto_profile"
+                            accept="image/jpeg,image/jpg,image/png,image/gif" hidden>
+                        <div id="uploadStatusWarga" style="margin-top: 8px; font-size: 11px;"></div>
+                    </form>
                 </div>
                 <h4>
                     <?php echo htmlspecialchars($data['nama_warga']); ?>
@@ -152,12 +114,20 @@ if (!empty($_SESSION['flash'])) {
                 <p class="text-muted">NIK: <?php echo htmlspecialchars($data['nik_warga']); ?></p>
                 <hr>
                 <div class="text-start">
-                    <p><i class="fas fa-calendar"></i> Tgl Lahir: <?php echo htmlspecialchars($data['tanggal_lahir']); ?></p>
-                    <p><i class="fas fa-venus-mars"></i> Jenis Kelamin: <?php echo htmlspecialchars($data['jenis_kelamin']); ?></p>
+                    <p><i class="fas fa-calendar"></i> Tgl Lahir:
+                        <?php echo htmlspecialchars($data['tanggal_lahir']); ?></p>
+                    <p><i class="fas fa-venus-mars"></i> Jenis Kelamin:
+                        <?php echo htmlspecialchars($data['jenis_kelamin']); ?></p>
                     <p><i class="fas fa-pray"></i> Agama: <?php echo htmlspecialchars($data['agama']); ?></p>
-                    <p>Status Kawin: <span class="badge bg-success badge-custom"><?php echo htmlspecialchars($data['status_kawin']); ?></span></p>
-                    <p>Pendidikan: <span class="badge bg-primary badge-custom"><?php echo htmlspecialchars($data['pendidikan']); ?></span></p>
-                    <p>Pekerjaan: <span class="badge bg-info text-dark badge-custom"><?php echo htmlspecialchars($data['pekerjaan']); ?></span></p>
+                    <p>Status Kawin: <span
+                            class="badge bg-success badge-custom"><?php echo htmlspecialchars($data['status_kawin']); ?></span>
+                    </p>
+                    <p>Pendidikan: <span
+                            class="badge bg-primary badge-custom"><?php echo htmlspecialchars($data['pendidikan']); ?></span>
+                    </p>
+                    <p>Pekerjaan: <span
+                            class="badge bg-info text-dark badge-custom"><?php echo htmlspecialchars($data['pekerjaan']); ?></span>
+                    </p>
                     <hr>
                     <!-- Upload KTP & KK -->
                     <div>
@@ -173,7 +143,8 @@ if (!empty($_SESSION['flash'])) {
 
                             <!-- Upload KTP -->
                             <div class="mb-2">
-                                <label id="label_ktp" for="foto_ktp" class="btn btn-outline-secondary upload-label w-100">
+                                <label id="label_ktp" for="foto_ktp"
+                                    class="btn btn-outline-secondary upload-label w-100">
                                     <i class="fas fa-upload"></i> Upload KTP
                                 </label>
                                 <input type="file" id="foto_ktp" name="foto_ktp" accept="image/*" hidden required>
@@ -214,7 +185,8 @@ if (!empty($_SESSION['flash'])) {
                             </tr>
                             <tr>
                                 <th>Tempat Tanggal Lahir</th>
-                                <td><?php echo htmlspecialchars($data['tempat_lahir']); ?> / <?php echo htmlspecialchars($data['tanggal_lahir']); ?></td>
+                                <td><?php echo htmlspecialchars($data['tempat_lahir']); ?> /
+                                    <?php echo htmlspecialchars($data['tanggal_lahir']); ?></td>
                             </tr>
                             <tr>
                                 <th>Alamat</th>
@@ -246,7 +218,8 @@ if (!empty($_SESSION['flash'])) {
                             </tr>
                             <tr>
                                 <th>RT/RW</th>
-                                <td><?php echo htmlspecialchars($data['no_rt']); ?> / <?php echo htmlspecialchars($data['no_rw']); ?></td>
+                                <td><?php echo htmlspecialchars($data['no_rt']); ?> /
+                                    <?php echo htmlspecialchars($data['no_rw']); ?></td>
                             </tr>
                             <tr>
                                 <th>Nama RT</th>
@@ -265,9 +238,11 @@ if (!empty($_SESSION['flash'])) {
                     </table>
                 </div>
                 <div class="d-flex justify-content-end gap-2 mt-3">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalProfil"><i class="fas fa-edit"></i> Ubah Data</button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalProfil"><i
+                            class="fas fa-edit"></i> Ubah Data</button>
                     <form action="logout_warga.php" method="post">
-                        <button class="btn btn-danger" onclick="return confirm('Yakin ingin keluar?')"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                        <button class="btn btn-danger" onclick="return confirm('Yakin ingin keluar?')"><i
+                                class="fas fa-sign-out-alt"></i> Logout</button>
                     </form>
                 </div>
             </div>
@@ -289,22 +264,26 @@ if (!empty($_SESSION['flash'])) {
 
                         <div class="mb-3">
                             <label class="form-label">Nama Lengkap</label>
-                            <input type="text" class="form-control" value="<?php echo htmlspecialchars($data['nama_warga']); ?>" disabled>
+                            <input type="text" class="form-control"
+                                value="<?php echo htmlspecialchars($data['nama_warga']); ?>" disabled>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">NIK</label>
-                            <input type="text" class="form-control" value="<?php echo htmlspecialchars($data['nik_warga']); ?>" disabled>
+                            <input type="text" class="form-control"
+                                value="<?php echo htmlspecialchars($data['nik_warga']); ?>" disabled>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Nomor HP</label>
-                            <input type="text" class="form-control" name="hp" value="<?php echo htmlspecialchars($data['hp']); ?>" required>
+                            <input type="text" class="form-control" name="hp"
+                                value="<?php echo htmlspecialchars($data['hp']); ?>" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($data['email']); ?>" required>
+                            <input type="email" class="form-control" name="email"
+                                value="<?php echo htmlspecialchars($data['email']); ?>" required>
                         </div>
 
                         <div class="mb-3">
@@ -315,7 +294,8 @@ if (!empty($_SESSION['flash'])) {
 
                         <div class="mb-3">
                             <label class="form-label">Pekerjaan</label>
-                            <input type="text" class="form-control" name="pekerjaan" value="<?php echo htmlspecialchars($data['pekerjaan']); ?>" required>
+                            <input type="text" class="form-control" name="pekerjaan"
+                                value="<?php echo htmlspecialchars($data['pekerjaan']); ?>" required>
                         </div>
 
                         <button type="submit" class="btn btn-success w-100">
@@ -336,7 +316,7 @@ if (!empty($_SESSION['flash'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             // ... (Kode JavaScript untuk Modal Anda di sini) ...
         });
 
@@ -351,7 +331,7 @@ if (!empty($_SESSION['flash'])) {
         updateClock();
     </script>
     <script>
-        document.getElementById("foto_kk").addEventListener("change", function() {
+        document.getElementById("foto_kk").addEventListener("change", function () {
             if (this.files.length > 0) {
                 document.getElementById("label_kk").innerHTML =
                     '<i class="fas fa-check-circle text-success"></i> ' + this.files[0].name;
@@ -360,7 +340,7 @@ if (!empty($_SESSION['flash'])) {
             }
         });
 
-        document.getElementById("foto_ktp").addEventListener("change", function() {
+        document.getElementById("foto_ktp").addEventListener("change", function () {
             if (this.files.length > 0) {
                 document.getElementById("label_ktp").innerHTML =
                     '<i class="fas fa-check-circle text-success"></i> ' + this.files[0].name;
@@ -369,7 +349,7 @@ if (!empty($_SESSION['flash'])) {
             }
         });
 
-        document.getElementById("kirimDokumenBtn").addEventListener("click", function(e) {
+        document.getElementById("kirimDokumenBtn").addEventListener("click", function (e) {
             if (!document.getElementById("foto_kk").files.length ||
                 !document.getElementById("foto_ktp").files.length) {
 
@@ -378,15 +358,15 @@ if (!empty($_SESSION['flash'])) {
                 return;
             }
         });
-        document.getElementById("formProfil").addEventListener("submit", function(e) {
+        document.getElementById("formProfil").addEventListener("submit", function (e) {
             e.preventDefault();
 
             let formData = new FormData(this);
 
             fetch("proses_ubah_profil.php", {
-                    method: "POST",
-                    body: formData
-                })
+                method: "POST",
+                body: formData
+            })
                 .then(res => res.text())
                 .then(data => {
                     alert(data);
@@ -395,6 +375,76 @@ if (!empty($_SESSION['flash'])) {
                     modal.hide();
 
                     location.reload(); // refresh data baru
+                });
+        });
+
+        // Upload Foto Profile Warga
+        const fileAvatarWarga = document.getElementById('fileAvatarWarga');
+        const fotoProfilWarga = document.getElementById('fotoProfilWarga');
+        const uploadStatusWarga = document.getElementById('uploadStatusWarga');
+
+        fileAvatarWarga.addEventListener('change', function (e) {
+            const file = this.files[0];
+            if (!file) return;
+
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                uploadStatusWarga.style.color = '#dc3545';
+                uploadStatusWarga.textContent = 'Tipe file tidak valid. Gunakan JPG, PNG, atau GIF';
+                this.value = '';
+                return;
+            }
+
+            // Validate file size (2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                uploadStatusWarga.style.color = '#dc3545';
+                uploadStatusWarga.textContent = 'Ukuran file terlalu besar. Maksimal 2MB';
+                this.value = '';
+                return;
+            }
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                fotoProfilWarga.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            // Upload file via AJAX
+            const formData = new FormData();
+            formData.append('foto_profile', file);
+
+            uploadStatusWarga.style.color = '#0d6efd';
+            uploadStatusWarga.textContent = 'Mengupload...';
+
+            fetch('upload_foto_profile_warga.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        uploadStatusWarga.style.color = '#198754';
+                        uploadStatusWarga.textContent = 'Foto berhasil diupdate!';
+                        // Update image source to new file
+                        fotoProfilWarga.src = 'profile/' + data.filename;
+                        setTimeout(() => {
+                            uploadStatusWarga.textContent = '';
+                        }, 3000);
+                    } else {
+                        uploadStatusWarga.style.color = '#dc3545';
+                        uploadStatusWarga.textContent = 'Error: ' + data.message;
+                        // Revert to old image
+                        fotoProfilWarga.src = '<?php echo $foto_path_warga; ?>';
+                    }
+                })
+                .catch(error => {
+                    uploadStatusWarga.style.color = '#dc3545';
+                    uploadStatusWarga.textContent = 'Gagal mengupload foto';
+                    console.error('Upload error:', error);
+                    // Revert to old image
+                    fotoProfilWarga.src = '<?php echo $foto_path_warga; ?>';
                 });
         });
 
@@ -445,11 +495,11 @@ if (!empty($_SESSION['flash'])) {
                 });
 
                 tl.to(".welcome-title", {
-                        duration: 1,
-                        y: 0,
-                        opacity: 1,
-                        ease: "back.out(1.7)"
-                    })
+                    duration: 1,
+                    y: 0,
+                    opacity: 1,
+                    ease: "back.out(1.7)"
+                })
                     .to(".welcome-divider", {
                         duration: 0.8,
                         width: "50%",

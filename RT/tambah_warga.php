@@ -1,13 +1,14 @@
 <?php
 session_start();
-include "../koneksi.php";
+require_once '../koneksi.php';
+require_once '../db_helper.php';
 
-$nama = trim($_POST['nama']);
-$nik = trim($_POST['nik']);
+$nama     = trim($_POST['nama']);
+$nik      = trim($_POST['nik']);
 $keluarga = trim($_POST['keluarga']);
 
 if ($nama == "" || $nik == "" || $keluarga == "") {
-    $_SESSION['notif'] = "Data tidak boleh kosong!";
+    $_SESSION['notif']  = "Data tidak boleh kosong!";
     $_SESSION['status'] = "gagal";
     header("Location: Dashboard_RT.php");
     exit();
@@ -17,32 +18,19 @@ if ($nama == "" || $nik == "" || $keluarga == "") {
 $sk_rt = $_SESSION['user_rt']['sk_rt'];
 
 // Ambil no_rt dan no_rw dari tabel user_rt
-$rtQ = "SELECT no_rt, no_rw FROM user_rt WHERE sk_rt = ?";
-$stmt = mysqli_stmt_init($koneksi);
-if (!mysqli_stmt_prepare($stmt, $rtQ)) {
-    $_SESSION['notif'] = "Gagal mengambil data RT!";
+$rtData = db_select_single($koneksi, "SELECT no_rt, no_rw FROM user_rt WHERE sk_rt = ?", "s", [$sk_rt]);
+if (!$rtData) {
+    $_SESSION['notif'] = "Data RT tidak ditemukan!";
     $_SESSION['status'] = "gagal";
     header("Location: Dashboard_RT.php");
     exit();
-} else {
-    mysqli_stmt_bind_param($stmt, "s", $sk_rt);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $rtData = mysqli_fetch_assoc($result);
-
-    if (!$rtData) {
-        $_SESSION['notif'] = "Data RT tidak ditemukan!";
-        $_SESSION['status'] = "gagal";
-        header("Location: Dashboard_RT.php");
-        exit();
-    }
 }
-
 
 $no_rt = $rtData['no_rt'];
 $no_rw = $rtData['no_rw'];
 
 // ✅ 1. CEK DUPLIKAT NIK
+$stmt = mysqli_stmt_init($koneksi); 
 $cek = "SELECT nik_warga FROM user_warga WHERE nik_warga = ?";
 if (mysqli_stmt_prepare($stmt, $cek)) {
     mysqli_stmt_bind_param($stmt, "s", $nik);

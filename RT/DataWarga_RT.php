@@ -1,6 +1,7 @@
 <?php
 session_start();
-include '../koneksi.php';
+require_once '../koneksi.php';
+require_once '../db_helper.php';
 
 if (!isset($_SESSION['user_rt'])) {
     echo "<script>
@@ -19,44 +20,44 @@ if (!isset($_SESSION['welcome_shown'])) {
     $_SESSION['welcome_shown'] = true;
 }
 
-$result = mysqli_query($koneksi, "SELECT * FROM user_warga WHERE rt = '$validasi_RT'");
+$select = "SELECT * FROM user_warga WHERE rt=?";
+$stmt = mysqli_stmt_init($koneksi);
+if (!mysqli_stmt_prepare($stmt, $select)) {
+    echo "error";
+} else {
+    mysqli_stmt_bind_param($stmt, "s", $validasi_RT);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_stmt_close($stmt);
+}
+
 $warga_list = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $warga_list[] = $row;
 }
 
-
-
-if (isset($_POST['verifikasi'])) {
+if (isset($_POST['nik_warga'], $_POST['pass'])) {
     $nik = $_POST['nik_warga'];
     $pass = $_POST['pass'];
     $sk = $_SESSION['user_rt']['sk_rt'];
 
-    // cek password admin RT
-    $query = mysqli_query(
-        $koneksi,
-        "SELECT * FROM user_rt WHERE sk_rt='$sk' AND password ='$pass'"
-    );
-
-    if (mysqli_num_rows($query) > 0) {
-
-        // hapus warga
-        mysqli_query($koneksi, "DELETE FROM user_warga WHERE nik_warga='$nik'");
-
+    $query = db_select_single($koneksi, "SELECT sk_rt, password FROM user_rt WHERE sk_rt=?", "s", [$sk]);
+    if (!$query || !password_verify($pass, $query['password'])) {
         echo "<script>
-            alert('Data warga berhasil dihapus!');
+            alert('Password salah, gagal menghapus data');
             window.location.href='DataWarga_RT.php';
         </script>";
     } else {
+        // hapus warga
+        db_delete($koneksi, "DELETE FROM user_warga WHERE nik_warga = ?", "s", [$nik]);
         echo "<script>
-            alert('Password salah, gagal menghapus data');
+            alert('Data warga berhasil dihapus!');
             window.location.href='DataWarga_RT.php';
         </script>";
     }
 }
 
-if (isset($_POST['update'])) {
-
+if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
     $nik = $_POST['nik_edit'];
     $kolom = $_POST['kolom_edit'];
     $nilai_baru = $_POST['nilai_baru'];
@@ -64,14 +65,9 @@ if (isset($_POST['update'])) {
     $sk = $_SESSION['user_rt']['sk_rt'];
 
     // Validasi password RT
-    $cekPass = mysqli_query(
-        $koneksi,
-        "SELECT * FROM user_rt WHERE sk_rt='$sk' AND password='$pass'"
-    );
+    $cekPass = db_select_single($koneksi, "SELECT password FROM user_rt WHERE sk_rt=?", "s", [$sk]);
 
-    if (mysqli_num_rows($cekPass) > 0) {
-
-        // Jika user mengganti NIK → cek apakah NIK sudah dipakai
+    if ($cekPass && password_verify($pass, $cekPass['password'])) {
         if ($kolom === "NIK") {
             $cekNik = mysqli_query(
                 $koneksi,
@@ -104,13 +100,7 @@ if (isset($_POST['update'])) {
         ];
 
         $kolom_db = $mapKolom[$kolom];
-
-        // Query update
-        mysqli_query(
-            $koneksi,
-            "UPDATE user_warga SET $kolom_db='$nilai_baru' WHERE nik_warga='$nik'"
-        );
-
+        db_update($koneksi, "UPDATE user_warga SET $kolom_db='$nilai_baru' WHERE nik_warga=?", "s", [$nik]);
         echo "<script>
                 alert('Data berhasil diperbarui!');
                 window.location.href='DataWarga_RT.php';
@@ -141,38 +131,6 @@ if (isset($_POST['update'])) {
     <!-- jsPDF & AutoTable untuk PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-
-    <style>
-        @keyframes contentSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card-home {
-            animation: contentSlideUp 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .filter-bar {
-            animation: contentSlideUp 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        table {
-            animation: contentSlideUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-
-        }
-
-        .content-animate {
-            padding-left: 0;
-            margin-left: 250px;
-        }
-    </style>
 </head>
 
 <body>
@@ -248,7 +206,7 @@ if (isset($_POST['update'])) {
                 <?php
                 $no = 1;
                 while ($data = mysqli_fetch_assoc($result)) {
-                ?>
+                    ?>
                     <tr>
                         <td><?php echo $no++; ?></td>
                         <td><?php echo $data['nama_warga']; ?></td>
@@ -262,6 +220,8 @@ if (isset($_POST['update'])) {
                 <?php } ?>
             </tbody>
         </table>
+        <!-- PAGINATION CONTROLS -->
+        <div id="paginationContainer" class="mt-3"></div>
 
         <!-- Modal Detail -->
         <div class="modal fade" id="modalDetail" tabindex="-1">
@@ -297,7 +257,7 @@ if (isset($_POST['update'])) {
                         </div>
                         <div class="modal-body">
                             <p>Masukkan password untuk melanjutkan:</p>
-                            <input type="password" name="pass" id="inputPassword" class="form-control"
+                            <input type="text" name="pass" id="inputPassword" class="form-control"
                                 placeholder="Password...">
                         </div>
                         <div class="modal-footer">
@@ -351,7 +311,7 @@ if (isset($_POST['update'])) {
 
                             <div class="mb-3">
                                 <label>Password Validasi:</label>
-                                <input type="password" name="pass_edit" id="inputPasswordEdit" class="form-control">
+                                <input type="text" name="pass_edit" id="inputPasswordEdit" class="form-control">
                             </div>
 
                         </div>
@@ -480,25 +440,100 @@ if (isset($_POST['update'])) {
             new bootstrap.Modal('#modalDetail').show();
         }
 
+        let currentPage = 1;
+        const rowsPerPage = 10;
+        let filteredData = []; // Menyimpan data hasil filter untuk pagination
+
         function tampilkanData(dataArray) {
+            filteredData = dataArray; // Update data yang sedang aktif (bisa full / hasil filter)
             const kolom = document.getElementById("kolom");
             kolom.innerHTML = "";
-            dataArray.forEach((data, index) => {
-                kolom.innerHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${data.nama_warga}</td>
-                        <td>${data.nik_warga}</td>
-                        <td>${data.keluarga}</td>
-                        <td>${data.jenis_kelamin}</td>
-                        <td>${data.no_kk}</td>
-                        <td><button class="btn btn-green btn-sm" onclick="lihatDetail('${data.nik_warga}')">Kelola Data</button></td>
-                    </tr>
-                `;
-            });
+
+            // Hitung Pagination
+            const totalRows = filteredData.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+            // Validasi currentPage
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+            // Slice data untuk halaman ini
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const paginatedData = filteredData.slice(start, end);
+
+            // Render Tabel
+            if (totalRows === 0) {
+                kolom.innerHTML = "<tr><td colspan='7' class='text-center'>Tidak ada data ditemukan</td></tr>";
+            } else {
+                paginatedData.forEach((data, index) => {
+                    // index + 1 + start agar nomor urut berlanjut antar halaman
+                    kolom.innerHTML += `
+                        <tr>
+                            <td>${start + index + 1}</td>
+                            <td>${data.nama_warga}</td>
+                            <td>${data.nik_warga}</td>
+                            <td>${data.keluarga}</td>
+                            <td>${data.jenis_kelamin}</td>
+                            <td>${data.no_kk}</td>
+                            <td><button class="btn btn-green btn-sm" onclick="lihatDetail('${data.nik_warga}')">Kelola Data</button></td>
+                        </tr>
+                    `;
+                });
+            }
+
+            renderPaginationControls(totalPages);
+        }
+
+        function renderPaginationControls(totalPages) {
+            let container = document.getElementById("paginationContainer");
+            if (!container) return;
+
+            if (totalPages <= 1) {
+                container.innerHTML = "";
+                return;
+            }
+
+            let html = '<nav><ul class="pagination pagination-sm justify-content-end">';
+
+            // Prev Button
+            let prevDisabled = (currentPage === 1) ? "disabled" : "";
+            html += `<li class="page-item ${prevDisabled}"><a class="page-link" href="#" onclick="gantiHalaman(${currentPage - 1}); return false;">Previous</a></li>`;
+
+            // Page Numbers (Simple Logic: show all or simplified range)
+            // Untuk simplifikasi, kita tampilkan max 5 page di sekitar current page
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+
+            if (startPage > 1) {
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="gantiHalaman(1); return false;">1</a></li>`;
+                if (startPage > 2) html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                let active = (i === currentPage) ? "active" : "";
+                html += `<li class="page-item ${active}"><a class="page-link" href="#" onclick="gantiHalaman(${i}); return false;">${i}</a></li>`;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="gantiHalaman(${totalPages}); return false;">${totalPages}</a></li>`;
+            }
+
+            // Next Button
+            let nextDisabled = (currentPage === totalPages) ? "disabled" : "";
+            html += `<li class="page-item ${nextDisabled}"><a class="page-link" href="#" onclick="gantiHalaman(${currentPage + 1}); return false;">Next</a></li>`;
+
+            html += '</ul></nav>';
+            container.innerHTML = html;
+        }
+
+        function gantiHalaman(page) {
+            currentPage = page;
+            tampilkanData(filteredData); // Re-render dengan data yang sama (filteredData sudah tersimpan di scope global)
         }
         // ==== Aksi Tombol ====
-        document.getElementById("btnHapus").onclick = function() {
+        document.getElementById("btnHapus").onclick = function () {
             modeAksi = "hapus";
 
             // masukkan nik warga ke hidden input
@@ -508,12 +543,12 @@ if (isset($_POST['update'])) {
         };
 
 
-        document.getElementById("btnPerbarui").onclick = function() {
+        document.getElementById("btnPerbarui").onclick = function () {
             document.getElementById("nikEditHidden").value = selectedNik;
             new bootstrap.Modal('#modalEdit').show();
         };
 
-        document.getElementById("selectKolom").addEventListener("change", function() {
+        document.getElementById("selectKolom").addEventListener("change", function () {
             let kolom = this.value;
             let container = document.getElementById("fieldContainer");
 
@@ -721,6 +756,17 @@ if (isset($_POST['update'])) {
 
             doc.save("data_warga_rt.pdf");
         }
+
+        // Initialize view
+        tampilkanData(warga);
+
+        <?php if (isset($_SESSION['pesan_sukses'])): ?>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '<?= $_SESSION['pesan_sukses']; unset($_SESSION['pesan_sukses']); ?>',
+            });
+        <?php endif; ?>
     </script>
 </body>
 

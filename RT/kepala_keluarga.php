@@ -1,7 +1,7 @@
 <?php
 session_start();
-include "../koneksi.php";
-
+require_once "../koneksi.php";
+require_once "../db_helper.php";
 
 if (!isset($_SESSION['user_rt'])) {
     header("Location: ../LoginRTWARGA.php");
@@ -10,9 +10,20 @@ if (!isset($_SESSION['user_rt'])) {
 
 $sk_rt = $_SESSION['user_rt']['sk_rt'];
 
-// Ambil semua kepala keluarga
-$kk = mysqli_query($koneksi, "SELECT * FROM user_warga 
-    WHERE keluarga = 'kepala keluarga' and rt = '$sk_rt'");
+// Konfigurasi Pagination
+$halaman_aktif = (isset($_GET['hal'])) ? (int) $_GET['hal'] : 1;
+$limit = 10;
+$offset = ($halaman_aktif - 1) * $limit;
+
+// Hitung total kepala keluarga
+$count_query = "SELECT COUNT(*) FROM user_warga WHERE keluarga = 'kepala keluarga' AND rt = ?";
+$total_data = db_count($koneksi, $count_query, "s", [$sk_rt]);
+
+// Ambil data kepala keluarga dengan Pagination
+$query_kk = "SELECT * FROM user_warga 
+    WHERE keluarga = 'kepala keluarga' AND rt = ? 
+    LIMIT ? OFFSET ?";
+$kk = db_select_no_assoc($koneksi, $query_kk, "sii", [$sk_rt, $limit, $offset]);
 ?>
 
 <!DOCTYPE html>
@@ -145,7 +156,8 @@ $kk = mysqli_query($koneksi, "SELECT * FROM user_warga
             color: #ffffff;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .container{
+
+        .container {
             max-width: none !important;
         }
     </style>
@@ -186,18 +198,19 @@ $kk = mysqli_query($koneksi, "SELECT * FROM user_warga
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = mysqli_fetch_assoc($kk)):
-                        $no_kk = $row['no_kk'];
+                    <?php if ($kk): ?>
+                        <?php while ($row = mysqli_fetch_assoc($kk)):
+                            $no_kk = $row['no_kk'];
 
-                        // Hitung jumlah anggota keluarga (Count yang benar)
-                        $anggota = mysqli_query(
-                            $koneksi,
-                            "SELECT COUNT(*) AS total FROM user_warga WHERE no_kk='$no_kk'"
-                        );
-                        $count = mysqli_fetch_assoc($anggota);
-                        $jumlah = $count['total'];
-                        ?>
-                        <tr onclick='openModal(
+                            // Hitung jumlah anggota keluarga
+                            // Optimization: Gunakan prepared statement jika memungkinkan nanti, tapi count query ini masih ok
+                            $count_anggota_query = "SELECT COUNT(*) AS total FROM user_warga WHERE no_kk='$no_kk'";
+                            // Kita pakai mysqli_query biasa karena di dalam loop, kalau db_count dipanggil berkali-kali prepare nya overhead
+                            $anggota = mysqli_query($koneksi, $count_anggota_query);
+                            $count = mysqli_fetch_assoc($anggota);
+                            $jumlah = $count['total'];
+                            ?>
+                            <tr onclick='openModal(
                             <?= json_encode($row["no_kk"], JSON_HEX_QUOT | JSON_HEX_APOS) ?>,
                             <?= json_encode($row["nik_warga"], JSON_HEX_QUOT | JSON_HEX_APOS) ?>,
                             <?= json_encode($row["nama_warga"], JSON_HEX_QUOT | JSON_HEX_APOS) ?>,
@@ -205,16 +218,21 @@ $kk = mysqli_query($koneksi, "SELECT * FROM user_warga
                             <?= json_encode($row["keluarga"], JSON_HEX_QUOT | JSON_HEX_APOS) ?> 
                         )'>
 
-                            <td><?= $row['no_kk'] ?></td>
-                            <td><?= $row['nama_warga'] ?></td>
-                            <td><?= $row['nik_warga'] ?></td>
-                            <td><?= $jumlah ?> Orang</td>
-                        </tr>
-
-                    <?php endwhile; ?>
+                                <td><?= htmlspecialchars($row['no_kk']) ?></td>
+                                <td><?= htmlspecialchars($row['nama_warga']) ?></td>
+                                <td><?= htmlspecialchars($row['nik_warga']) ?></td>
+                                <td><?= $jumlah ?> Orang</td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php endif; ?>
 
                 </tbody>
             </table>
+
+            <!-- PAGINATION LINKS -->
+            <div class="mt-3">
+                <?= db_pagination_links($total_data, $limit, $halaman_aktif, 'kepala_keluarga.php'); ?>
+            </div>
         </div>
     </div>
 
