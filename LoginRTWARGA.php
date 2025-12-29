@@ -113,7 +113,8 @@ include "koneksi.php";
                         </div>
 
                         <div class="input-box">
-                            <input type="password" autocomplete="off" id="password" class="pwd" required name="password">
+                            <input type="password" autocomplete="off" id="password" class="pwd" required
+                                name="password">
                             <label>Password</label>
                             <i class="fa-solid fa-eye toggle-eye"></i>
                         </div>
@@ -121,7 +122,7 @@ include "koneksi.php";
                         <footer style="font-size:15.5px; margin-top:10px; color:#495336" align="center"> Gunakan SK_RT
                             sebagai password Anda saat pertama kali Login
                         </footer>
-                        
+
                         <div class="remember-forgot">
                             <a href=""></a>
                         </div>
@@ -267,6 +268,125 @@ include "koneksi.php";
 
 
 
+
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Lenis for Smooth Scrolling -->
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", (event) => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Helper function for fast reverse with custom start position
+            const fastReverseConfig = (trigger, vars, startPos = "top 70%") => {
+                return {
+                    scrollTrigger: {
+                        trigger: trigger,
+                        start: startPos, // dynamic start position
+                        // Using callbacks for speed control
+                        onEnter: (self) => {
+                            self.animation.timeScale(1).play();
+                        },
+                        onLeaveBack: (self) => {
+                            self.animation.timeScale(3).reverse();
+                        }
+                    },
+                    ...vars
+                };
+            };
+
+            // --- HERO / ABOUT SECTION ---
+
+            // Text & Content Animation (From LEFT, Staggered) -> KEEPS 50% TRIGGER
+            if (document.querySelector(".hero-details")) {
+                gsap.from(".hero-details > *", fastReverseConfig(".hero-details", {
+                    x: -50,
+                    opacity: 0,
+                    duration: 1,
+                    stagger: 0.2,
+                    ease: "power2.out"
+                }, "top 50%")); // Explicitly set to 50% as requested
+            }
+
+            // Image Animation (From RIGHT) -> CHANGES TO 70% (30% view)
+            if (document.querySelector(".imagea")) {
+                gsap.from(".imagea", fastReverseConfig(".imagea", {
+                    x: 50,
+                    opacity: 0,
+                    duration: 1.2,
+                    ease: "power2.out"
+                }, "top 70%")); // 70% Trigger
+            }
+
+
+            // --- SERVICES (LAYANAN) SECTION ---
+            // Animate Cards From BOTTOM (Staggered) -> CHANGES TO 70%
+            const cards = gsap.utils.toArray('.list-layanan');
+            if (cards.length > 0) {
+                gsap.from(cards, {
+                    scrollTrigger: {
+                        trigger: "#layanannn",
+                        start: "top 70%", // 70% Trigger
+                        // Custom speed control
+                        onEnter: (self) => {
+                            self.animation.timeScale(1).play();
+                        },
+                        onLeaveBack: (self) => {
+                            self.animation.timeScale(3).reverse();
+                        }
+                    },
+                    y: 100, // Come from Bottom
+                    opacity: 0,
+                    duration: 1,
+                    stagger: 0.2,
+                    ease: "power2.out"
+                });
+
+                // Floating/Bounce effect removed as requested
+            }
+
+
+            // --- FOOTER SECTION ---
+            // Animate Footer Links -> CHANGES TO 85% (Standard for footer)
+            const footerItems = document.querySelectorAll(".footer-list .list");
+            if (footerItems.length > 0) {
+                gsap.from(footerItems, {
+                    scrollTrigger: {
+                        trigger: "#konntak",
+                        start: "top 85%", // Footer stays low
+                        onEnter: (self) => { self.animation.timeScale(1).play(); },
+                        onLeaveBack: (self) => { self.animation.timeScale(3).reverse(); }
+                    },
+                    x: -30,
+                    opacity: 0,
+                    duration: 0.8,
+                    stagger: 0.1,
+                    ease: "power2.out"
+                });
+            }
+
+            // Animate Footer Form
+            if (document.querySelector(".akhir-form")) {
+                gsap.from(".akhir-form", {
+                    scrollTrigger: {
+                        trigger: "#konntak",
+                        start: "top 85%",
+                        onEnter: (self) => { self.animation.timeScale(1).play(); },
+                        onLeaveBack: (self) => { self.animation.timeScale(3).reverse(); }
+                    },
+                    x: 30,
+                    opacity: 0,
+                    duration: 1,
+                    ease: "power2.out",
+                    delay: 0.3
+                });
+            }
+        });
+    </script>
 
     <script>
         const akhirnya1 = document.getElementById('akhirnyaCard1')

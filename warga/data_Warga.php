@@ -21,24 +21,18 @@ $rowRT = db_select_single($koneksi, "SELECT rt FROM user_warga WHERE nik_warga=?
 $skRT = $rowRT['rt'];
 
 $rowrt = db_select_single($koneksi, "SELECT nama_rt,nohp_rt FROM user_rt WHERE sk_rt =?", "s", [$skRT]);
-$nama_rt = $rowrt['nama_rt'];
-$nama_rt1 = $rowrt['nohp_rt'];
+
 
 $data = db_select_single($koneksi, "SELECT 
 nik_warga, nama_warga, tanggal_lahir, jenis_kelamin, agama, status_kawin, no_kk, tempat_lahir, alamat, email, pekerjaan, pendidikan, hp, no_rt, no_rw, kecamatan, kelurahan, keluarga, foto_profile
 FROM user_warga WHERE nik_warga = ?", "s", [$nik]);
-if (!$data) {
-    echo "Data tidak ditemukan.";
-    exit();
-}
 
 if (!empty($_SESSION['flash'])) {
     echo "<script>alert('$_SESSION[flash]');</script>";
     unset($_SESSION['flash']);
 }
-
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -131,8 +125,7 @@ if (!empty($_SESSION['flash'])) {
                     <hr>
                     <!-- Upload KTP & KK -->
                     <div>
-                        <form action="proses_upload.php" method="POST" enctype="multipart/form-data">
-
+                        <form action="aksi_datawarga/proses_upload.php" method="POST" enctype="multipart/form-data">
                             <!-- Upload KK -->
                             <div class="mb-2">
                                 <label id="label_kk" for="foto_kk" class="btn btn-outline-secondary upload-label w-100">
@@ -223,11 +216,11 @@ if (!empty($_SESSION['flash'])) {
                             </tr>
                             <tr>
                                 <th>Nama RT</th>
-                                <td><?php echo $nama_rt; ?> </td>
+                                <td><?php echo htmlspecialchars($rowrt['nama_rt']); ?></td>
                             </tr>
                             <tr>
                                 <th>No HP RT</th>
-                                <td><?php echo $nama_rt1; ?> </td>
+                                <td><?php echo htmlspecialchars($rowrt['nohp_rt']); ?></td>
                             </tr>
 
                             <tr>

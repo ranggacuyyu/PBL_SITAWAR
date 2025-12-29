@@ -1,6 +1,7 @@
 <?php
 session_start();
-include "../koneksi.php";
+require_once '../koneksi.php';
+require_once '../db_helper.php';
 
 // Pastikan login
 if (!isset($_SESSION['user_warga']['nik_warga'])) {
@@ -11,8 +12,7 @@ if (!isset($_SESSION['user_warga']['nik_warga'])) {
 $nik = $_SESSION['user_warga']['nik_warga'];
 
 // Cek apakah sudah mengisi
-$cek = mysqli_query($koneksi, "SELECT sudah_lengkap FROM user_warga WHERE nik_warga='$nik'");
-$data = mysqli_fetch_assoc($cek);
+$data = db_select_single($koneksi, "SELECT sudah_lengkap FROM user_warga WHERE nik_warga=?", "s", [$nik]);
 if ((int)$data['sudah_lengkap'] === 1) {
   header("Location: data_Warga.php");
   exit();

@@ -35,6 +35,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             'no_rw' => $user['no_rw'],
             'nama_rt' => $user['nama_rt']
         ];
+        session_regenerate_id(true);
         header("Location: ../RT/Dashboard_RT.php");
         exit;
     }

@@ -42,21 +42,11 @@ $kelurahan = $row['kelurahan'] ?? "";
 $kecamatan = $row['kecamatan'] ?? "";
 $kota = "BATAM";
 
-$result_query = "SELECT * FROM dokumen WHERE warga=? ORDER BY tanggal DESC";
-$stmt = mysqli_stmt_init($koneksi);
-if(!mysqli_stmt_prepare($stmt, $result_query)){
-  echo "error";
-} else{
-  mysqli_stmt_bind_param($stmt, "s", $nik_login);
-  mysqli_stmt_execute($stmt);
-  $result_dokumen = mysqli_stmt_get_result($stmt);
-  mysqli_stmt_close($stmt);
-}
+$result_dokumen    = db_select_no_assoc($koneksi, "SELECT * FROM dokumen WHERE warga=? ORDER BY tanggal DESC", "s", [$nik_login]);
+$cekAktif_domisili = db_select_no_assoc($koneksi,"SELECT * FROM dokumen 
+WHERE warga=? AND status IN ('pending','valid') AND jenis_dokumen='domisili'", "s", [$nik_login]);
 
-$cekAktif_domisili = mysqli_query($koneksi, "SELECT * FROM dokumen 
-WHERE warga='$nik_login' 
-AND status IN ('pending','valid') AND jenis_dokumen='domisili'");
-
+$cekAktif_laporan = db_
 $cekAktif_laporan = mysqli_query($koneksi, "SELECT * FROM dokumen 
 WHERE warga='$nik_login' 
 AND status IN ('pending','valid') AND jenis_dokumen='Pengantar RT'");

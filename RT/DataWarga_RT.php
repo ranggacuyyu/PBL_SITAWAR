@@ -20,26 +20,16 @@ if (!isset($_SESSION['welcome_shown'])) {
     $_SESSION['welcome_shown'] = true;
 }
 
-$select = "SELECT * FROM user_warga WHERE rt=?";
-$stmt = mysqli_stmt_init($koneksi);
-if (!mysqli_stmt_prepare($stmt, $select)) {
-    echo "error";
-} else {
-    mysqli_stmt_bind_param($stmt, "s", $validasi_RT);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    mysqli_stmt_close($stmt);
-}
-
+$result = db_select_no_assoc($koneksi, "SELECT * FROM user_warga WHERE rt=?", "s", [$validasi_RT]);
 $warga_list = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $warga_list[] = $row;
 }
 
 if (isset($_POST['nik_warga'], $_POST['pass'])) {
-    $nik = $_POST['nik_warga'];
-    $pass = $_POST['pass'];
-    $sk = $_SESSION['user_rt']['sk_rt'];
+    $nik   = $_POST['nik_warga'];
+    $pass  = $_POST['pass'];
+    $sk    = $_SESSION['user_rt']['sk_rt'];
 
     $query = db_select_single($koneksi, "SELECT sk_rt, password FROM user_rt WHERE sk_rt=?", "s", [$sk]);
     if (!$query || !password_verify($pass, $query['password'])) {
@@ -58,20 +48,22 @@ if (isset($_POST['nik_warga'], $_POST['pass'])) {
 }
 
 if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
-    $nik = $_POST['nik_edit'];
-    $kolom = $_POST['kolom_edit'];
+    $nik        = $_POST['nik_edit'];
+    $kolom      = $_POST['kolom_edit'];
     $nilai_baru = $_POST['nilai_baru'];
-    $pass = $_POST['pass_edit'];
-    $sk = $_SESSION['user_rt']['sk_rt'];
+    $pass       = $_POST['pass_edit'];
+    $sk         = $_SESSION['user_rt']['sk_rt'];
 
     // Validasi password RT
     $cekPass = db_select_single($koneksi, "SELECT password FROM user_rt WHERE sk_rt=?", "s", [$sk]);
 
     if ($cekPass && password_verify($pass, $cekPass['password'])) {
         if ($kolom === "NIK") {
-            $cekNik = mysqli_query(
+            $cekNik = db_select_no_assoc(
                 $koneksi,
-                "SELECT * FROM user_warga WHERE nik_warga='$nilai_baru'"
+                "SELECT * FROM user_warga WHERE nik_warga=?",
+                "s",
+                [$nilai_baru]
             );
 
             if (mysqli_num_rows($cekNik) > 0) {
@@ -85,17 +77,17 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
 
         // Map kolom dropdown → nama kolom di database
         $mapKolom = [
-            "Nama" => "nama_warga",
-            "NIK" => "nik_warga",
-            "Tanggal_lahir" => "tanggal_lahir",
-            "Tempat_lahir" => "tempat_lahir",
-            "Agama" => "agama",
-            "Status Keluarga" => "keluarga",
-            "Jenis Kelamin" => "jenis_kelamin",
-            "NO KK" => "no_kk",
-            "Alamat" => "alamat",
-            "Pekerjaan" => "pekerjaan",
-            "Pendidikan" => "pendidikan",
+            "Nama"              => "nama_warga",
+            "NIK"               => "nik_warga",
+            "Tanggal_lahir"     => "tanggal_lahir",
+            "Tempat_lahir"      => "tempat_lahir",
+            "Agama"             => "agama",
+            "Status Keluarga"   => "keluarga",
+            "Jenis Kelamin"     => "jenis_kelamin",
+            "NO KK"             => "no_kk",
+            "Alamat"            => "alamat",
+            "Pekerjaan"         => "pekerjaan",
+            "Pendidikan"        => "pendidikan",
             "Status Perkawinan" => "status_kawin"
         ];
 

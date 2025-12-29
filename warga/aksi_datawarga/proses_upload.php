@@ -1,46 +1,34 @@
 <?php
 session_start();
-include "../koneksi.php";
+require_once '../koneksi.php';
+require_once '../db_helper.php';
 
 function redirect($msg) {
     $_SESSION['flash'] = $msg;
     header("Location: data_Warga.php");
     exit();
 }
-
-// ===============================
 // 1. VALIDASI LOGIN
-// ===============================
 if (!isset($_SESSION['user_warga']['nik_warga'])) {
     redirect("⚠️ Silakan login terlebih dahulu");
 }
 $id_warga = $_SESSION['user_warga']['nik_warga'];
 
-// ===============================
 // 2. VALIDASI DATA WARGA
-// ===============================
-$cek = $koneksi->prepare("SELECT nik_warga FROM user_warga WHERE nik_warga=?");
-$cek->bind_param("s", $id_warga);
-$cek->execute();
-$res = $cek->get_result();
-
+$res = db_select_no_assoc($koneksi, "SELECT nik_warga FROM user_warga WHERE nik_warga=?", "s", [$id_warga]);
 if ($res->num_rows == 0) {
     redirect("❌ Data warga tidak valid");
 }
 
-// ===============================
 // 3. WAJIB ADA 2 FILE
-// ===============================
 if (empty($_FILES['foto_kk']['name']) || empty($_FILES['foto_ktp']['name'])) {
     redirect("❌ Foto KK dan KTP wajib diupload");
 }
 
-// ===============================
 // 4. VALIDASI FILE
-// ===============================
 $allowedExt  = ['jpg','jpeg','png'];
 $allowedMime = ['image/jpeg','image/png'];
-$maxSize = 2 * 1024 * 1024;
+$maxSize     = 2 * 1024 * 1024;
 
 function validasiFile($file, $allowedExt, $allowedMime, $maxSize) {
     $ext  = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));

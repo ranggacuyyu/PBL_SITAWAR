@@ -7,10 +7,8 @@ if (!isset($_SESSION['user_rt'])) {
     exit;
 }
 
-$nik  = $_GET['nik_warga'];
-$pass = $_GET['password'];
-
-// Ambil password admin dari session login
+$nik      = $_GET['nik_warga'];
+$pass     = $_GET['password'];
 $id_admin = $_SESSION['admin_user']['id_admin'];
 
 $cekAdmin = mysqli_query($koneksi, "SELECT password FROM admin WHERE id_admin='$id_admin'");
