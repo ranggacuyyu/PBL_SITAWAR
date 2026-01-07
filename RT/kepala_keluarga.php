@@ -8,14 +8,15 @@ if (!isset($_SESSION['user_rt'])) {
     exit;
 }
 
+$notif = $_SESSION['notif'] ?? null;
+unset($_SESSION['notif']);
+
 $sk_rt = $_SESSION['user_rt']['sk_rt'];
 
-// Konfigurasi Pagination
 $halaman_aktif = (isset($_GET['hal'])) ? (int) $_GET['hal'] : 1;
 $limit = 10;
 $offset = ($halaman_aktif - 1) * $limit;
 
-// Hitung total kepala keluarga
 $count_query = "SELECT COUNT(*) FROM user_warga WHERE keluarga = 'kepala keluarga' AND rt = ?";
 $total_data = db_count($koneksi, $count_query, "s", [$sk_rt]);
 
@@ -33,138 +34,19 @@ $kk = db_select_no_assoc($koneksi, $query_kk, "sii", [$sk_rt, $limit, $offset]);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Kepala Keluarga - Sitawar</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        /* Animation */
-        @keyframes contentSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .content-animate {
-            animation: contentSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Segoe UI", sans-serif;
-        }
-
-
-        body {
-            display: flex;
-            background-image: url(download.jpg);
-            background-size: cover;
-            background-position: fixed;
-            color: #333;
-            min-height: 100vh;
-        }
-
-        .table-hover tbody tr:hover {
-            background-color: #e8f0fe;
-            cursor: pointer;
-        }
-
-        .profile-img {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #fff;
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-header {
-            border: none;
-        }
-
-        .card-custom {
-            border-radius: 18px;
-            box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.1);
-        }
-
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 250px;
-            background-color: #8da070;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: fixed;
-            height: 100%;
-            left: 0;
-            top: 0;
-        }
-
-        .sidebar-header {
-            text-align: center;
-            padding: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .sidebar-header h1 {
-            padding-top: 11px;
-            font-size: 24px;
-            margin-bottom: 4px;
-            font-weight: 700;
-        }
-
-        .sidebar-header p {
-            font-size: 12px;
-            color: #4b5c30;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .nav {
-            padding: 20px;
-        }
-
-        .nav a {
-            display: block;
-            color: white;
-            width: 100%;
-            text-decoration: none;
-            padding: 10px 15px;
-            margin-bottom: 5px;
-            border-radius: 8px;
-            transition: background 0.2s;
-            font-size: 1.35em;
-        }
-
-        .nav a:hover {
-            background-color: #6b7a59;
-        }
-
-        .sidebar-footer {
-            padding: 15px;
-            text-align: center;
-            font-size: 12px;
-            color: #ffffff;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .container {
-            max-width: none !important;
-        }
-    </style>
-
+    <link rel="stylesheet" href="kepala_keluarga.css">
+    <link rel="stylesheet" href="../notif.css">
 </head>
 
 <body>
+    <div class="notifikasi">
+        <?php if ($notif): ?>
+            <div id="notif" class="notif">
+                <?= htmlspecialchars($notif) ?>
+            </div>
+        <?php endif; ?>
+    </div>
     <div class="bungkusluar"></div>
     <!-- SIDEBAR -->
     <aside class="sidebar">
@@ -185,7 +67,14 @@ $kk = db_select_no_assoc($koneksi, $query_kk, "sii", [$sk_rt, $limit, $offset]);
     </aside>
 
     <div class="container content-animate" style=" margin-left: 250px; padding: 30px; background-color: #88976cce;">
-        <h2 class="fw-bold mb-4 text-center">Daftar Kepala Keluarga - Sitawar</h2>
+        <h2 class="fw-bold mb-4 text-center" style="color: #f5f5f5f5;">Daftar Kepala Keluarga - Sitawar</h2>
+        <div class="card-home">
+            <h3>RT 01 RW 02</h3>
+            <h5>Kelurahan Sukamaju, Kecamatan Cilandak, Kota Jakarta Selatan</h5>
+            <p>halaman pengelolaan data warga dapat melakukan pencarian cepat data warga berdasarkan Nama dan NIK,
+                memberikan statistik jumlah warga berdasarkan usia dan dapat menghapus data warga beserta mengupdate
+                data warga</p>
+        </div>
 
         <div class="card p-4 shadow">
             <table class="table table-hover align-middle">
@@ -201,21 +90,17 @@ $kk = db_select_no_assoc($koneksi, $query_kk, "sii", [$sk_rt, $limit, $offset]);
                     <?php if ($kk): ?>
                         <?php while ($row = mysqli_fetch_assoc($kk)):
                             $no_kk = $row['no_kk'];
-
-                            // Hitung jumlah anggota keluarga
-                            // Optimization: Gunakan prepared statement jika memungkinkan nanti, tapi count query ini masih ok
-                            $count_anggota_query = "SELECT COUNT(*) AS total FROM user_warga WHERE no_kk='$no_kk'";
-                            // Kita pakai mysqli_query biasa karena di dalam loop, kalau db_count dipanggil berkali-kali prepare nya overhead
-                            $anggota = mysqli_query($koneksi, $count_anggota_query);
-                            $count = mysqli_fetch_assoc($anggota);
+                            $count_anggota_query = "SELECT COUNT(*) AS total FROM user_warga WHERE no_kk=?";
+                            $count = db_select_single($koneksi, $count_anggota_query, "s", [$no_kk]);
                             $jumlah = $count['total'];
-                            ?>
+                        ?>
                             <tr onclick='openModal(
                             <?= json_encode($row["no_kk"], JSON_HEX_QUOT | JSON_HEX_APOS) ?>,
                             <?= json_encode($row["nik_warga"], JSON_HEX_QUOT | JSON_HEX_APOS) ?>,
                             <?= json_encode($row["nama_warga"], JSON_HEX_QUOT | JSON_HEX_APOS) ?>,
                             <?= json_encode($jumlah, JSON_HEX_QUOT | JSON_HEX_APOS) ?>,
-                            <?= json_encode($row["keluarga"], JSON_HEX_QUOT | JSON_HEX_APOS) ?> 
+                            <?= json_encode($row["keluarga"], JSON_HEX_QUOT | JSON_HEX_APOS) ?>,
+                            <?= json_encode($row["foto_profile"], JSON_HEX_QUOT | JSON_HEX_APOS) ?> 
                         )'>
 
                                 <td><?= htmlspecialchars($row['no_kk']) ?></td>
@@ -245,8 +130,7 @@ $kk = db_select_no_assoc($koneksi, $query_kk, "sii", [$sk_rt, $limit, $offset]);
             <div class="modal-content p-3">
 
                 <div class="text-center">
-                    <img id="modalFoto" class="profile-img mb-3" src="../img/default-profile.png">
-
+                    <img id="modalFoto" class="profile-img mb-3">
                     <h4 class="fw-bold" id="modalNoKK"></h4>
                 </div>
 
@@ -301,61 +185,85 @@ $kk = db_select_no_assoc($koneksi, $query_kk, "sii", [$sk_rt, $limit, $offset]);
     </div>
     <!-- Modal Kepala Keluarga Wafat -->
     <div class="modal fade" id="modalWafat" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-3">
+        <form action="update_wafat.php" method="post">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content p-3">
+                    <input type="hidden" name="no_kk" id="inputNoKK">
+                    <input type="hidden" name="nik_wafat" id="inputNIK">
 
-                <h5 class="fw-bold text-center">Konfirmasi Kepala Keluarga Wafat</h5>
-                <p class="text-center">Apakah Anda yakin kepala keluarga ini telah wafat?</p>
+                    <h5 class="fw-bold text-center">Konfirmasi Kepala Keluarga Wafat</h5>
+                    <p class="text-center">Apakah Anda yakin kepala keluarga ini telah wafat?</p>
 
-                <div class="mb-3">
-                    <label class="form-label">Masukkan Password RT</label>
-                    <input type="password" id="passwordWafat" class="form-control" placeholder="Password wajib diisi">
+                    <div class="mb-3">
+                        <label class="form-label">Anda wajib memilih kepala keluarga baru saat ada kepala keluarga yang wafat</label>
+                        <select id="dropdownwafat" name="nik_baru" class="form-select">
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Masukkan Password RT</label>
+                        <input type="password" name="password_wafat" id="passwordWafat" class="form-control" placeholder="Password wajib diisi">
+                    </div>
+
+                    <div class="text-center d-flex justify-content-end gap-2">
+                        <div class="btn btn-secondary" data-bs-dismiss="modal">Batal</div>
+                        <button class="btn btn-danger" type="submit">Konfirmasi</button>
+                    </div>
+
                 </div>
-
-                <div class="text-center d-flex justify-content-end gap-2">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button class="btn btn-danger" onclick="submitWafat()">Konfirmasi</button>
-                </div>
-
             </div>
-        </div>
+        </form>
     </div>
     <!-- Modal Ganti Kepala Keluarga -->
     <div class="modal fade" id="modalGanti" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-3">
+        <form action="ganti_kepala_keluarga.php" method="post">
+            <div class="modal-dialog modal-dialog-centered">
 
-                <h5 class="fw-bold text-center">Ganti Kepala Keluarga</h5>
+                <div class="modal-content p-3">
+                    <input type="hidden" name="no_kk1" id="inputNoKK">
 
-                <div class="mb-3">
-                    <label class="form-label">Pilih Anggota</label>
-                    <select id="dropdownAnggota" class="form-select">
-                    </select>
-                </div>
+                    <h5 class="fw-bold text-center">Ganti Kepala Keluarga</h5>
 
-                <div class="text-end d-flex justify-content-end gap-2">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button class="btn btn-primary" onclick="submitGanti()">Simpan</button>
+                    <div class="mb-3">
+                        <label class="form-label">Pilih Anggota</label>
+                        <select id="dropdownAnggota" class="form-select" name="nik_baru1">
+                        </select>
+                    </div>
+
+                    <div class="text-end d-flex justify-content-end gap-2">
+                        <div class="btn btn-secondary" data-bs-dismiss="modal">Batal</div>
+                        <button class="btn btn-primary" onclick="submitGanti()">Simpan</button>
+                    </div>
+
                 </div>
 
             </div>
-        </div>
+        </form>
     </div>
-
-
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    <?php if ($notif): ?>
+        <script>
+            // Hilangkan notifikasi otomatis setelah 4 detik
+            setTimeout(() => {
+                const notif = document.getElementById('notif');
+                if (notif) {
+                    notif.classList.add('hide');
+                    setTimeout(() => notif.remove(), 500);
+                }
+            }, 4000);
+        </script>
+    <?php endif; ?>
     <script>
-        // Fungsi buka modal
-        function openModal(no_kk, nik, nama, jumlah, status) {
+        function openModal(no_kk, nik, nama, jumlah, status, foto_profile) {
 
-            document.getElementById('modalFoto').src = "../img/default-profile.png";
+            document.getElementById('modalFoto').src = foto_profile ? '../warga/profile/' + foto_profile : '../warga/profile/default.jpg';
 
             document.getElementById('modalNoKK').innerHTML = "No KK: " + no_kk;
             document.getElementById('modalNIK').innerHTML = nik;
             document.getElementById('modalNama').innerHTML = nama;
             document.getElementById('modalJumlah').innerHTML = jumlah + " Orang";
+            document.getElementById('inputNoKK').value = no_kk;
+            document.getElementById('inputNIK').value = nik;
 
             // Atur status tombol
             if (status === "wafat") {
@@ -380,21 +288,13 @@ $kk = db_select_no_assoc($koneksi, $query_kk, "sii", [$sk_rt, $limit, $offset]);
         function openWafatModal() {
             var m = new bootstrap.Modal(document.getElementById('modalWafat'));
             m.show();
-        }
 
-        function submitWafat() {
-            let pass = document.getElementById('passwordWafat').value;
-
-            if (pass.trim() === "") {
-                alert("Password wajib diisi!");
-                return;
-            }
-
-            fetch('update_wafat.php?no_kk=' + window.selectedKK + "&pass=" + pass)
+            fetch('ambil_dropdown_anggota.php?no_kk=' + window.selectedKK)
                 .then(res => res.text())
-                .then(response => {
-                    alert(response);
-                    location.reload();
+                .then(optionHtml => {
+                    document.getElementById('dropdownwafat').innerHTML = optionHtml;
+
+
                 });
         }
 

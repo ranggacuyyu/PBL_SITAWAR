@@ -11,48 +11,42 @@ if (!isset($_SESSION['user_rt'])) {
     exit;
 }
 
+$notif = $_SESSION['notif'] ?? null;
+unset($_SESSION['notif']);
+
 $validasi_RT = $_SESSION['user_rt']['sk_rt'];
-
-// Cek status welcome animation
-$show_welcome = false;
-if (!isset($_SESSION['welcome_shown'])) {
-    $show_welcome = true;
-    $_SESSION['welcome_shown'] = true;
-}
-
 $result = db_select_no_assoc($koneksi, "SELECT * FROM user_warga WHERE rt=?", "s", [$validasi_RT]);
-$warga_list = [];
-while ($row = mysqli_fetch_assoc($result)) {
-    $warga_list[] = $row;
-}
 
 if (isset($_POST['nik_warga'], $_POST['pass'])) {
-    $nik   = $_POST['nik_warga'];
-    $pass  = $_POST['pass'];
-    $sk    = $_SESSION['user_rt']['sk_rt'];
+    $nik = $_POST['nik_warga'];
+    $pass = $_POST['pass'];
+    $sk = $_SESSION['user_rt']['sk_rt'];
 
     $query = db_select_single($koneksi, "SELECT sk_rt, password FROM user_rt WHERE sk_rt=?", "s", [$sk]);
     if (!$query || !password_verify($pass, $query['password'])) {
+        $_SESSION['notif'] = "Password salah, gagal menghapus data";
+
         echo "<script>
-            alert('Password salah, gagal menghapus data');
             window.location.href='DataWarga_RT.php';
         </script>";
+        exit;
     } else {
-        // hapus warga
         db_delete($koneksi, "DELETE FROM user_warga WHERE nik_warga = ?", "s", [$nik]);
+        $_SESSION['notif'] = "Data warga berhasil dihapus.";
+
         echo "<script>
-            alert('Data warga berhasil dihapus!');
             window.location.href='DataWarga_RT.php';
         </script>";
+        exit;
     }
 }
 
 if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
-    $nik        = $_POST['nik_edit'];
-    $kolom      = $_POST['kolom_edit'];
+    $nik = $_POST['nik_edit'];
+    $kolom = $_POST['kolom_edit'];
     $nilai_baru = $_POST['nilai_baru'];
-    $pass       = $_POST['pass_edit'];
-    $sk         = $_SESSION['user_rt']['sk_rt'];
+    $pass = $_POST['pass_edit'];
+    $sk = $_SESSION['user_rt']['sk_rt'];
 
     // Validasi password RT
     $cekPass = db_select_single($koneksi, "SELECT password FROM user_rt WHERE sk_rt=?", "s", [$sk]);
@@ -61,47 +55,48 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
         if ($kolom === "NIK") {
             $cekNik = db_select_no_assoc(
                 $koneksi,
-                "SELECT * FROM user_warga WHERE nik_warga=?",
+                "SELECT nik_warga FROM user_warga WHERE nik_warga=?",
                 "s",
                 [$nilai_baru]
             );
 
             if (mysqli_num_rows($cekNik) > 0) {
+                $_SESSION['notif'] = "NIK sudah terdaftar, silahkan gunakan NIK lain.";
                 echo "<script>
-                        alert('NIK sudah digunakan warga lain! Update dibatalkan.');
-                        window.location.href='DataWarga_RT.php';
-                    </script>";
+                    window.location.href='DataWarga_RT.php';
+                </script>";
                 exit;
             }
         }
 
         // Map kolom dropdown → nama kolom di database
         $mapKolom = [
-            "Nama"              => "nama_warga",
-            "NIK"               => "nik_warga",
-            "Tanggal_lahir"     => "tanggal_lahir",
-            "Tempat_lahir"      => "tempat_lahir",
-            "Agama"             => "agama",
-            "Status Keluarga"   => "keluarga",
-            "Jenis Kelamin"     => "jenis_kelamin",
-            "NO KK"             => "no_kk",
-            "Alamat"            => "alamat",
-            "Pekerjaan"         => "pekerjaan",
-            "Pendidikan"        => "pendidikan",
+            "Nama" => "nama_warga",
+            "NIK" => "nik_warga",
+            "Tanggal_lahir" => "tanggal_lahir",
+            "Tempat_lahir" => "tempat_lahir",
+            "Agama" => "agama",
+            "Status Keluarga" => "keluarga",
+            "Jenis Kelamin" => "jenis_kelamin",
+            "NO KK" => "no_kk",
+            "Alamat" => "alamat",
+            "Pekerjaan" => "pekerjaan",
+            "Pendidikan" => "pendidikan",
             "Status Perkawinan" => "status_kawin"
         ];
 
         $kolom_db = $mapKolom[$kolom];
         db_update($koneksi, "UPDATE user_warga SET $kolom_db='$nilai_baru' WHERE nik_warga=?", "s", [$nik]);
+        $_SESSION['notif'] = "Data warga berhasil diperbarui.";
         echo "<script>
-                alert('Data berhasil diperbarui!');
                 window.location.href='DataWarga_RT.php';
               </script>";
     } else {
+        $_SESSION['notif'] = "Password salah, gagal memperbarui data.";
         echo "<script>
-                alert('Password salah!');
                 window.location.href='DataWarga_RT.php';
               </script>";
+        exit;
     }
 }
 
@@ -117,6 +112,7 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="DataWarga_RT.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../notif.css">
     <!-- SheetJS untuk Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
@@ -126,18 +122,13 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
 </head>
 
 <body>
-    <?php if ($show_welcome): ?>
-        <!-- Welcome Overlay -->
-        <div id="welcome-overlay">
-            <div class="welcome-content">
-                <h1 class="welcome-title">Selamat Datang, <?php echo htmlspecialchars($_SESSION['user_rt']['nama_rt']); ?>
-                </h1>
-                <div class="welcome-divider"></div>
-                <p class="welcome-subtitle">Sistem Informasi Tata Warga (SITAWAR)</p>
+    <div class="notifikasi">
+        <?php if ($notif): ?>
+            <div id="notif" class="notif">
+                <?= htmlspecialchars($notif) ?>
             </div>
-        </div>
-    <?php endif; ?>
-
+        <?php endif; ?>
+    </div>
     <aside class="sidebar">
         <div>
             <div class="sidebar-header">
@@ -198,7 +189,7 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
                 <?php
                 $no = 1;
                 while ($data = mysqli_fetch_assoc($result)) {
-                    ?>
+                ?>
                     <tr>
                         <td><?php echo $no++; ?></td>
                         <td><?php echo $data['nama_warga']; ?></td>
@@ -253,7 +244,7 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
                                 placeholder="Password...">
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <div class="btn btn-secondary" data-bs-dismiss="modal">Batal</div>
                             <button class="btn btn-green" id="btnValidasi" name="verifikasi">Verifikasi</button>
                         </div>
                     </form>
@@ -309,7 +300,7 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
                         </div>
 
                         <div class="modal-footer">
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <div class="btn btn-secondary" data-bs-dismiss="modal">Batal</div>
                             <button type="submit" name="update" class="btn btn-green" id="btnSimpanEdit">
                                 Simpan Perubahan
                             </button>
@@ -368,8 +359,18 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
             </div>
         </div>
     </div>
-
-
+    <?php if ($notif): ?>
+        <script>
+            // Hilangkan notifikasi otomatis setelah 4 detik
+            setTimeout(() => {
+                const notif = document.getElementById('notif');
+                if (notif) {
+                    notif.classList.add('hide');
+                    setTimeout(() => notif.remove(), 500);
+                }
+            }, 4000);
+        </script>
+    <?php endif; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let warga = [
@@ -383,29 +384,37 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
             mysqli_data_seek($result, 0);
             while ($data = mysqli_fetch_assoc($result)) {
                 echo "{ 
-                    nama_warga  : '" . $data['nama_warga'] . "',
-                    nik_warga   : '" . $data['nik_warga'] . "',
-                    keluarga    : '" . $data['keluarga'] . "',
-                    jenis_kelamin : '" . $data['jenis_kelamin'] . "',
-                    no_kk       : '" . $data['no_kk'] . "',
-                    tanggal_lahir : '" . $data['tanggal_lahir'] . "',
-                    usia         : hitungUsia('" . $data['tanggal_lahir'] . "'),
-                    tempat_lahir : '" . $data['tempat_lahir'] . "',
-                    agama        : '" . $data['agama'] . "',
-                    status_kawin : '" . $data['status_kawin'] . "',
-                    alamat       : '" . $data['alamat'] . "',
-                    email        : '" . $data['email'] . "', 
-                    pekerjaan    : '" . $data['pekerjaan'] . "',
-                    pendidikan   : '" . $data['pendidikan'] . "', 
-                    hp           : '" . $data['hp'] . "',
-                    'ibu_hamil' : '" . (isset($laporan[$data['nik_warga']]['ibu-hamil']) ? 1 : 0) . "',
-                    'warga_wafat' : '" . (isset($laporan[$data['nik_warga']]['warga-meninggal']) ? 1 : 0) . "'
+                    nama_warga  : " . json_encode($data['nama_warga'] ?: null) . ",
+                    nik_warga   : " . json_encode($data['nik_warga'] ?: null) . ",
+                    keluarga    : " . json_encode($data['keluarga'] ?: null) . ",
+                    jenis_kelamin : " . json_encode($data['jenis_kelamin'] ?: null) . ",
+                    no_kk       : " . json_encode($data['no_kk'] ?: null) . ",
+                    tanggal_lahir : " . json_encode($data['tanggal_lahir'] ?: null) . ",
+                    usia         : hitungUsia(" . json_encode($data['tanggal_lahir']) . "),
+                    tempat_lahir : " . json_encode($data['tempat_lahir'] ?: null) . ",
+                    agama        : " . json_encode($data['agama'] ?: null) . ",
+                    status_kawin : " . json_encode($data['status_kawin'] ?: null) . ",
+                    alamat       : " . json_encode($data['alamat'] ?: null) . ",
+                    email        : " . json_encode($data['email'] ?: null) . ", 
+                    pekerjaan    : " . json_encode($data['pekerjaan'] ?: null) . ",
+                    pendidikan   : " . json_encode($data['pendidikan'] ?: null) . ", 
+                    hp           : " . json_encode($data['hp'] ?: null) . ",
+                    ibu_hamil    : " . json_encode(isset($laporan[$data['nik_warga']]['ibu-hamil']) ? 'Hamil' : '-') . ",
+                    warga_wafat  : " . json_encode(strtolower($data['keluarga']) === 'wafat' ? 'Telah Wafat' : 'Hidup') . "
                 },";
             }
             ?>
         ];
         let selectedNik = null;
         let modeAksi = ""; // "hapus" atau "edit"
+
+        function tampilkan(val) {
+            if (val === null || val === undefined || val === '' || Number.isNaN(val)) {
+                return '-';
+            }
+            return val;
+        }
+
 
         function lihatDetail(nik) {
             selectedNik = nik;
@@ -415,18 +424,18 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
 
             const detailBody = document.getElementById("detailBody");
             detailBody.innerHTML = `
-                <tr><th>Nama</th><td>${data.nama_warga}</td></tr>
-                <tr><th>NIK</th><td>${data.nik_warga}</td></tr>
-                <tr><th>Tempat/Tanggal Lahir</th><td>${data.tempat_lahir}/${data.tanggal_lahir}</td></tr>
-                <tr><th>Agama</th><td>${data.agama}</td></tr>
-                <tr><th>Status keluarga</th><td>${data.keluarga}</td></tr>
-                <tr><th>Status Kawin</th><td>${data.status_kawin}</td></tr>
-                <tr><th>Jenis Kelamin</th><td>${data.jenis_kelamin}</td></tr>
-                <tr><th>No KK</th><td>${data.no_kk}</td></tr>
-                <tr><th>Alamat</th><td>${data.alamat}</td></tr>
-                <tr><th>Pekerjaan</th><td>${data.pekerjaan}</td></tr>
-                <tr><th>Pendidikan</th><td>${data.pendidikan}</td></tr>
-                <tr><th>NO TELEPON</th><td>${data.hp}</td></tr>
+                <tr><th>Nama</th><td>${tampilkan(data.nama_warga)}</td></tr>
+                <tr><th>NIK</th><td>${tampilkan(data.nik_warga)}</td></tr>
+                <tr><th>Tempat/Tanggal Lahir</th><td>${tampilkan(data.tempat_lahir)}/${tampilkan(data.tanggal_lahir)}</td></tr>
+                <tr><th>Agama</th><td>${tampilkan(data.agama)}</td></tr>
+                <tr><th>Status keluarga</th><td>${tampilkan(data.keluarga)}</td></tr>
+                <tr><th>Status Kawin</th><td>${tampilkan(data.status_kawin)}</td></tr>
+                <tr><th>Jenis Kelamin</th><td>${tampilkan(data.jenis_kelamin)}</td></tr>
+                <tr><th>No KK</th><td>${tampilkan(data.no_kk)}</td></tr>
+                <tr><th>Alamat</th><td>${tampilkan(data.alamat)}</td></tr>
+                <tr><th>Pekerjaan</th><td>${tampilkan(data.pekerjaan)}</td></tr>
+                <tr><th>Pendidikan</th><td>${tampilkan(data.pendidikan)}</td></tr>
+                <tr><th>NO TELEPON</th><td>${tampilkan(data.hp)}</td></tr>
             `;
 
             new bootstrap.Modal('#modalDetail').show();
@@ -463,11 +472,11 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
                     kolom.innerHTML += `
                         <tr>
                             <td>${start + index + 1}</td>
-                            <td>${data.nama_warga}</td>
-                            <td>${data.nik_warga}</td>
-                            <td>${data.keluarga}</td>
-                            <td>${data.jenis_kelamin}</td>
-                            <td>${data.no_kk}</td>
+                            <td>${tampilkan(data.nama_warga)}</td>
+                            <td>${tampilkan(data.nik_warga)}</td>
+                            <td>${tampilkan(data.keluarga)}</td>
+                            <td>${tampilkan(data.jenis_kelamin)}</td>
+                            <td>${tampilkan(data.no_kk)}</td>
                             <td><button class="btn btn-green btn-sm" onclick="lihatDetail('${data.nik_warga}')">Kelola Data</button></td>
                         </tr>
                     `;
@@ -525,7 +534,7 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
             tampilkanData(filteredData); // Re-render dengan data yang sama (filteredData sudah tersimpan di scope global)
         }
         // ==== Aksi Tombol ====
-        document.getElementById("btnHapus").onclick = function () {
+        document.getElementById("btnHapus").onclick = function() {
             modeAksi = "hapus";
 
             // masukkan nik warga ke hidden input
@@ -535,12 +544,12 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
         };
 
 
-        document.getElementById("btnPerbarui").onclick = function () {
+        document.getElementById("btnPerbarui").onclick = function() {
             document.getElementById("nikEditHidden").value = selectedNik;
             new bootstrap.Modal('#modalEdit').show();
         };
 
-        document.getElementById("selectKolom").addEventListener("change", function () {
+        document.getElementById("selectKolom").addEventListener("change", function() {
             let kolom = this.value;
             let container = document.getElementById("fieldContainer");
 
@@ -580,23 +589,50 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
         `;
             }
 
+            if (kolom === "Tanggal_lahir") {
+                container.innerHTML = `
+            <input type="date" class="form-control" name="nilai_baru" id="inputNilaiBaru">
+        `;
+            }
+
+            if (kolom === "Status Keluarga") {
+                container.innerHTML = `
+            <select class="form-select" name="nilai_baru">
+                <option>kepala keluarga</option>
+                <option>anggota keluarga</option>
+            </select>
+        `;
+            }
+
+            if (kolom === "Jenis Kelamin") {
+                container.innerHTML = `
+            <select class="form-select" name="nilai_baru">
+                <option>Laki-laki</option>
+                <option>Perempuan</option>
+            </select>
+        `;
+            }
+
+            if (kolom === "Status Perkawinan") {
+                container.innerHTML = `
+            <select class="form-select" name="nilai_baru">
+                <option>Belum Kawin</option>
+                <option>Kawin</option>
+                <option>Cerai Hidup</option>
+                <option>Cerai Mati</option>
+            </select>
+        `;
+            }
+
             if (kolom === "Pekerjaan") {
                 container.innerHTML = `
             <select class="form-select" name="nilai_baru">
                 <option>Pelajar / Mahasiswa</option>
-                <option>Karyawan Swasta</option>
-                <option>Wiraswasta</option>
-                <option>Buruh</option>
+                <option>Swasta</option>
+                <option>BUMN</option>
+                <option>Wirausaha</option>
                 <option>PNS</option>
-                <option>TNI</option>
-                <option>Polri</option>
-                <option>Guru</option>
-                <option>Perawat</option>
-                <option>Petani</option>
-                <option>Nelayan</option>
-                <option>Dokter</option>
-                <option>Ibu Rumah Tangga</option>
-                <option>Pensiunan</option>
+                <option>Tidak bekerja</option>
             </select>
         `;
             }
@@ -627,7 +663,18 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
         }
 
         function hitungUsia(tanggal) {
+            // Jika tanggal lahir tidak ada atau kosong, return null
+            if (!tanggal || tanggal === '' || tanggal === null || tanggal === undefined) {
+                return null;
+            }
+
             const tgl = new Date(tanggal);
+
+            // Cek apakah tanggal valid
+            if (isNaN(tgl.getTime())) {
+                return null;
+            }
+
             const today = new Date();
             let usia = today.getFullYear() - tgl.getFullYear();
             const bulan = today.getMonth() - tgl.getMonth();
@@ -641,40 +688,62 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
         let chartUsia = null;
 
         function tampilStatistik() {
-            // hitung usia
+
+            // hitung data
             const balita = warga.filter(w => w.usia <= 6).length;
             const remaja = warga.filter(w => w.usia >= 7 && w.usia <= 17).length;
             const dewasa = warga.filter(w => w.usia >= 18 && w.usia <= 59).length;
             const lansia = warga.filter(w => w.usia >= 60).length;
+            const wafat = warga.filter(w => w.keluarga === 'wafat').length;
+
+            const dataStat = [balita, remaja, dewasa, lansia, wafat];
+            const maxData = Math.max(...dataStat) + 1; // ⭐ batas atas
 
             const ctx = document.getElementById('chartUsia').getContext('2d');
 
-            // 🧨 Hapus chart lama jika ada
-            if (chartUsia !== null) {
+            // hapus chart lama
+            if (chartUsia) {
                 chartUsia.destroy();
             }
 
-            // buat chart baru
             chartUsia = new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
-                    labels: ['Balita', 'Anak-anak', 'Dewasa', 'Lansia'],
+                    labels: ['Balita', 'Anak-anak', 'Dewasa', 'Lansia', 'Wafat'],
                     datasets: [{
                         label: 'Jumlah Warga',
-                        data: [balita, remaja, dewasa, lansia],
-                        backgroundColor: ['#a2b17c', '#7b865a', '#5f6842', '#404733']
+                        data: dataStat,
+
+                        // gaya modern
+                        borderColor: '#4b5320',
+                        backgroundColor: 'rgba(75, 83, 32, 0.15)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#4b5320',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
                     }]
                 },
                 options: {
+                    responsive: true,
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            max: maxData, // ⭐ batas atas = nilai terbesar + 1
+                            ticks: {
+                                precision: 0 // ⛔ tanpa desimal
+                            }
                         }
                     }
                 }
             });
 
-            new bootstrap.Modal('#modalStatistik').show();
+            new bootstrap.Modal(
+                document.getElementById('modalStatistik')
+            ).show();
         }
 
         tampilkanData(warga);
@@ -687,29 +756,9 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
 
             let hasil = warga.map(row => {
                 let obj = {};
-
                 kolomDipilih.forEach(k => {
-                    let value = row[k];
-
-                    // KHUSUS kolom ibu_hamil
-                    if (k === 'ibu_hamil') {
-                        obj[k] = value == 1 ? 'Hamil' : 'Tidak Hamil';
-                    } else if (k === 'warga_wafat') {
-                        obj[k] = value == 1 ? 'Wafat' : 'Hidup';
-                    } else if (k == 'usia') {
-                        if (value === null || value === '' || Number.isNaN(value)) {
-                            obj[k] = '-';
-                        } else {
-                            obj[k] = value;
-                        }
-                    } else {
-                        // default kolom lain
-                        obj[k] = (value === null || value === '' || value === 0) ?
-                            '-' :
-                            value;
-                    }
+                    obj[k] = tampilkan(row[k]);
                 });
-
                 return obj;
             });
 
@@ -719,7 +768,6 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
 
             XLSX.writeFile(workbook, "data_warga_rt.xlsx");
         }
-
 
         function exportPDF() {
             const {
@@ -735,7 +783,7 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
             let head = [kolomDipilih.map(k => k.toUpperCase())];
 
             let body = warga.map(row => {
-                return kolomDipilih.map(k => row[k]);
+                return kolomDipilih.map(k => tampilkan(row[k]));
             });
 
             doc.text("DATA WARGA RT", 14, 15);
@@ -751,14 +799,6 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
 
         // Initialize view
         tampilkanData(warga);
-
-        <?php if (isset($_SESSION['pesan_sukses'])): ?>
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: '<?= $_SESSION['pesan_sukses']; unset($_SESSION['pesan_sukses']); ?>',
-            });
-        <?php endif; ?>
     </script>
 </body>
 

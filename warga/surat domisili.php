@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_warga'])) {
     exit();
 }
 $warga = $_SESSION['user_warga']['nik_warga'];
-$data = db_select_single($koneksi, "SELECT no_rt, no_rw, kecamatan, kelurahan, nama_warga, tempat_lahir, tanggal_lahir, jenis_kelamin, pekerjaan,, agama, status_kawin FROM user_warga WHERE nik_warga=?", "s", [$warga])
+$data = db_select_single($koneksi, "SELECT no_rt, no_rw, kecamatan, kelurahan, nama_warga, tempat_lahir, tanggal_lahir, jenis_kelamin, pekerjaan, agama, status_kawin FROM user_warga WHERE nik_warga=?", "s", [$warga])
 ?>
 
 <!DOCTYPE html>
@@ -49,10 +49,12 @@ $data = db_select_single($koneksi, "SELECT no_rt, no_rw, kecamatan, kelurahan, n
     .hading {
         text-align: center;
         width: 100%;
+        gap: 0;
+        padding-bottom: 20px;
     }
 
     .hading h2 {
-        margin: 10px 10px 20px 10px;
+        margin: 10px 10px 0px 10px;  
         
     }
 
@@ -128,7 +130,7 @@ $data = db_select_single($koneksi, "SELECT no_rt, no_rw, kecamatan, kelurahan, n
             <p>&nbsp;&nbsp;&nbsp;&nbsp;Yang bertanda tangan di bawah ini Ketua RT <span><?php echo htmlspecialchars($data['no_rt']); ?></span> RW <span><?php echo htmlspecialchars($data['no_rw']); ?></span>
                 Desa <span><?php echo htmlspecialchars($data['kelurahan']); ?></</span>
                 Kecamatan
-                <span><?php echo htmlspecialchars($data['kecamatan']); ?></span> KOTA <span>BATAM</span> Dengan ini menerangkan bahwa:
+                <span><?php echo htmlspecialchars($data['kecamatan']); ?></span> Kota <span>BATAM</span> Dengan ini menerangkan bahwa:
             </p>
         </div>
         <div class="tables">
@@ -186,8 +188,8 @@ $data = db_select_single($koneksi, "SELECT no_rt, no_rw, kecamatan, kelurahan, n
         </div>
         <div class="kata-penutup">
             <p>orang tersebut diatas, adalah benar benar warga kami dan berdomisili di RT <?php echo htmlspecialchars($data['no_rt']); ?></span> RW <span><?php echo htmlspecialchars($data['no_rw']); ?></span>
-                Desa <span><?php echo htmlspecialchars($data['kelurahan']); ?></span></h2><h2>Kecamatan <span><?php echo htmlspecialchars($data['kecamatan']); ?> Kota <span>BATAM</span>. Surat keterangan ini dibuat
-                sebagai kelenkapan penurusan surat <span>Keterangan Domisili</span><br><br> &nbsp;&nbsp;&nbsp;&nbsp;demikian surat
+                Desa <span><?php echo htmlspecialchars($data['kelurahan']); ?></span> Kecamatan <span><?php echo htmlspecialchars($data['kecamatan']); ?> Kota <span>BATAM</span>. Surat keterangan ini dibuat
+                sebagai kelengkapan pengurusan surat <span>Keterangan Domisili</span><br><br> &nbsp;&nbsp;&nbsp;&nbsp;demikian surat
                 keterangan ini kami buat, untuk
                 dapat digunakan sebagaimana semestinya.
             </p>

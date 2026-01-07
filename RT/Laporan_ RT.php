@@ -152,7 +152,7 @@ if (!isset($_SESSION['user_rt'])) {
 
                 if ($query) {
                     while ($data = mysqli_fetch_assoc($query)) {
-                        ?>
+                ?>
                         <tr>
                             <td><?= $no++ ?></td>
                             <td><?= htmlspecialchars($data['nama_pelapor']); ?></td>
@@ -171,7 +171,7 @@ if (!isset($_SESSION['user_rt'])) {
                                 </button>
                             </td>
                         </tr>
-                    <?php }
+                <?php }
                 } ?>
             </tbody>
         </table>
@@ -188,17 +188,54 @@ if (!isset($_SESSION['user_rt'])) {
         </div>
     </div>
 
-    <div class="popup" id="popup">
-        <div class="popup-content">
-            <h3>Rincian Laporan</h3>
-            <p><b>JENIS LAPORAN</b> <span id="popupjenis"></span></p>
-            <p><b>Nama Pelapor:</b> <span id="popupNama"></span></p>
-            <p><b>No. Telepon:</b> <span id="popupTelepon"></span></p>
-            <p><b>Blok Rumah yang Dilapor:</b> <span id="popupBlok"></span></p>
-            <p><b>Usia yang Dilapor:</b> <span id="popupUsia"></span></p>
-            <button class="close-btn" onclick="tutupPopup()">Tutup</button>
+    <div class="matcha-overlay" id="popup">
+        <div class="matcha-modal animate-in">
+
+            <!-- Header -->
+            <div class="matcha-header">
+                <div class="matcha-title">
+
+                    <h3>Rincian Laporan</h3>
+                </div>
+                <button class="matcha-close" onclick="tutupPopup()">✕</button>
+            </div>
+
+            <!-- Body -->
+            <div class="matcha-body">
+                <div class="detail-item">
+                    <span class="label">Jenis Laporan</span>
+                    <span class="value" id="popupjenis"></span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="label">Nama Pelapor</span>
+                    <span class="value" id="popupNama"></span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="label">No. Telepon</span>
+                    <span class="value" id="popupTelepon"></span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="label">Blok Rumah Dilapor</span>
+                    <span class="value" id="popupBlok"></span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="label">Usia Dilapor</span>
+                    <span class="value" id="popupUsia"></span>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="matcha-footer">
+                <button class="matcha-btn" onclick="tutupPopup()">Tutup</button>
+            </div>
+
         </div>
     </div>
+
 
 
     <script>

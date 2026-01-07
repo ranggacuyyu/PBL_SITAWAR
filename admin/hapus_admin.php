@@ -1,9 +1,10 @@
 <?php
 session_start();
-include "../koneksi.php";
+require_once '../koneksi.php';
+require_once '../db_helper.php';
 
-if (isset($_GET['sk_rt'])) {
-    $sk_rt = $_GET['sk_rt'];
+if (isset($_POST['sk_rt'])) {
+    $sk_rt    = $_POST['sk_rt'];
     $id_admin = $_SESSION['admin_user']['id_admin'];
 
     $query = "DELETE FROM user_rt WHERE sk_rt = ? AND admin = ?";

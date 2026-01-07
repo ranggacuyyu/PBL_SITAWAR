@@ -21,6 +21,13 @@ if (!$data) {
 
 $nama_pelapor = $data['nama_warga'];
 $nohp_pelapor = $data['hp'];
+
+$error_message = '';
+if (isset($_SESSION['error'])) {
+    $error_message = $_SESSION['error'];
+    echo "<script>alert('" . addslashes($error_message) . "');</script>";
+    unset($_SESSION['error']);
+}   
 ?>
 
 <!DOCTYPE html>
@@ -76,17 +83,15 @@ $nohp_pelapor = $data['hp'];
                     <div class="form-section">
                         <h2>Data Pelapor</h2>
 
-                        <input type="hidden" name="nik_pelapor" value="<?= $nik ?>">
-
+                        <input type="hidden" name="nik_pelapor" value="<?= htmlspecialchars($nik) ?>">
                         <div class="form-group">
                             <label>Nama </label>
-                            <input type="text" id="namaPelapor" name="nama_pelapor" value="<?= $nama_pelapor ?>"
+                            <input type="text" id="namaPelapor" name="nama_pelapor" value="<?= htmlspecialchars($nama_pelapor) ?>"
                                 readonly>
                         </div>
-
                         <div class="form-group">
                             <label>No Telephone </label>
-                            <input type="number" id="noTelephone" name="nohp_pelapor" value="<?= $nohp_pelapor ?>"
+                            <input type="number" id="noTelephone" name="nohp_pelapor" value="<?= htmlspecialchars($nohp_pelapor) ?>"
                                 readonly>
                         </div>
 
@@ -116,19 +121,19 @@ $nohp_pelapor = $data['hp'];
 
                         <div class="form-group">
                             <label>Nama Warga (Ibu Hamil)</label>
-                            <select id="namaIbuHamil" name="nama_subjek1" required>
+                            <select id="namaIbuHamil" name="nama_subjek1" >
                                 <option value="">Pilih Nama Warga...</option>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label>Umur</label>
-                            <input type="number" id="umurIbuHamil" name="umur_subjek1" readonly required>
+                            <input type="number" id="umurIbuHamil" name="umur_subjek1" readonly >
                         </div>
 
                         <div class="form-group">
                             <label>Blok Rumah</label>
-                            <input type="text" name="blok_subjek1" required>
+                            <input type="text" name="blok_subjek1" >
                         </div>
 
                         <button type="submit" class="submit-btn">Ajukan</button>
@@ -139,35 +144,31 @@ $nohp_pelapor = $data['hp'];
 
                         <div class="form-group">
                             <label>Nama Warga</label>
-                            <select id="namaWargaMeninggal" name="nama_subjek" required>
+                            <select id="namaWargaMeninggal" name="nama_subjek" >
                                 <option value="">Pilih Nama Warga...</option>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label>Umur</label>
-                            <input type="number" id="umurWargaMeninggal" name="umur_subjek" readonly required>
+                            <input type="number" id="umurWargaMeninggal" name="umur_subjek" readonly >
                         </div>
 
                         <div class="form-group">
                             <label>Tanggal Meninggal</label>
-                            <input type="date" name="tanggal_meninggal" required>
+                            <input type="date" name="tanggal_meninggal" >
                         </div>
 
                         <div class="form-group">
                             <label>Blok Rumah</label>
-                            <input type="text" name="blok_subjek" required>
+                            <input type="text" name="blok_subjek" >
                         </div>
 
                         <button type="submit" class="submit-btn">Ajukan</button>
                     </div>
-
+                </form>
             </div>
-            </form>
-
         </div>
-
-    </div>
     </div>
 
     <script>

@@ -13,24 +13,25 @@ if (!isset($_SESSION['welcome_shown'])) {
     $show_welcome = true;
     $_SESSION['welcome_shown'] = true;
 }
-
 $nik = $_SESSION['user_warga']['nik_warga'];
 
-/* bagian untuk mendapatkan foregin key warga */
 $rowRT = db_select_single($koneksi, "SELECT rt FROM user_warga WHERE nik_warga=?", "s", [$nik]);
 $skRT = $rowRT['rt'];
-
 $rowrt = db_select_single($koneksi, "SELECT nama_rt,nohp_rt FROM user_rt WHERE sk_rt =?", "s", [$skRT]);
-
-
 $data = db_select_single($koneksi, "SELECT 
 nik_warga, nama_warga, tanggal_lahir, jenis_kelamin, agama, status_kawin, no_kk, tempat_lahir, alamat, email, pekerjaan, pendidikan, hp, no_rt, no_rw, kecamatan, kelurahan, keluarga, foto_profile
 FROM user_warga WHERE nik_warga = ?", "s", [$nik]);
 
-if (!empty($_SESSION['flash'])) {
-    echo "<script>alert('$_SESSION[flash]');</script>";
-    unset($_SESSION['flash']);
-}
+$cek_kk_ktp = db_select_single(
+    $koneksi,
+    "SELECT id_dokumen,foto_kk, foto_ktp FROM dokumen_wargart WHERE id_warga = ?",
+    "s",
+    [$nik]
+);
+
+$notif = $_SESSION['notif'] ?? null;
+unset($_SESSION['notif']);
+
 ?>
 
 <!DOCTYPE html>
@@ -43,11 +44,106 @@ if (!empty($_SESSION['flash'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="data_Warga.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="../notif_warga.css">
     <!-- GSAP CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        /* === MATCHA MODAL STYLE === */
+        .matcha-modal .modal-content {
+            background: linear-gradient(135deg, #f5f9ed 0%, #e7f0da 100%);
+            border-radius: 18px;
+            border: none;
+            box-shadow: 0 25px 70px rgba(90, 120, 80, 0.35);
+            animation: matchaZoom 0.4s ease;
+        }
+
+        /* Header */
+        .matcha-modal .modal-header {
+            background: rgba(255, 255, 255, 0.55);
+            border-bottom: none;
+            padding: 1rem 1.25rem;
+        }
+
+        /* Title */
+        .matcha-modal .modal-title {
+            font-weight: 700;
+            color: #3f5532;
+        }
+
+        /* Body */
+        .matcha-modal .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Image Card */
+        .matcha-doc {
+            background: white;
+            border-radius: 16px;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .matcha-doc:hover {
+            transform: scale(1.02);
+        }
+
+        .matcha-doc img {
+            border-radius: 12px;
+            max-height: 350px;
+            object-fit: contain;
+        }
+
+        /* Footer */
+        .matcha-modal .modal-footer {
+            border-top: none;
+            padding: 1rem 1.25rem;
+        }
+
+        /* Buttons */
+        .btn-matcha {
+            background: linear-gradient(135deg, #6a7c4f, #8fa876);
+            color: white;
+            border-radius: 12px;
+            border: none;
+            padding: 8px 16px;
+        }
+
+        .btn-matcha:hover {
+            opacity: 0.9;
+        }
+
+        .btn-danger-soft {
+            background: #ffe3e3;
+            color: #c0392b;
+            border-radius: 12px;
+            border: none;
+        }
+
+        /* Animation */
+        @keyframes matchaZoom {
+            from {
+                opacity: 0;
+                transform: scale(0.85);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <div class="notifikasi">
+        <?php if ($notif): ?>
+            <div id="notif" class="notif">
+                <?= htmlspecialchars($notif) ?>
+            </div>
+        <?php endif; ?>
+    </div>
     <?php if ($show_welcome): ?>
         <!-- Welcome Overlay -->
         <div id="welcome-overlay">
@@ -109,9 +205,11 @@ if (!empty($_SESSION['flash'])) {
                 <hr>
                 <div class="text-start">
                     <p><i class="fas fa-calendar"></i> Tgl Lahir:
-                        <?php echo htmlspecialchars($data['tanggal_lahir']); ?></p>
+                        <?php echo htmlspecialchars($data['tanggal_lahir']); ?>
+                    </p>
                     <p><i class="fas fa-venus-mars"></i> Jenis Kelamin:
-                        <?php echo htmlspecialchars($data['jenis_kelamin']); ?></p>
+                        <?php echo htmlspecialchars($data['jenis_kelamin']); ?>
+                    </p>
                     <p><i class="fas fa-pray"></i> Agama: <?php echo htmlspecialchars($data['agama']); ?></p>
                     <p>Status Kawin: <span
                             class="badge bg-success badge-custom"><?php echo htmlspecialchars($data['status_kawin']); ?></span>
@@ -125,41 +223,53 @@ if (!empty($_SESSION['flash'])) {
                     <hr>
                     <!-- Upload KTP & KK -->
                     <div>
-                        <form action="aksi_datawarga/proses_upload.php" method="POST" enctype="multipart/form-data">
-                            <!-- Upload KK -->
-                            <div class="mb-2">
-                                <label id="label_kk" for="foto_kk" class="btn btn-outline-secondary upload-label w-100">
-                                    <i class="fas fa-upload"></i> Upload KK
-                                </label>
-                                <input type="file" id="foto_kk" name="foto_kk" accept="image/*" hidden required>
-                            </div>
-
-                            <!-- Upload KTP -->
-                            <div class="mb-2">
-                                <label id="label_ktp" for="foto_ktp"
-                                    class="btn btn-outline-secondary upload-label w-100">
-                                    <i class="fas fa-upload"></i> Upload KTP
-                                </label>
-                                <input type="file" id="foto_ktp" name="foto_ktp" accept="image/*" hidden required>
-                            </div>
-
-                            <!-- Panduan -->
+                        <?php if ($cek_kk_ktp) { ?>
                             <div class="alert alert-info mt-3">
-                                <strong>Syarat Upload Dokumen:</strong>
-                                <ul class="mb-0">
-                                    <li>Format file <b>JPG / PNG</b></li>
-                                    <li>Ukuran maksimal <b>2 MB</b></li>
-                                    <li>Foto harus <b>jelas, tidak buram, tidak terpotong</b></li>
-                                    <li>Data harus <b>sesuai dengan biodata warga</b></li>
-                                </ul>
-                            </div>
-
-                            <button type="submit" class="btn btn-success w-100 mt-2" id="kirimDokumenBtn">
-                                <i class="fas fa-paper-plane"></i> Kirim Dokumen
+                                    <strong>Anda telah mengunggah foto KK dan KTP:</strong>
+                                    <ul class="mb-0">
+                                        <li>tekan tombol untuk melihat dan memperbarui foto KK dan KTP</li>
+                                    </ul>
+                                </div>
+                            <button class="btn btn-matcha w-100" data-bs-toggle="modal" data-bs-target="#modalDokumen">
+                                <i class="fas fa-eye"></i> Lihat Dokumen
                             </button>
 
-                        </form>
+                        <?php } elseif (!$cek_kk_ktp) { ?>
+                            <form action="aksi_datawarga/proses_upload.php" method="POST" enctype="multipart/form-data">
+                                <!-- Upload KK -->
+                                <div class="mb-2">
+                                    <label id="label_kk" for="foto_kk" class="btn btn-outline-secondary upload-label w-100">
+                                        <i class="fas fa-upload"></i> Upload KK
+                                    </label>
+                                    <input type="file" id="foto_kk" name="foto_kk" accept="image/*" hidden required>
+                                </div>
 
+                                <!-- Upload KTP -->
+                                <div class="mb-2">
+                                    <label id="label_ktp" for="foto_ktp"
+                                        class="btn btn-outline-secondary upload-label w-100">
+                                        <i class="fas fa-upload"></i> Upload KTP
+                                    </label>
+                                    <input type="file" id="foto_ktp" name="foto_ktp" accept="image/*" hidden required>
+                                </div>
+
+                                <!-- Panduan -->
+                                <div class="alert alert-info mt-3">
+                                    <strong>Syarat Upload Dokumen:</strong>
+                                    <ul class="mb-0">
+                                        <li>Format file <b>JPG / PNG</b></li>
+                                        <li>Ukuran maksimal <b>2 MB</b></li>
+                                        <li>Foto harus <b>jelas, tidak buram, tidak terpotong</b></li>
+                                        <li>Data harus <b>sesuai dengan biodata warga</b></li>
+                                    </ul>
+                                </div>
+
+                                <button type="submit" class="btn btn-success w-100 mt-2" id="kirimDokumenBtn">
+                                    <i class="fas fa-paper-plane"></i> Kirim Dokumen
+                                </button>
+
+                            </form>
+                        <?php } ?>
 
                     </div>
 
@@ -179,7 +289,8 @@ if (!empty($_SESSION['flash'])) {
                             <tr>
                                 <th>Tempat Tanggal Lahir</th>
                                 <td><?php echo htmlspecialchars($data['tempat_lahir']); ?> /
-                                    <?php echo htmlspecialchars($data['tanggal_lahir']); ?></td>
+                                    <?php echo htmlspecialchars($data['tanggal_lahir']); ?>
+                                </td>
                             </tr>
                             <tr>
                                 <th>Alamat</th>
@@ -212,7 +323,8 @@ if (!empty($_SESSION['flash'])) {
                             <tr>
                                 <th>RT/RW</th>
                                 <td><?php echo htmlspecialchars($data['no_rt']); ?> /
-                                    <?php echo htmlspecialchars($data['no_rw']); ?></td>
+                                    <?php echo htmlspecialchars($data['no_rw']); ?>
+                                </td>
                             </tr>
                             <tr>
                                 <th>Nama RT</th>
@@ -252,7 +364,7 @@ if (!empty($_SESSION['flash'])) {
                 </div>
 
                 <div class="modal-body">
-                    <form id="formProfil">
+                    <form action="proses_ubah_profil.php" method="POST">
                         <input type="hidden" name="nik" value="<?php echo $data['nik_warga']; ?>">
 
                         <div class="mb-3">
@@ -301,15 +413,76 @@ if (!empty($_SESSION['flash'])) {
             </div>
         </div>
     </div>
+    <div class="modal fade matcha-modal" id="modalDokumen" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-image"></i> Foto KK & KTP anda
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <!-- KK -->
+                    <div class="matcha-doc">
+                        <p class="fw-bold text-success text-center mb-2">
+                            Kartu Keluarga
+                        </p>
+                        <img src="view_file_warga.php?id=<?= $cek_kk_ktp['id_dokumen']; ?>&type=kk"
+                            class="img-fluid w-100" alt="Foto KK">
+                    </div>
+
+                    <!-- KTP -->
+                    <div class="matcha-doc">
+                        <p class="fw-bold text-success text-center mb-2">
+                            KTP
+                        </p>
+                        <img src="view_file_warga.php?id=<?= $cek_kk_ktp['id_dokumen']; ?>&type=ktp"
+                            class="img-fluid w-100" alt="Foto KTP">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer d-flex justify-content-between">
+
+                    <form action="aksi_datawarga/hapus_dokumen.php" method="POST"
+                        onsubmit="return confirm('Yakin ingin menghapus dokumen ini?')">
+                        <input type="hidden" name="id_warga" value="<?= $data['nik_warga']; ?>">
+                        <button type="submit" class="btn btn-danger-soft">
+                            <i class="fas fa-trash"></i> Hapus Dokumen
+                        </button>
+                    </form>
+
+                    <button type="button" class="btn btn-matcha" data-bs-dismiss="modal">
+                        Tutup
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 
-
-
-
+    <?php if ($notif): ?>
+        <script>
+            // Hilangkan notifikasi otomatis setelah 4 detik
+            setTimeout(() => {
+                const notif = document.getElementById('notif');
+                if (notif) {
+                    notif.classList.add('hide');
+                    setTimeout(() => notif.remove(), 500);
+                }
+            }, 4000);
+        </script>
+    <?php endif; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             // ... (Kode JavaScript untuk Modal Anda di sini) ...
         });
 
@@ -324,7 +497,7 @@ if (!empty($_SESSION['flash'])) {
         updateClock();
     </script>
     <script>
-        document.getElementById("foto_kk").addEventListener("change", function () {
+        document.getElementById("foto_kk").addEventListener("change", function() {
             if (this.files.length > 0) {
                 document.getElementById("label_kk").innerHTML =
                     '<i class="fas fa-check-circle text-success"></i> ' + this.files[0].name;
@@ -333,7 +506,7 @@ if (!empty($_SESSION['flash'])) {
             }
         });
 
-        document.getElementById("foto_ktp").addEventListener("change", function () {
+        document.getElementById("foto_ktp").addEventListener("change", function() {
             if (this.files.length > 0) {
                 document.getElementById("label_ktp").innerHTML =
                     '<i class="fas fa-check-circle text-success"></i> ' + this.files[0].name;
@@ -342,7 +515,7 @@ if (!empty($_SESSION['flash'])) {
             }
         });
 
-        document.getElementById("kirimDokumenBtn").addEventListener("click", function (e) {
+        document.getElementById("kirimDokumenBtn").addEventListener("click", function(e) {
             if (!document.getElementById("foto_kk").files.length ||
                 !document.getElementById("foto_ktp").files.length) {
 
@@ -351,32 +524,14 @@ if (!empty($_SESSION['flash'])) {
                 return;
             }
         });
-        document.getElementById("formProfil").addEventListener("submit", function (e) {
-            e.preventDefault();
 
-            let formData = new FormData(this);
-
-            fetch("proses_ubah_profil.php", {
-                method: "POST",
-                body: formData
-            })
-                .then(res => res.text())
-                .then(data => {
-                    alert(data);
-
-                    let modal = bootstrap.Modal.getInstance(document.getElementById('modalProfil'));
-                    modal.hide();
-
-                    location.reload(); // refresh data baru
-                });
-        });
 
         // Upload Foto Profile Warga
         const fileAvatarWarga = document.getElementById('fileAvatarWarga');
         const fotoProfilWarga = document.getElementById('fotoProfilWarga');
         const uploadStatusWarga = document.getElementById('uploadStatusWarga');
 
-        fileAvatarWarga.addEventListener('change', function (e) {
+        fileAvatarWarga.addEventListener('change', function(e) {
             const file = this.files[0];
             if (!file) return;
 
@@ -399,7 +554,7 @@ if (!empty($_SESSION['flash'])) {
 
             // Show preview
             const reader = new FileReader();
-            reader.onload = function (event) {
+            reader.onload = function(event) {
                 fotoProfilWarga.src = event.target.result;
             };
             reader.readAsDataURL(file);
@@ -412,9 +567,9 @@ if (!empty($_SESSION['flash'])) {
             uploadStatusWarga.textContent = 'Mengupload...';
 
             fetch('upload_foto_profile_warga.php', {
-                method: 'POST',
-                body: formData
-            })
+                    method: 'POST',
+                    body: formData
+                })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -488,11 +643,11 @@ if (!empty($_SESSION['flash'])) {
                 });
 
                 tl.to(".welcome-title", {
-                    duration: 1,
-                    y: 0,
-                    opacity: 1,
-                    ease: "back.out(1.7)"
-                })
+                        duration: 1,
+                        y: 0,
+                        opacity: 1,
+                        ease: "back.out(1.7)"
+                    })
                     .to(".welcome-divider", {
                         duration: 0.8,
                         width: "50%",

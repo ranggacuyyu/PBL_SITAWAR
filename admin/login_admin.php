@@ -1,6 +1,7 @@
 <?php
 session_start();
-include "../koneksi.php";
+$notif = $_SESSION['notif'] ?? null;
+unset($_SESSION['notif']);
 ?>
 
 <!DOCTYPE html>
@@ -12,40 +13,72 @@ include "../koneksi.php";
   <title>Login Admin</title>
   <link rel="stylesheet" href="login_admin.css?v=<?php echo time(); ?>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <style>
+    @keyframes fadeDown {
+      from {
+        opacity: 0;
+        transform: translateY(-15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      to {
+        opacity: 0;
+        transform: translateY(-25px);
+      }
+    }
+
+    .notif {
+      background: #efffe5ff;
+      color: #3e5f20ff;
+      padding: 10px 12px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border-left: 5px solid #66b46bff;
+      opacity: 0;
+      transform: translateY(-15px);
+
+      /* animasi */
+      animation: fadeDown 0.6s ease forwards;
+    }
+
+    .notif.hide {
+      opacity: 0;
+      transform: translateY(-10px);
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    .notifikasi {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+    }
+  </style>
 </head>
 
 <body>
-  <?php
-  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username']);
-    $password = trim(($_POST['password']));
-
-    if (empty($username) || empty($password)) {
-      echo '<script>alert("Nama atau password tidak boleh diisi kosong")</script>';
-    }
-
-    $sql = "SELECT id_admin, password_admin FROM admin_user where nama =?";
-    $stmt = mysqli_prepare($koneksi, $sql);
-    mysqli_stmt_bind_param($stmt, "s", $username, );
-    mysqli_stmt_execute($stmt);
-    $dataadmin = mysqli_stmt_get_result($stmt);
-    $query = mysqli_fetch_assoc($dataadmin);
-
-    if (!$query || !password_verify($password, $query['password_admin'])) {
-      echo '<script>alert("gagal login")</script>';
-    } else {
-      $_SESSION['admin_user'] = $query;
-      echo
-        '<script> alert("selamat datang");
-         window.location.href="dashborad_admin.php";
-        </script>';
-    }
-  }
-  ?>
   <!-- LOGIN PAGE -->
+  <div class="notifikasi">
+    <?php if ($notif): ?>
+      <div id="notif" class="notif">
+        <?= htmlspecialchars($notif) ?>
+      </div>
+    <?php endif; ?>
+  </div>
   <div class="login-container">
     <h2>Login Admin</h2>
-    <form id="loginForm" method="POST">
+    <form id="loginForm" method="POST" action="proses_API/proses_login.php">
       <label>Username</label>
       <input type="text" placeholder="Masukkan username" name="username" required>
       <label>Kata Sandi</label>
@@ -57,6 +90,18 @@ include "../koneksi.php";
     </form>
   </div>
 
+  <?php if ($notif): ?>
+    <script>
+      // Hilangkan notifikasi otomatis setelah 4 detik
+      setTimeout(() => {
+        const notif = document.getElementById('notif');
+        if (notif) {
+          notif.classList.add('hide');
+          setTimeout(() => notif.remove(), 500);
+        }
+      }, 4000);
+    </script>
+  <?php endif; ?>
   <script>
     //fungsi tombol mata
     document.querySelectorAll(".toggle-eye").forEach(eye => {

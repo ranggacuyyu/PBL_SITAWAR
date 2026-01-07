@@ -1,11 +1,11 @@
 <?php
 session_start();
-require_once '../koneksi.php';
-require_once '../db_helper.php';
+require_once '../../koneksi.php';
+require_once '../../db_helper.php';
 
 function redirect($msg) {
     $_SESSION['flash'] = $msg;
-    header("Location: data_Warga.php");
+    header("Location: ../data_Warga.php");
     exit();
 }
 // 1. VALIDASI LOGIN
@@ -49,8 +49,8 @@ if ($cekKTP !== true) redirect($cekKTP);
 // ===============================
 // 5. FOLDER
 // ===============================
-$folderKK  = "../uploads/kk/";
-$folderKTP = "../uploads/ktp/";
+$folderKK  = "../../uploads/kk/";
+$folderKTP = "../../uploads/ktp/";
 
 if (!is_dir($folderKK))  mkdir($folderKK, 0755, true);
 if (!is_dir($folderKTP)) mkdir($folderKTP, 0755, true);
@@ -74,36 +74,32 @@ if (
 // ===============================
 // 8. CEK DATA LAMA
 // ===============================
-$cek = $koneksi->prepare("SELECT id_dokumen, foto_kk, foto_ktp FROM dokumen_wargart WHERE id_warga=?");
-$cek->bind_param("s", $id_warga);
-$cek->execute();
-$old = $cek->get_result()->fetch_assoc();
+$old = db_select_single($koneksi, 
+"SELECT id_dokumen, foto_kk, foto_ktp FROM dokumen_wargart WHERE id_warga=?", 
+"s", 
+[$id_warga]);
 
 if ($old) {
 
     @unlink($folderKK . $old['foto_kk']);
     @unlink($folderKTP . $old['foto_ktp']);
 
-    $update = $koneksi->prepare("
-        UPDATE dokumen_wargart SET 
+    $update_query = "UPDATE dokumen_wargart SET 
         foto_kk=?, foto_ktp=?, status_verifikasi='pending',
         catatan_penolakan=NULL, tanggal_upload=CURDATE()
-        WHERE id_warga=?
-    ");
-
-    $update->bind_param("sss", $namaKK, $namaKTP, $id_warga);
-    $update->execute();
+        WHERE id_warga=?";
+    db_update($koneksi, 
+        $update_query, 
+        "sss", 
+        [$namaKK, $namaKTP, $id_warga]
+    );
 
 } else {
-
-    $insert = $koneksi->prepare("
-        INSERT INTO dokumen_wargart 
+    $insert = "INSERT INTO dokumen_wargart 
         (id_warga, foto_kk, foto_ktp, status_verifikasi, tanggal_upload, jenis_dokumen)
-        VALUES (?, ?, ?, 'pending', CURDATE(), 'pengantar_rt')
-    ");
+        VALUES (?, ?, ?, 'pending', CURDATE(), 'pengantar_rt')";
 
-    $insert->bind_param("sss", $id_warga, $namaKK, $namaKTP);
-    $insert->execute();
+    db_insert($koneksi, $insert, "sss", [$id_warga, $namaKK, $namaKTP]);
 }
 
 redirect("✅ Upload KK & KTP berhasil!");

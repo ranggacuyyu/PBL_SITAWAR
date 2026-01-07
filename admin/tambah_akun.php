@@ -1,7 +1,8 @@
 <?php
 session_start();
-include "../koneksi.php";
-mysqli_report(MYSQLI_REPORT_OFF);
+require_once '../koneksi.php';
+require_once '../db_helper.php';
+
 if (!isset($_SESSION['admin_user'])) {
     header("Location: login_admin.php");
     exit();
@@ -25,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nama_rt  = trim($_POST["nama"]);
     $nohp_rt  = trim($_POST["nohp"]);
     $sk_rt    = trim($_POST["sk"]);
-    $password_hash = password_hash($sk_rt, PASSWORD_DEFAULT);
 
     if ($nik_rt && $no_rt && $no_rw && $nama_rt && $nohp_rt && $sk_rt) {
         if (!preg_match('/^[0-9]{16}$/', $nik_rt)) {
@@ -33,47 +33,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } elseif (!preg_match('/^[0-9]{10,13}$/', $nohp_rt)) {
             $error = "No HP tidak valid passtikan angka lebih dari 10 dan kurang dari 13!";
         } else {
-            // Cek duplikat NIK
-            $stmt_cek = $koneksi->prepare("SELECT sk_rt FROM user_rt WHERE nik_rt = ?");
-            $stmt_cek->bind_param("s", $nik_rt);
-            $stmt_cek->execute();
-            $result_cek = $stmt_cek->get_result();
-
-            if ($result_cek->num_rows > 0) {
+            $sk_cek = db_select_no_assoc($koneksi, "SELECT sk_rt FROM user_rt WHERE sk_rt = ?", "s", [$sk_rt]);
+            $nik_cek = db_select_no_assoc($koneksi, "SELECT nik_rt FROM user_rt WHERE nik_rt = ?", "s", [$nik_rt]);
+            
+            if ($sk_cek && $sk_cek->num_rows > 0) {
+                $error = "SK RT sudah terdaftar di sistem!";
+            } elseif ($nik_cek && $nik_cek->num_rows > 0) {
                 $error = "NIK RT sudah terdaftar di sistem!";
-                $stmt_cek->close();
             } else {
-                $stmt_cek->close();
-
-                // 👇 TAMBAHKAN CEK DUPLIKAT SK DI SINI
-                // Cek duplikat SK RT
-                $stmt_cek_sk = $koneksi->prepare("SELECT nik_rt FROM user_rt WHERE sk_rt = ?");
-                $stmt_cek_sk->bind_param("s", $sk_rt);
-                $stmt_cek_sk->execute();
-                $result_cek_sk = $stmt_cek_sk->get_result();
-
-                if ($result_cek_sk->num_rows > 0) {
-                    $error = "SK RT sudah terdaftar di sistem!";
-                    $stmt_cek_sk->close();
+                $password_hash = password_hash($sk_rt, PASSWORD_DEFAULT);
+                $insert_data_rt = db_insert($koneksi, 
+                    "INSERT INTO user_rt (sk_rt, nik_rt, no_rt, no_rw, nama_rt, nohp_rt, admin, password) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
+                    "ssssssss", 
+                    [$sk_rt, $nik_rt, $no_rt, $no_rw, $nama_rt, $nohp_rt, $id_admin, $password_hash]
+                );
+                if ($insert_data_rt) {
+                    $sukses = "Akun RT berhasil ditambahkan!";
+                    // Reset form values
+                    $nik_rt  = "";
+                    $nama_rt = "";
+                    $no_rt   = "";
+                    $no_rw   = "";
+                    $nohp_rt = "";
+                    $sk_rt   = "";
                 } else {
-                    $stmt_cek_sk->close();
-
-                    // Hash password
-                    $password_hash = password_hash($sk_rt, PASSWORD_DEFAULT);
-
-                    // Insert dengan prepared statement
-                    $stmt = $koneksi->prepare("INSERT INTO user_rt(sk_rt, nik_rt, no_rt, no_rw, nama_rt, nohp_rt, admin, password) 
-                                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                    $stmt->bind_param("ssssssss", $sk_rt, $nik_rt, $no_rt, $no_rw, $nama_rt, $nohp_rt, $id_admin, $password_hash);
-
-                    if ($stmt->execute()) {
-                        $sukses = "Data berhasil ditambahkan!";
-                        // Reset form
-                        $nik_rt = $nama_rt = $no_rt = $no_rw = $nohp_rt = $sk_rt =  "";
-                    } else {
-                        $error = "Data gagal ditambahkan! Error: " . $stmt->error;
-                    }
-                    $stmt->close();
+                    $error = "Gagal menambahkan akun RT. Silakan coba lagi.";   
                 }
             }
         }

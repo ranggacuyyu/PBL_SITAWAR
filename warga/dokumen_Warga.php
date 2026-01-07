@@ -7,8 +7,8 @@ if (!isset($_SESSION['user_warga'])) {
   header("Location: ../LoginRTWARGA.php");
   exit();
 }
-$nik_login = $_SESSION['user_warga']['nik_warga'];
 
+$nik_login = $_SESSION['user_warga']['nik_warga'];
 $row = db_select_single($koneksi, 
 "SELECT nama_warga, nik_warga, rt, hp, tanggal_lahir, alamat, agama, jenis_kelamin, status_kawin, no_kk, no_rt, no_rw, kelurahan, kecamatan, dokumen FROM user_warga WHERE nik_warga =?", 
 "s", 
@@ -38,18 +38,11 @@ if ($no_rt && $no_rw) {
   $rt_rw = $no_rt . "/" . $no_rw;
 }
 
-$kelurahan = $row['kelurahan'] ?? "";
-$kecamatan = $row['kecamatan'] ?? "";
-$kota = "BATAM";
-
 $result_dokumen    = db_select_no_assoc($koneksi, "SELECT * FROM dokumen WHERE warga=? ORDER BY tanggal DESC", "s", [$nik_login]);
 $cekAktif_domisili = db_select_no_assoc($koneksi,"SELECT * FROM dokumen 
 WHERE warga=? AND status IN ('pending','valid') AND jenis_dokumen='domisili'", "s", [$nik_login]);
-
-$cekAktif_laporan = db_
-$cekAktif_laporan = mysqli_query($koneksi, "SELECT * FROM dokumen 
-WHERE warga='$nik_login' 
-AND status IN ('pending','valid') AND jenis_dokumen='Pengantar RT'");
+$cekAktif_laporan  = db_select_no_assoc($koneksi, "SELECT * FROM dokumen 
+WHERE warga=? AND status IN ('pending','valid') AND jenis_dokumen='Pengantar RT'", "s", [$nik_login]);
 
 $adaPengajuan_domisili = mysqli_num_rows($cekAktif_domisili);
 $adaPengajuan_laporan = mysqli_num_rows($cekAktif_laporan);
@@ -251,29 +244,23 @@ $adaPengajuan_laporan = mysqli_num_rows($cekAktif_laporan);
             <?php
             if ($result_dokumen && mysqli_num_rows($result_dokumen) > 0) {
               $no = 1;
-              while ($row_dok = mysqli_fetch_assoc($result_dokumen)) {
-                $nama_warga = htmlspecialchars($row_dok['nama_warga'] ?? '-');
+              while ($row_dok  = mysqli_fetch_assoc($result_dokumen)) {
+                $nama_warga    = htmlspecialchars($row_dok['nama_warga'] ?? '-');
                 $jenis_dokumen = htmlspecialchars($row_dok['jenis_dokumen'] ?? 'Surat Keterangan');
-                $tanggal = htmlspecialchars($row_dok['tanggal'] ?? '-');
-                $id_dokumen = htmlspecialchars($row_dok['id_dokumen'] ?? '');
-
-                $status = "Diproses"; // Default status
-                $validasi = "-"; // Default belum validasi
-
-                if ($row_dok['status'] == 'setuju') {
-                  $status = "Selesai";
-                } elseif ($row_dok['status'] == 'pending') {
-                  $status = "Diproses";
-                } elseif ($row_dok['status'] == 'tolak') {
-                  $status = "Ditolak";
-                }
+                $tanggal       = htmlspecialchars($row_dok['tanggal'] ?? '-');
+                $id_dokumen    = htmlspecialchars($row_dok['id_dokumen'] ?? '');
+                $status        = "Diproses"; // Default status
+                $validasi      = "-"; // Default belum validasi
 
                 if ($row_dok['status'] == 'setuju') {
+                  $status   = "Selesai";
                   $validasi = "Valid";
-                } elseif ($row_dok['status'] == 'tolak') {
-                  $validasi = "Tidak Valid";
-                } else {
+                } elseif ($row_dok['status'] == 'pending') {
+                  $status   = "Diproses";
                   $validasi = "Belum Validasi";
+                } elseif ($row_dok['status'] == 'tolak') {
+                  $status   = "Ditolak";
+                  $validasi = "Tidak Valid";
                 }
 
                 echo "<tr>";
@@ -297,11 +284,11 @@ $adaPengajuan_laporan = mysqli_num_rows($cekAktif_laporan);
   </main>
 
   <script>
-    const openModalDomisili = document.getElementById('openDomisili');
-    const openModalPengantar = document.getElementById('openPengantar');
-    const popUpDomisili = document.querySelector('.pop-up11');
-    const popUpPengantar = document.querySelector('.pop-up-pengantar');
-    const closeModalDomisili = document.getElementById('closeModalDomisili');
+    const openModalDomisili   = document.getElementById('openDomisili');
+    const openModalPengantar  = document.getElementById('openPengantar');
+    const popUpDomisili       = document.querySelector('.pop-up11');
+    const popUpPengantar      = document.querySelector('.pop-up-pengantar');
+    const closeModalDomisili  = document.getElementById('closeModalDomisili');
     const closeModalPengantar = document.getElementById('closeModalPengantar');
 
     // ✅ CEK DULU JIKA BUTTON ADA

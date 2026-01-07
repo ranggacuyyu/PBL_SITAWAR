@@ -380,68 +380,84 @@ function db_sanitize($data)
 
 /**
  * Helper untuk membuat link pagination Bootstrap 5
- * 
- * @param int $total_data Total seluruh data
- * @param int $per_page Jumlah data per halaman
- * @param int $current_page Halaman saat ini 
- * @param string $url URL dasar (contoh: 'Dokumen_RT.php?')
- * @return string HTML pagination
  */
 function db_pagination_links($total_data, $per_page, $current_page, $url)
 {
-    if ($total_data <= 0)
+    if ($total_data <= 0 || $per_page <= 0) {
         return "";
+    }
 
-    $total_page = ceil($total_data / $per_page);
-    if ($total_page <= 1)
+    $total_page = (int) ceil($total_data / $per_page);
+    if ($total_page <= 1) {
         return "";
+    }
 
-    // Pastikan URL memiliki parameter separator yang benar
-    $separator = (strpos($url, '?') !== false) ? '&' : '?';
+    // Validasi halaman aktif
+    $current_page = max(1, min($current_page, $total_page));
+
+    // Pisahkan URL & query
+    $parsed = parse_url($url);
+    $base_url = $parsed['path'] ?? '';
+    parse_str($parsed['query'] ?? '', $params);
 
     // HTML output
     $output = '<nav aria-label="Page navigation"><ul class="pagination pagination-sm justify-content-end">';
 
-    // Tombol Previous
+    // Helper pembuat link
+    $build_link = function ($page) use ($base_url, $params) {
+        $params['hal'] = $page;
+        return htmlspecialchars($base_url . '?' . http_build_query($params));
+    };
+
+    // Previous
     if ($current_page > 1) {
-        $prev = $current_page - 1;
-        $output .= '<li class="page-item"><a class="page-link" href="' . $url . $separator . 'hal=' . $prev . '">Previous</a></li>';
+        $output .= '<li class="page-item">
+            <a class="page-link" href="' . $build_link($current_page - 1) . '" rel="prev">Previous</a>
+        </li>';
     } else {
         $output .= '<li class="page-item disabled"><span class="page-link">Previous</span></li>';
     }
 
-    // Logic number links (tampilkan sekitar current page)
-    $start_number = ($current_page > 3) ? $current_page - 2 : 1;
-    $end_number = ($current_page < ($total_page - 2)) ? $current_page + 2 : $total_page;
+    // Range halaman
+    $start = max(1, $current_page - 2);
+    $end   = min($total_page, $current_page + 2);
 
-    if ($start_number > 1) {
-        $output .= '<li class="page-item"><a class="page-link" href="' . $url . $separator . 'hal=1">1</a></li>';
-        if ($start_number > 2) {
-            $output .= '<li class="page-item disabled"><span class="page-link">...</span></li>';
+    if ($start > 1) {
+        $output .= '<li class="page-item"><a class="page-link" href="' . $build_link(1) . '">1</a></li>';
+        if ($start > 2) {
+            $output .= '<li class="page-item disabled"><span class="page-link">…</span></li>';
         }
     }
 
-    for ($i = $start_number; $i <= $end_number; $i++) {
-        $active = ($i == $current_page) ? 'active' : '';
-        $output .= '<li class="page-item ' . $active . '"><a class="page-link" href="' . $url . $separator . 'hal=' . $i . '">' . $i . '</a></li>';
-    }
-
-    if ($end_number < $total_page) {
-        if ($end_number < ($total_page - 1)) {
-            $output .= '<li class="page-item disabled"><span class="page-link">...</span></li>';
+    for ($i = $start; $i <= $end; $i++) {
+        if ($i == $current_page) {
+            $output .= '<li class="page-item active" aria-current="page">
+                <span class="page-link">' . $i . '</span>
+            </li>';
+        } else {
+            $output .= '<li class="page-item">
+                <a class="page-link" href="' . $build_link($i) . '">' . $i . '</a>
+            </li>';
         }
-        $output .= '<li class="page-item"><a class="page-link" href="' . $url . $separator . 'hal=' . $total_page . '">' . $total_page . '</a></li>';
     }
 
-    // Tombol Next
+    if ($end < $total_page) {
+        if ($end < $total_page - 1) {
+            $output .= '<li class="page-item disabled"><span class="page-link">…</span></li>';
+        }
+        $output .= '<li class="page-item"><a class="page-link" href="' . $build_link($total_page) . '">' . $total_page . '</a></li>';
+    }
+
+    // Next
     if ($current_page < $total_page) {
-        $next = $current_page + 1;
-        $output .= '<li class="page-item"><a class="page-link" href="' . $url . $separator . 'hal=' . $next . '">Next</a></li>';
+        $output .= '<li class="page-item">
+            <a class="page-link" href="' . $build_link($current_page + 1) . '" rel="next">Next</a>
+        </li>';
     } else {
         $output .= '<li class="page-item disabled"><span class="page-link">Next</span></li>';
     }
 
     $output .= '</ul></nav>';
+
     return $output;
 }
-?>

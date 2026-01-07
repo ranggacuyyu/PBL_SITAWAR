@@ -108,12 +108,26 @@ body {
 
 .overlay {
     position: fixed;
+    inset: 0;
+
     display: none;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
+
     background-color: #292e1fa8;
+
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+/* tampilkan overlay */
+.overlay.show {
+    display: flex;
+}
+
+/* animasi fade */
+.overlay.active {
+    opacity: 1;
 }
 
 .modal_profile {
@@ -123,6 +137,16 @@ body {
     border-radius: 15px;
     padding: 20px;
     color: #d8e5beff;
+
+    transform: scale(0.85) translateY(30px);
+    opacity: 0;
+    transition: all 0.8s ease;
+}
+
+/* animasi modal masuk */
+.overlay.active .modal_profile {
+    transform: scale(1) translateY(0);
+    opacity: 1;
 }
 
 .modal-body {
@@ -130,6 +154,7 @@ body {
     align-items: center;
     height: 90%;
 }
+
 
 .keluar-button {
     display: flex;
@@ -213,10 +238,10 @@ body {
     margin-bottom: 10px
 }
 
-input[type=password] {
+.modal-right input[type=text] {
     padding: 10px 12px;
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.664);
     background: transparent;
     color: #e6eef6
 }
@@ -373,6 +398,17 @@ input[type=password] {
     background: rgba(0, 0, 0, 0.6);
     justify-content: center;
     align-items: center;
+
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal.active {
+    opacity: 1; 
 }
 
 .modal-content {
@@ -382,6 +418,15 @@ input[type=password] {
     width: 400px;
     max-width: 90%;
     position: relative;
+
+    transform: scale(0.85) translateY(30px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.modal.active .modal-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
 }
 
 .modal-content h3 {
