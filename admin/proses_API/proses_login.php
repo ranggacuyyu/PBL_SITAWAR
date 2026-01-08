@@ -1,9 +1,9 @@
-  <?php
-  session_start();
-  require_once '../../koneksi.php';
-  require_once '../../db_helper.php';
-  
-  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+<?php
+session_start();
+require_once '../../koneksi.php';
+require_once '../../db_helper.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = trim(($_POST['password']));
 

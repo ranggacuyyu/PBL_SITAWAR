@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 18, 2025 at 06:53 AM
+-- Generation Time: Jan 08, 2026 at 10:22 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,19 @@ SET time_zone = "+00:00";
 --
 -- Database: `pbl1`
 --
+
+-- ========================================
+-- OTOMATIS MEMBUAT DATABASE
+-- ========================================
+
+-- Hapus database jika sudah ada (opsional, hapus baris ini jika tidak ingin menghapus database lama)
+DROP DATABASE IF EXISTS `pbl1`;
+
+-- Buat database baru
+CREATE DATABASE IF NOT EXISTS `pbl1` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+-- Gunakan database yang baru dibuat
+USE `pbl1`;
 
 -- --------------------------------------------------------
 
@@ -38,8 +51,10 @@ CREATE TABLE `admin_user` (
 --
 
 INSERT INTO `admin_user` (`nama`, `id_admin`, `password_admin`) VALUES
-('admin', 1, 'admin'),
-('shabir', 3, '');
+('mangga', 4, '$2y$10$5k3by7PNwGsYJohPaWRfUubSPhrxZIHLxovSztSScJoaBSJXQzm/C'),
+('admin', 5, '$2y$10$NfOGQkZ8ysIqWeXfWQar.uZDdyamkUB/MMGDfdDW1jZvSPLPpV9m2'),
+('nadya', 7, '$2y$10$oUtAnS.fC1xkVHo8k0PlSuMmWNTOjGZURojWPcrQZWOEg3otgbzCe'),
+('adminbaru', 8, '$2y$10$NCauQiLxHfwoIlHiibN.4e6UJp9k78EWjvBNbsvMM9k.ftMkdoEYe');
 
 -- --------------------------------------------------------
 
@@ -80,16 +95,17 @@ CREATE TABLE `dokumen` (
 --
 
 INSERT INTO `dokumen` (`id_dokumen`, `tanggal`, `warga`, `status`, `jenis_dokumen`) VALUES
-(20, '2025-12-17', '54321', 'tolak', 'domisili'),
-(21, '2025-12-17', '54321', 'setuju', 'pengantar rt');
+(56, '2026-01-08', '0987654321123451', 'tolak', 'domisili'),
+(57, '2026-01-08', '0987654321123451', 'setuju', 'pengantar rt'),
+(58, '2026-01-08', '0987654321123451', 'setuju', 'domisili');
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `dokumen_warga`
 --
--- Error reading structure for table pbl1.dokumen_warga: #1932 - Table &#039;pbl1.dokumen_warga&#039; doesn&#039;t exist in engine
--- Error reading data for table pbl1.dokumen_warga: #1064 - You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near &#039;FROM `pbl1`.`dokumen_warga`&#039; at line 1
+-- Error reading structure for table pbl1.dokumen_warga: #1932 - Table 'pbl1.dokumen_warga' doesn't exist in engine
+-- Error reading data for table pbl1.dokumen_warga: #1064 - You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FROM `pbl1`.`dokumen_warga`' at line 1
 
 -- --------------------------------------------------------
 
@@ -113,7 +129,7 @@ CREATE TABLE `dokumen_wargart` (
 --
 
 INSERT INTO `dokumen_wargart` (`id_dokumen`, `id_warga`, `foto_kk`, `foto_ktp`, `status_verifikasi`, `catatan_penolakan`, `tanggal_upload`, `jenis_dokumen`) VALUES
-(5, '12341234', '6fa9ae086eb66fb80ee9484b12f4eb287927cbc7e4f95a799089e6379a8c4471.jpg', 'e916ef543e81da0c653370821b8e59a2e1e8adb2b24e8d34f9f269988ca9c25f.jpg', 'pending', NULL, '2025-12-15', 'pengantar_rt');
+(14, '0987654321123453', '141b778a5ac4662619d3268ec7cf307f2c8fd49100c47230f5b0adc911b7b06a.jpg', 'e15a620433b229a5493774941151436e0b64faa937b196f8d76dca16d5a88852.jpg', 'pending', NULL, '2026-01-08', 'pengantar_rt');
 
 -- --------------------------------------------------------
 
@@ -133,8 +149,17 @@ CREATE TABLE `laporan` (
   `tanggal_meninggal` date DEFAULT NULL,
   `blok_subjek` varchar(10) NOT NULL,
   `tanggal_laporan` timestamp NOT NULL DEFAULT current_timestamp(),
-  `KK_pelapor` varchar(100) NOT NULL
+  `KK_pelapor` varchar(100) NOT NULL,
+  `status_laporan` enum('aktif','selesai') DEFAULT 'aktif'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `laporan`
+--
+
+INSERT INTO `laporan` (`id_laporan`, `nik_pelapor`, `nama_pelapor`, `nohp_pelapor`, `blok_pelapor`, `jenis_laporan`, `nama_subjek`, `umur_subjek`, `tanggal_meninggal`, `blok_subjek`, `tanggal_laporan`, `KK_pelapor`, `status_laporan`) VALUES
+(30, '0987654321123451', 'mangga', '081275796451', 'taman raya', 'ibu-hamil', 'Ara', 35, NULL, 'taman raya', '2026-01-08 04:16:29', '373839303777', 'aktif'),
+(31, '0987654321123451', 'mangga', '081275796451', 'taman raya', 'warga-meninggal', 'rangga', 3, '2026-01-12', 'blok m', '2026-01-08 04:16:53', '373839303777', 'aktif');
 
 -- --------------------------------------------------------
 
@@ -149,18 +174,20 @@ CREATE TABLE `user_rt` (
   `no_rw` char(10) NOT NULL,
   `nama_rt` varchar(50) NOT NULL,
   `nohp_rt` varchar(13) NOT NULL,
-  `wilayah_rt` varchar(100) NOT NULL,
-  `alamat` varchar(200) NOT NULL,
   `admin` int(11) NOT NULL,
-  `password` varchar(255) DEFAULT NULL
+  `password` varchar(255) DEFAULT NULL,
+  `foto_profile` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `user_rt`
 --
 
-INSERT INTO `user_rt` (`sk_rt`, `nik_rt`, `no_rt`, `no_rw`, `nama_rt`, `nohp_rt`, `wilayah_rt`, `alamat`, `admin`, `password`) VALUES
-('15/12/2025', '2171434250102510', '001', '001', 'fadli', '081275796452', 'meditrania', '', 1, '$2y$10$5qpCkISB0.bQ2ouAZGU7dOC2a1JVt8W3Zu.En00GQoScmV2c3A2Jm');
+INSERT INTO `user_rt` (`sk_rt`, `nik_rt`, `no_rt`, `no_rw`, `nama_rt`, `nohp_rt`, `admin`, `password`, `foto_profile`) VALUES
+('12341234', '0987654321123457', '001', '007', 'mangga', '081275796452', 5, '$2y$10$CvxD95GBdjROCfHSN1rZqOWuf4IZ5G.e7YPPUYx760Xo/KXSLhw.y', NULL),
+('15/12/2025', '0987654321123456', '002', '001', 'femboysku', '081275796452', 5, '$2y$10$GeA7IChM8AvO76x.eeNEMezvpX8Hi0R6ekyi7kDWBD0Dj.VmSV6v2', '1767319837_6957291d367ae.gif'),
+('30/11/2025 sk tahun pertama', '0987654321123451', '01', '001', '0987654321123456', '081275796452', 5, '$2y$10$O38I.gKKot0pRidbPPOsNuFjlZIsgokqKUV02/BQWsCY3QMqSUYUK', NULL),
+('54321', '0987654321123454', '01', '01', 'mangga', '081275796452', 5, '$2y$10$HWuyGhSgjG.BgWYonpkVfOR36gebBJY19uCIOXLP4JaKAcLglN/vu', '1767849480_695f3e08339a3.jpg');
 
 -- --------------------------------------------------------
 
@@ -187,27 +214,29 @@ CREATE TABLE `user_warga` (
   `rt` varchar(50) NOT NULL,
   `ibu_hamil` varchar(10) DEFAULT NULL,
   `keluarga` enum('kepala keluarga','anggota keluarga','wafat') DEFAULT NULL,
-  `hp` int(15) NOT NULL,
+  `hp` varchar(15) NOT NULL,
   `no_rt` char(50) NOT NULL,
   `no_rw` char(50) NOT NULL,
   `kecamatan` varchar(50) NOT NULL,
   `kelurahan` varchar(50) NOT NULL,
   `sudah_lengkap` tinyint(1) DEFAULT 0,
   `warga_wafat` varchar(50) DEFAULT NULL,
-  `tanggal_input` timestamp NOT NULL DEFAULT current_timestamp()
+  `tanggal_input` timestamp NOT NULL DEFAULT current_timestamp(),
+  `foto_profile` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `user_warga`
 --
 
-INSERT INTO `user_warga` (`nik_warga`, `password`, `dokumen`, `laporan`, `nama_warga`, `tanggal_lahir`, `jenis_kelamin`, `agama`, `status_kawin`, `no_kk`, `tempat_lahir`, `alamat`, `email`, `pekerjaan`, `pendidikan`, `rt`, `ibu_hamil`, `keluarga`, `hp`, `no_rt`, `no_rw`, `kecamatan`, `kelurahan`, `sudah_lengkap`, `warga_wafat`, `tanggal_input`) VALUES
-('', '$2y$10$RJmsWrzlF1ogi6O7AfZmb.0ikC2pphHrsEHpmXvlWy9c9H.lPJFyC', NULL, NULL, ' ', NULL, NULL, '', NULL, '', '', '', '', NULL, NULL, '15/12/2025', NULL, 'anggota keluarga', 0, '001', '001', '', '', 0, NULL, '2025-12-15 14:25:41'),
-('123123123', '$2y$10$WIDkI.bBoUfQvCh9jsmF3ODt3oOF3JwoJ3foXLHgQEcA0HC5j44gy', NULL, NULL, 'rangga', NULL, NULL, '', NULL, '', '', '', '', NULL, NULL, '15/12/2025', NULL, 'anggota keluarga', 0, '001', '001', '', '', 0, NULL, '2025-12-15 15:25:07'),
-('12341234', '$2y$10$nwaQGI7DHfRVN7WkV7n1HO6zp26NlnnksxL8lvZ4Eg/OUZNRTeEDC', NULL, NULL, 'femboys', '2007-01-03', 'Laki-Laki', 'Islam', 'belum-kawin', '373839303777', 'BATAM', 'Teluk mata ikan RT 03 RW 07 kelurahan Sambau kecamatan Nongsa', 'ranggakomik@gmail.com', 'swasta', 's1/d4', '15/12/2025', NULL, 'anggota keluarga', 2147483647, '001', '001', 'NONGSA', 'SAMBAU', 1, NULL, '2025-12-15 14:03:55'),
-('192837', '$2y$10$D7kVMmGNrxD4uiKTQQEpHO1g1Y.ipQeA/g27VlT4609oqlrm4/hTq', NULL, NULL, 'femboys', '2007-01-09', 'Laki-Laki', 'Islam', 'kawin', '373839303777', 'BATAM', 'Teluk mata ikan RT 03 RW 07 kelurahan Sambau kecamatan Nongsa', 'ranggakomik@gmail.com', 'Pelajar/Mahasiswa', '', '15/12/2025', NULL, 'kepala keluarga', 2147483647, '001', '001', 'NONGSA', 'SAMBAU', 1, NULL, '2025-12-16 01:53:33'),
-('54321', '$2y$10$FgOMfKFtDpV7mciPP131dudTW/4nyDlwE8xlIdMWY2R0YQE5zyG66', 'pengantar rt', NULL, 'femboys', '2000-02-01', 'Laki-Laki', 'Kristen', 'kawin', '373839303777', 'BATAM', 'Teluk mata ikan RT 03 RW 07 kelurahan Sambau kecamatan Nongsa', 'ranggakomik@gmail.com', 'pns', 'd3/d2', '15/12/2025', NULL, 'kepala keluarga', 2147483647, '001', '001', 'NONGSA', 'SAMBAU', 1, NULL, '2025-12-15 08:10:40'),
-('987654321', '$2y$10$H6l84XW03UFweM1mS2budOa51BdXC7NLVXzj6KFkUg3yyzLEoRUo2', NULL, NULL, 'rangga', NULL, NULL, '', NULL, '', '', '', '', NULL, NULL, '15/12/2025', NULL, 'kepala keluarga', 0, '001', '001', '', '', 0, NULL, '2025-12-16 02:06:16');
+INSERT INTO `user_warga` (`nik_warga`, `password`, `dokumen`, `laporan`, `nama_warga`, `tanggal_lahir`, `jenis_kelamin`, `agama`, `status_kawin`, `no_kk`, `tempat_lahir`, `alamat`, `email`, `pekerjaan`, `pendidikan`, `rt`, `ibu_hamil`, `keluarga`, `hp`, `no_rt`, `no_rw`, `kecamatan`, `kelurahan`, `sudah_lengkap`, `warga_wafat`, `tanggal_input`, `foto_profile`) VALUES
+('0987654321123433', '$2y$10$rfqarlRdKn0TiPswkDx81eXRVXEIJ/RErOJMe4/FK37k7RnDGPDmO', NULL, NULL, 'rangga', NULL, NULL, '', NULL, '', '', '', '', NULL, NULL, '54321', NULL, 'anggota keluarga', '', '01', '01', '', '', 0, NULL, '2026-01-08 05:18:14', NULL),
+('0987654321123451', '$2y$10$Ktgrkt6URjLlyivODCJALeOcNKdcDJhEyVmOo5sJ0bZthwRgiJ4Xa', 'domisili', NULL, 'mangga', '2009-01-03', 'Laki-Laki', 'Kristen', 'kawin', '373839303777', 'belakang padang', 'Teluk mata ikan RT 03 RW 07 kelurahan Sambau kecamatan Nongsa', 'ranggakomika@gmail.com', 'BUMN', 's2', '54321', NULL, 'kepala keluarga', '081275796451', '01', '01', 'NONGSA', 'SAMBAU', 1, NULL, '2026-01-02 08:26:08', '1767858112_695f5fc08f697.png'),
+('0987654321123452', '$2y$10$DaPA/35pF6inXmGoIOi.suSSmbotJ7j9Yca4XQhrFHGxJjLIl.CRe', NULL, NULL, 'rangga', '2023-01-03', 'Laki-Laki', 'Kristen', 'belum-kawin', '373839303777', 'BATAM', 'Teluk mata ikan RT 03 RW 07 kelurahan Sambau kecamatan Nongsa', 'ranggakomik@gmail.com', 'TNI', 'tidak bersekolah', '54321', NULL, 'anggota keluarga', '081275796452', '01', '01', 'NONGSA', 'SAMBAU', 1, NULL, '2026-01-03 17:14:54', NULL),
+('0987654321123453', '$2y$10$S8oyvJsJaw.Wq5e7VRE5aOaP84/Q6qwh577Ot/tat4vrWpj2xXzM6', NULL, NULL, 'Ara', '1990-01-09', 'Perempuan', 'Islam', 'kawin', '373839303777', 'belakang padang', 'Teluk mata ikan RT 03 RW 07 kelurahan Sambau kecamatan Nongsa', 'ranggakomik@gmail.com', 'Wirausaha', 's2', '54321', NULL, 'wafat', '081275796452', '01', '01', 'NONGSA', 'SAMBAU', 1, NULL, '2026-01-03 17:18:20', NULL),
+('0987654321123457', '$2y$10$sZUf4lZF1HwGNLuERql8wODlxEx3.hfuW4UXuErzRRTBMdf0nkEiS', NULL, NULL, 'mangga', '2020-02-03', 'Laki-Laki', 'Islam', 'belum-kawin', '373839303777', 'belakang padang', 'Teluk mata ikan RT 03 RW 07 kelurahan Sambau kecamatan Nongsa', 'ranggakomik@gmail.com', 'BUMN', 'tidak bersekolah', '54321', NULL, 'wafat', '081275796452', '01', '01', 'NONGSA', 'SAMBAU', 1, NULL, '2026-01-08 03:59:58', NULL),
+('0987654321123458', '$2y$10$sKdUKuAUaP67/.07EYG6huNn8cVaxEUMKued/O76r8ScqU6CF7E/W', NULL, NULL, 'zaki', '2020-02-01', 'Laki-Laki', 'Kristen', 'kawin', '373839303777', 'belakang padang', 'Teluk mata ikan RT 03 RW 07 kelurahan Sambau kecamatan Nongsa', 'ranggakomik@gmail.com', 'Swasta', 'tidak bersekolah', '54321', NULL, 'wafat', '081275796452', '01', '01', 'NONGSA', 'SAMBAU', 1, NULL, '2026-01-08 04:40:07', NULL),
+('54321', '$2y$10$QZSykIowSmGBZCd3TxYSXe2R/sKL.hVgU72V0uo/42sGog0wEWkES', NULL, NULL, 'mangga', NULL, NULL, '', NULL, '', '', '', '', NULL, NULL, '54321', NULL, 'kepala keluarga', '', '01', '01', '', '', 0, NULL, '2026-01-08 09:03:10', NULL);
 
 --
 -- Indexes for dumped tables
@@ -270,7 +299,7 @@ ALTER TABLE `user_warga`
 -- AUTO_INCREMENT for table `admin_user`
 --
 ALTER TABLE `admin_user`
-  MODIFY `id_admin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_admin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `chat`
@@ -282,19 +311,19 @@ ALTER TABLE `chat`
 -- AUTO_INCREMENT for table `dokumen`
 --
 ALTER TABLE `dokumen`
-  MODIFY `id_dokumen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id_dokumen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `dokumen_wargart`
 --
 ALTER TABLE `dokumen_wargart`
-  MODIFY `id_dokumen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_dokumen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `laporan`
 --
 ALTER TABLE `laporan`
-  MODIFY `id_laporan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_laporan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- Constraints for dumped tables
@@ -334,8 +363,11 @@ DELIMITER $$
 --
 -- Events
 --
-CREATE DEFINER=`root`@`localhost` EVENT `hapus_laporan_9_bulan` ON SCHEDULE EVERY 1 DAY STARTS '2025-12-04 19:34:04' ON COMPLETION NOT PRESERVE ENABLE DO DELETE FROM laporan
-WHERE tanggal_laporan < NOW() - INTERVAL 9 MONTH$$
+CREATE DEFINER=`root`@`localhost` EVENT `update_laporan_ibu_hamil` ON SCHEDULE EVERY 1 DAY STARTS '2026-01-04 00:00:00' ON COMPLETION NOT PRESERVE ENABLE DO UPDATE laporan
+SET status_laporan = 'selesai'
+WHERE jenis_laporan = 'ibu-hamil'
+AND status_laporan = 'aktif'
+AND tanggal_laporan <= DATE_SUB(CURDATE(), INTERVAL 9 MONTH)$$
 
 DELIMITER ;
 COMMIT;
