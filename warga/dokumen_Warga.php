@@ -226,7 +226,7 @@ $adaPengajuan_laporan = mysqli_num_rows($cekAktif_laporan);
 
     <div class="riwayat">
       <div class="riwayat-header-row">
-        <div>Riwayat Pelaporan</div>
+        <div>Riwayat Pembuatan Dokumen</div>
       </div>
       <div class="table-responsive">
         <table>

@@ -645,14 +645,15 @@ if (isset($_POST['nik_edit'], $_POST['kolom_edit'])) {
             const gender = document.getElementById("filterGender").value.toLowerCase();
 
             const hasil = warga.filter(w =>
-                w.nama_warga.toLowerCase().includes(nama) &&
-                w.no_kk.toLowerCase().includes(kk) &&
-                (gender === "" || w.jenis_kelamin.toLowerCase() === gender)
+                (w.nama_warga || "").toLowerCase().includes(nama) &&
+                (w.no_kk || "").toLowerCase().includes(kk) &&
+                (gender === "" || (w.jenis_kelamin || "").toLowerCase() === gender)
             );
 
-
+            currentPage = 1;
             tampilkanData(hasil);
         }
+
 
 
         function resetFilter() {

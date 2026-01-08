@@ -45,7 +45,7 @@ if(isset($_POST['nama'])){
             <div class="card shadow-lg">
                 <div class="card-header bg-success text-white text-center">
                     <h4 class="mb-0">Form Input Data</h4>
-                    <small>Contoh POST dengan Bootstrap</small>
+                    
                 </div>
 
                 <div class="card-body">

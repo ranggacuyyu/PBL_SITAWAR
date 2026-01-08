@@ -216,11 +216,11 @@ $kk = db_select_no_assoc($koneksi, $query_kk, "sii", [$sk_rt, $limit, $offset]);
     </div>
     <!-- Modal Ganti Kepala Keluarga -->
     <div class="modal fade" id="modalGanti" tabindex="-1">
-        <form action="ganti_kepala_keluarga.php" method="post">
+        <form action="ganti_kepala_keluarga.php" method="POST">
             <div class="modal-dialog modal-dialog-centered">
 
                 <div class="modal-content p-3">
-                    <input type="hidden" name="no_kk1" id="inputNoKK">
+                    <input type="hidden" name="no_kk1" id="inputNoKKGanti">
 
                     <h5 class="fw-bold text-center">Ganti Kepala Keluarga</h5>
 
@@ -232,7 +232,8 @@ $kk = db_select_no_assoc($koneksi, $query_kk, "sii", [$sk_rt, $limit, $offset]);
 
                     <div class="text-end d-flex justify-content-end gap-2">
                         <div class="btn btn-secondary" data-bs-dismiss="modal">Batal</div>
-                        <button class="btn btn-primary" onclick="submitGanti()">Simpan</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+
                     </div>
 
                 </div>
@@ -259,6 +260,7 @@ $kk = db_select_no_assoc($koneksi, $query_kk, "sii", [$sk_rt, $limit, $offset]);
             document.getElementById('modalFoto').src = foto_profile ? '../warga/profile/' + foto_profile : '../warga/profile/default.jpg';
 
             document.getElementById('modalNoKK').innerHTML = "No KK: " + no_kk;
+            document.getElementById('inputNoKKGanti').value = no_kk;
             document.getElementById('modalNIK').innerHTML = nik;
             document.getElementById('modalNama').innerHTML = nama;
             document.getElementById('modalJumlah').innerHTML = jumlah + " Orang";
@@ -309,15 +311,25 @@ $kk = db_select_no_assoc($koneksi, $query_kk, "sii", [$sk_rt, $limit, $offset]);
                 });
         }
 
-        function submitGanti() {
-            let nikBaru = document.getElementById('dropdownAnggota').value;
+        function bukaModalGanti(kk) {
+            document.getElementById("inputNoKK").value = kk;
 
-            fetch('ganti_kepala_keluarga.php?no_kk=' + window.selectedKK + "&nik=" + nikBaru)
-                .then(res => res.text())
-                .then(response => {
-                    alert(response);
-                    location.reload();
+            fetch("get_anggota_kk.php?no_kk=" + kk)
+                .then(res => res.json())
+                .then(data => {
+                    let dropdown = document.getElementById("dropdownAnggota");
+                    dropdown.innerHTML = "";
+
+                    data.forEach(warga => {
+                        let opt = document.createElement("option");
+                        opt.value = warga.nik_warga;
+                        opt.textContent = warga.nama_warga + " (" + warga.nik_warga + ")";
+                        dropdown.appendChild(opt);
+                    });
                 });
+
+            let modal = new bootstrap.Modal(document.getElementById("modalGantiKK"));
+            modal.show();
         }
     </script>
 
