@@ -49,7 +49,6 @@
 
 ### 🎨 **Modern & User-Friendly**
 - 🌈 **Matcha Green Theme** - Desain modern yang menenangkan mata
-- 📱 **Responsive Design** - Sempurna di desktop, tablet, dan smartphone
 - ⚡ **Smooth Animations** - GSAP animations untuk pengalaman premium
 - 🎯 **Intuitive Interface** - Mudah digunakan untuk semua kalangan
 
@@ -647,7 +646,7 @@ Terima kasih kepada:
 
 <div align="center">
 
-### Developed with ❤️ by **Tim PBL - Politeknik Negeri Batam**
+### Developed with ❤️ by **Tim PBL 101 A1 - Politeknik Negeri Batam**
 
 <table>
 <tr>
@@ -720,7 +719,7 @@ Butuh bantuan atau ada pertanyaan?
 | 👥 Warga Panel | ✅ Complete | ![100%](https://progress-bar.dev/100) |
 | 📊 Analytics | ✅ Complete | ![100%](https://progress-bar.dev/100) |
 | 🔐 Security | ✅ Complete | ![100%](https://progress-bar.dev/100) |
-| 📱 Responsive | ✅ Complete | ![100%](https://progress-bar.dev/100) |
+| 📱 Responsive | 🚧 In Progress | ![30%](https://progress-bar.dev/30) |
 | 📧 Email System | 🚧 In Progress | ![30%](https://progress-bar.dev/30) |
 | 🌙 Dark Mode | 📋 Planned | ![0%](https://progress-bar.dev/0) |
 
