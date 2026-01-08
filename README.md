@@ -13,10 +13,6 @@
 
 [✨ Features](#-fitur-unggulan) • [🚀 Quick Start](#-quick-start) • [📖 Documentation](#-dokumentasi-lengkap) • [🎯 Demo](#-demo)
 
----
-
-![SITAWAR Banner](https://via.placeholder.com/1200x400/6a7c4f/ffffff?text=SITAWAR+-+Sistem+Terpadu+Administrasi+Warga)
-
 </div>
 
 ---
@@ -30,17 +26,17 @@
 <table>
 <tr>
 <td width="33%" align="center">
-<img src="https://img.icons8.com/fluency/96/000000/problem.png" width="64"/>
+<h2>⚠️</h2>
 <h4>Masalah</h4>
 <p>Pengelolaan data warga masih manual, tracking dokumen sulit, tidak ada sistem verifikasi terstruktur</p>
 </td>
 <td width="33%" align="center">
-<img src="https://img.icons8.com/fluency/96/000000/light.png" width="64"/>
+<h2>💡</h2>
 <h4>Solusi</h4>
 <p>Platform terpadu yang menghubungkan Admin, RT, dan Warga dengan fitur lengkap</p>
 </td>
 <td width="33%" align="center">
-<img src="https://img.icons8.com/fluency/96/000000/trophy.png" width="64"/>
+<h2>🏆</h2>
 <h4>Hasil</h4>
 <p>Administrasi lebih cepat, transparan, dan paperless</p>
 </td>
@@ -471,53 +467,53 @@ if (!in_array($ext, $allowed)) {
 
 ## 🎯 Demo
 
-### 📸 Screenshots
+### 📸 Fitur Utama
 
 <details>
 <summary><b>🏠 Dashboard RT</b></summary>
 
-![Dashboard RT](https://via.placeholder.com/800x450/6a7c4f/ffffff?text=Dashboard+RT+with+Real-time+Statistics)
-
-- Real-time statistics cards
-- Interactive Chart.js graphs
-- Beautiful matcha green theme
-- Smooth animations
+**Fitur Dashboard:**
+- ✅ Real-time statistics cards (Total Warga, KK, Ibu Hamil)
+- ✅ Interactive Chart.js graphs showing monthly growth
+- ✅ Beautiful matcha green theme
+- ✅ Smooth GSAP animations
+- ✅ Quick action buttons
 
 </details>
 
 <details>
 <summary><b>📊 Data Warga Management</b></summary>
 
-![Data Warga](https://via.placeholder.com/800x450/8fa876/ffffff?text=Data+Warga+Management+with+Pagination)
-
-- Full CRUD operations
-- Export to Excel & PDF
-- Smart pagination
-- Search & filter
+**Fitur Manajemen Data:**
+- ✅ Full CRUD operations (Create, Read, Update, Delete)
+- ✅ Export to Excel & PDF with one click
+- ✅ Smart pagination for large datasets
+- ✅ Advanced search & filter
+- ✅ Bulk operations support
 
 </details>
 
 <details>
 <summary><b>✅ Verifikasi Dokumen</b></summary>
 
-![Verifikasi](https://via.placeholder.com/800x450/e7f0da/333333?text=Document+Verification+System)
-
-- Preview KK & KTP
-- Approve/Reject with notes
-- Status tracking
-- File download
+**Fitur Verifikasi:**
+- ✅ Preview KK & KTP in modal
+- ✅ Approve/Reject with detailed notes
+- ✅ Real-time status tracking
+- ✅ Secure file download
+- ✅ Upload validation
 
 </details>
 
 <details>
 <summary><b>👤 Profil Warga</b></summary>
 
-![Profil](https://via.placeholder.com/800x450/f5f9ed/333333?text=User+Profile+with+Document+Upload)
-
-- Complete profile management
-- Photo upload
-- Document upload KK/KTP
-- Data completion indicator
+**Fitur Profil:**
+- ✅ Complete profile management
+- ✅ Photo upload with preview
+- ✅ Document upload (KK/KTP)
+- ✅ Data completion progress indicator
+- ✅ Edit personal information
 
 </details>
 
@@ -656,9 +652,11 @@ Terima kasih kepada:
 <table>
 <tr>
 <td align="center">
-<img src="https://avatars.githubusercontent.com/u/ranggacuyyu" width="100px"/>
+<a href="https://github.com/ranggacuyyu">
+<img src="https://github.com/ranggacuyyu.png" width="100px" style="border-radius:50%"/>
 <br />
 <b>Rangga Cuyyu</b>
+</a>
 <br />
 <sub>Lead Developer</sub>
 </td>
