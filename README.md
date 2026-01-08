@@ -668,29 +668,56 @@ Terima kasih kepada:
 
 ---
 
-## 📄 License
+## 📄 License & Academic Information
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+### 🎓 Proyek Akademik
+
+**SITAWAR** merupakan bagian dari **Tugas Project-Based Learning (PBL)** yang dikembangkan oleh mahasiswa **Politeknik Negeri Batam** sebagai implementasi pembelajaran berbasis proyek. Sistem ini dirancang dan dibangun untuk memenuhi persyaratan akademik dan sebagai bukti penerapan kompetensi dalam pengembangan aplikasi web.
+
+### 📋 Informasi Kepemilikan
+
+- **Institusi**: Politeknik Negeri Batam
+- **Program Studi**: [Teknologi Rekayasa Perangkat Lunak]
+- **Kelas**: PBL 101 A1
+- **Tahun Akademik**: 2025
+- **Tujuan**: Proyek Pembelajaran Berbasis Masalah (PBL)
+
+### ⚖️ Ketentuan Penggunaan
+
+Proyek ini dikembangkan untuk tujuan **pembelajaran dan pengembangan akademik**. Hak cipta dan kepemilikan intelektual terkait proyek ini adalah milik:
+
+1. **Politeknik Negeri Batam** - sebagai institusi pendidikan
+2. **Tim Pengembang** - sebagai pelaksana proyek
+3. **Dosen Pembimbing** - sebagai supervisor akademik
+
+### 📜 Lisensi Referensi
+
+Untuk tujuan pembelajaran dan pengembangan lebih lanjut, kode sumber ini menggunakan prinsip **MIT License** sebagai referensi, dengan ketentuan tambahan:
 
 ```
-MIT License
+Academic Project License
 
-Copyright (c) 2025 SITAWAR - Tim PBL Polibatam
+Copyright (c) 2025 SITAWAR - Tim PBL 101 A1 Politeknik Negeri Batam
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Project ini dikembangkan sebagai bagian dari tugas kuliah Project-Based Learning 
+di Politeknik Negeri Batam. Segala bentuk penggunaan, modifikasi, atau distribusi 
+harus mendapatkan persetujuan dari:
+- Politeknik Negeri Batam (institusi)
+- Tim Pengembang (mahasiswa)
+- Dosen Pembimbing (supervisor)
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+PENTING: 
+Proyek ini dibuat untuk tujuan pendidikan dan pembelajaran. Penggunaan untuk 
+tujuan komersial atau produksi memerlukan izin tertulis dari pihak-pihak terkait.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 ```
+
+### 🔒 Disclaimer
+
+> **CATATAN**: Sistem ini dikembangkan dalam konteks pembelajaran dan mungkin memerlukan penyesuaian lebih lanjut untuk implementasi produksi. Pihak-pihak yang berkepentingan untuk menggunakan atau mengembangkan lebih lanjut sistem ini diwajibkan untuk menghubungi Politeknik Negeri Batam dan tim pengembang terlebih dahulu.
 
 ---
 
