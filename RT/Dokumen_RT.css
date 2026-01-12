@@ -1,0 +1,506 @@
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-image: url(download.jpg);
+            background-size: cover;
+            background-position: fixed;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .tanda_setuju {
+            background-color: rgb(144, 172, 94); 
+            color: #f5f5f5f5;
+            border: none !important;
+            font-weight: bold !important;
+            border-radius: 8px !important;
+            padding: 5px !important;
+            width: 100px !important;
+        }
+
+        .tanda_tolak {
+            background-color: #ad2c2cff !important;
+            color: white !important;
+            border: none !important;
+            padding: 5px !important;
+            width: 100px !important;
+            font-weight: bold !important;
+            border-radius: 8px !important;
+        }
+
+        /* Animation */
+        @keyframes contentSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-animate {
+            animation: contentSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 250px;
+            background-color: #8da070;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            height: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding-top: 22px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-header h1 {
+            font-weight: 700;
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: #4b5c30;
+            font-weight: bold;
+        }
+
+        .nav {
+            padding: 20px;
+        }
+
+        .nav a {
+            display: block;
+            width: 100%;
+            color: white;
+            text-decoration: none;
+            padding-bottom: 8px;
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-top: 8px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            font-size: 1.35em;
+        }
+
+        .nav a:hover {
+            background-color: #6b7a59;
+        }
+
+        .sidebar-footer {
+            padding: 14px;
+            text-align: center;
+            font-size: 12px;
+            color: #ffffff;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .bungkus {
+            margin-left: 250px;
+            display: flex;
+            background-color: #88976cce;
+            width: 100%;
+        }
+
+        .datatambahan {
+            width: 100%;
+            margin: 20px;
+        }
+
+        .main-content {
+            margin-left: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #a6b48c;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        .filter-bar {
+            display: flex;
+            font-size: 1.3em;
+            margin-left: 40px;
+            margin-top: 30px;
+            color: white;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #a6b48c;
+        }
+
+        th,
+        td {
+            border: 1px solid #8b9a70;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #tabelPengajuan th {
+            background-color: #7f8f62;
+            color: white;
+        }
+
+        #tabelPengajuan tbody tr:nth-child(even) {
+            background-color: #c2d1a9;
+        }
+
+        .btn {
+            border-radius: 5px;
+        }
+
+        .modal-content {
+            background-color: #e9f0da;
+        }
+
+        /* Modern Matcha Modal Styles */
+        .matcha-modal {
+            background: linear-gradient(135deg, #f5f9ed 0%, #e8f1da 100%) !important;
+            border: none !important;
+            border-radius: 20px !important;
+            box-shadow: 0 20px 60px rgba(106, 124, 79, 0.25) !important;
+            overflow: hidden !important;
+        }
+
+        .modal-header-matcha {
+            background: linear-gradient(135deg, #8da070 20%, #637943 100%);
+            padding: 24px 30px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .modal-icon {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .modal-icon:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .modal-title-matcha {
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .btn-close-matcha {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-close-matcha:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: rotate(90deg);
+        }
+
+        .modal-body-matcha {
+            padding: 30px;
+            background: transparent;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .detail-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            box-shadow: 0 4px 15px rgba(106, 124, 79, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .detail-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(141, 160, 112, 0.05) 0%, rgba(122, 144, 89, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(106, 124, 79, 0.15);
+            border-color: #8da070;
+        }
+
+        .detail-card:hover::before {
+            opacity: 1;
+        }
+
+        .detail-card-wide {
+            grid-column: span 2;
+        }
+
+        .detail-card-icon {
+            background: linear-gradient(135deg, #8da070 0%, #7a9059 100%);
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 12px rgba(141, 160, 112, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .detail-card:hover .detail-card-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 6px 18px rgba(141, 160, 112, 0.4);
+        }
+
+        .detail-card-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .detail-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6a7c4f;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+        }
+
+        .detail-value {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3a1e;
+            line-height: 1.4;
+        }
+
+        .modal-footer-matcha {
+            padding: 20px 30px;
+            border: none;
+            background: linear-gradient(180deg, rgba(141, 160, 112, 0.05) 0%, rgba(141, 160, 112, 0.1) 100%);
+            display: flex;
+            justify-content: flex-end;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .btn-matcha-close {
+            background: linear-gradient(135deg, #8da070 0%, #7a9059 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(141, 160, 112, 0.25);
+        }
+
+        .btn-matcha-close:hover {
+            background: linear-gradient(135deg, #7a9059 0%, #6b7a52 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(141, 160, 112, 0.35);
+        }
+
+        .btn-matcha-close:active {
+            transform: translateY(0);
+        }
+
+        /* Animations */
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes animateIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: animateIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .modal.show .modal-dialog {
+            animation: modalFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-card-wide {
+                grid-column: span 1;
+            }
+
+            .modal-header-matcha {
+                padding: 20px;
+            }
+
+            .modal-body-matcha {
+                padding: 20px;
+            }
+
+            .modal-title-matcha {
+                font-size: 18px;
+            }
+
+            .modal-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .detail-card-icon {
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+            }
+
+            .detail-card-icon svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        /* Modal Backdrop */
+        .modal-backdrop.show {
+            backdrop-filter: blur(4px);
+            background-color: rgba(45, 58, 30, 0.4);
+        }
+
+        #tabelPengajuan th {
+            background-color: #5c7040;
+            /* header hijau tua */
+            color: white;
+        }
+
+        /* Warna kolom pertama (Nama) */
+        #tabelPengajuan td:nth-child(1) {
+            background-color: #dee9d1;
+            font-weight: 600;
+        }
+
+        /* Warna kolom kedua (Jenis) */
+        #tabelPengajuan td:nth-child(2) {
+            background-color: #e8f1da;
+        }
+
+        /* Warna kolom ketiga (Tanggal) */
+        #tabelPengajuan td:nth-child(3) {
+            background-color: #f3f8e7;
+        }
+
+        /* Warna kolom keempat (Persetujuan) */
+        #tabelPengajuan td:nth-child(4) {
+            background-color: #e0eed0;
+        }
+
+        /* Tambahan efek hover baris */
+        #tabelPengajuan tbody tr:hover td {
+            background-color: #d5e3ba;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        /* Tambahan style tabel */
+        #tabelPengajuan {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #tabelPengajuan th,
+        #tabelPengajuan td {
+            border: 1px solid #8b9a70;
+            text-align: center;
+            padding: 10px;
+        }

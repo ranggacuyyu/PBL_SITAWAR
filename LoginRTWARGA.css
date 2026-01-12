@@ -1,0 +1,868 @@
+:root {
+    --backgroud-color-image: #93a375dc;
+    --font-color: #495336;
+    --macha-medium: #728156;
+    --bg-color: #f0f4f1;
+    --text-color: #333;
+    --header-color: linear-gradient(to right, #3f492d, #88976c);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+
+}
+
+.alert-box {
+    background-color: tomato;
+    color: white;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 15px;
+    text-align: center;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+/* animasi halus */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style-type: none;
+}
+
+
+/* background belakang */
+body {
+    background-image: url(image/download.jpg);
+    background-size: cover;
+    font-family: 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+/*header-----------------------------------------------------------------------*/
+header {
+    background-color: #728156;
+    position: fixed;
+    width: 100%;
+    padding: 5px;
+    z-index: 5;
+    background: var(--header-color);
+}
+
+.navbar h1 {
+    color: whitesmoke;
+    margin: 0px;
+    margin-left: 30px;
+}
+
+header .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.navbar .nav-menu {
+    display: flex;
+    gap: 15px;
+}
+
+.navbar .nav-menu .list-navbar {
+    padding: 13px 0 13px 10px;
+    font-size: 23px;
+    margin-left: 5px;
+}
+
+.list-navbar button {
+    width: 90px;
+    height: 33px;
+    background-color: transparent;
+    border: 2px solid #fff;
+    outline: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8em;
+    color: #fff;
+    font-weight: 550;
+    margin-right: 30px;
+    transition: .5s;
+}
+
+.list-navbar button:hover {
+    background-color: #fff;
+    color: #88976c;
+}
+
+.nav-menu a {
+    padding: 5px;
+    position: relative;
+    color: white;
+    transition: color 0.4s, transform 0.2s;
+}
+
+.nav-menu a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 100%;
+    background-color: white;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.nav-menu a:hover:after {
+    transform: scaleX(1);
+    transform-origin: right;
+}
+
+/* header selesai------------------------------------------------------------- */
+
+.menu-toggle {
+    display: none;
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.pop-up {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    z-index: 10;
+    top: -1%;
+    left: 35%;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    z-index: 10;
+    width: 400px;
+    height: 420px;
+    background: transparent;
+    border: 2px solid rgba(225, 225, 225, .5);
+    border-radius: 20px;
+    backdrop-filter: blur(13px);
+    box-shadow: 0, 0, 30px, rgba(0, 0, 0, .5);
+    overflow: hidden;
+    transform: scale(0);
+    transition: 0.2s ease;
+}
+
+.wrapper.active-popup {
+    transform: scale(1);
+}
+
+.wrapper.active {
+    height: 420px;
+}
+
+.daftar-regis {
+    position: absolute;
+    transform: translateX(400px);
+    padding: 50px;
+}
+
+.wrapper .form-box-login {
+    width: 100%;
+    padding: 40px;
+}
+
+.wrapper.active .form-box-login {
+    transition: 1s ease;
+    transform: translateX(-400px);
+}
+
+.wrapper.active .daftar-regis {
+    position: absolute;
+    transition: 1s ease;
+    transform: translateX(362px);
+}
+
+.wrapper .icon-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 50px;
+    width: 50px;
+    background-color: #495336;
+    font-size: 1.8em;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom-left-radius: 20px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.form-box-login h2 {
+    font-size: 2em;
+    color: #233f25;
+    text-align: center;
+}
+
+.form-box-login .input-box {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    border-bottom: 2px solid #495336;
+    padding: 25px 0;
+}
+
+.input-box {
+    position: relative;
+}
+
+.input-box input {
+    padding-right: 40px;
+}
+
+.input-box i.toggle-eye {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #88976c;
+    z-index: 20;
+}
+
+.input-box label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    font-size: 1.35em;
+    color: #233f25;
+    font-weight: 500;
+    pointer-events: none;
+    transition: 1.5s;
+    padding: 0px 35px 0px 5px;
+}
+
+.input-box input:focus~label,
+.input-box input:valid~label {
+    top: -10px;
+    left: 5px;
+    color: #88976c;
+    /* warna macha lembut */
+    opacity: 0;
+}
+
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1.3em;
+    color: #333;
+    font-weight: 600;
+}
+
+.input-box .ikon {
+    position: absolute;
+    right: 8px;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.remember-forgot {
+    margin: 10px;
+    font-size: .9em;
+    color: #233f25;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1em;
+}
+
+.remember-forgot label input {
+    accent-color: #233f25;
+    margin-right: 3px;
+}
+
+.remember-forgot a {
+    color: #233f25;
+    text-decoration: none;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+}
+
+.btn-forgot {
+    width: 100%;
+    height: 45px;
+    background-color: #495336;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.btn-forgot:hover {
+    border: #495336 solid 2px;
+    background-color: white;
+    color: #333;
+}
+
+.login-register {
+    color: #333;
+    font-size: 1em;
+    text-align: center;
+    font-weight: 500;
+    margin: 25px 0 10px;
+}
+
+.login-register p a {
+    color: #233f25;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-register p a:hover {
+    text-decoration: underline;
+}
+
+/* footoo ----------------------------------------------------------------------*/
+.foto {
+    width: 100%;
+    aspect-ratio: 2/1;
+    overflow: hidden;
+    background-color: var(--backgroud-color-image);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.foto-img {
+    height: 60%;
+    object-fit: cover;
+}
+
+/* foto selesai ----------------------------------------------------------------------*/
+
+
+
+/* about----------------------------------------------------------------------------- */
+
+.induk {
+    background: var(--backgroud-color-image);
+    min-height: 100vh;
+}
+
+.induk .section-content {
+    padding-top: 10px;
+    padding-left: 70px;
+    padding-right: 70px;
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    color: white;
+    justify-content: space-between;
+}
+
+.hero-details .title {
+    font-size: 60px;
+    margin-bottom: 10px;
+    color: var(--font-color);
+}
+
+.hero-details .sub-title {
+    font-size: 37px;
+}
+
+.hero-details .deskripsi {
+    font-size: 19px;
+}
+
+.imagea {
+    width: 45%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    padding-left: 10px;
+}
+
+.btn {
+    padding: 10px 18px;
+    border-radius: 20px;
+    background-color: #d4e4b7;
+    border-color: white;
+    font-size: medium;
+    color: var(--font-color);
+}
+
+.section-btn {
+    margin: 10px;
+}
+
+.section-btn :hover {
+    background-color: transparent;
+    color: white;
+}
+
+/*selesai-------------------------------------------------------*/
+
+
+
+/* layanan----------------------------------------------------- */
+
+.layanan {
+    background: var(--backgroud-color-image);
+    min-height: 100vh;
+    width: 100%;
+}
+
+.list-layanan {
+    padding: 20px;
+    justify-content: space-between;
+    left: 0;
+    width: 100%;
+}
+
+.penjelasanCard {
+    margin: 40px 40px 0 40px;
+    height: 100%;
+    padding: 40px 0 40px 0;
+    width: auto;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background-color: white;
+}
+
+.penjelasanCard:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    rotate: calc(-2deg);
+}
+
+.penjelasanCard img {
+    width: 110px;
+    height: 110px;
+}
+
+.layanan {
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    padding: 0;
+}
+
+.list-layanan h3 {
+    padding: 12px;
+    margin-top: 15px;
+    font-weight: bold;
+    background-color: #d1e0b3;
+    border-radius: 10px;
+    color: var(--font-color);
+    transition: 0.3s ease-in;
+}
+
+.akhirnya {
+    background-color: #d1e0b3e7;
+    padding: 20px 10px 20px 10px;
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    color: var(--font-color);
+    opacity: 0;
+    z-index: 100;
+    font-size: 1.07em;
+    position: absolute;
+    transition: transform 2s ease-in-out;
+    transform: translateY(-10px);
+}
+
+.bungkus-akhirnya {
+    max-width: 100%;
+    height: 100px;
+    position: relative;
+    margin-right: 20px;
+    z-index: 100;
+}
+
+/* layanan selesai---------------------------------------------------------------------- */
+
+
+
+/* footer------------------------------------------------------------------------------- */
+.bawah {
+    min-height: 27vh;
+    background-color: #dcebd1;
+    font-family: 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.footer-bawah {
+    justify-content: center;
+    display: flex;
+    color: var(--font-color);
+    padding: 20px;
+}
+
+.list {
+    margin: 15px;
+}
+
+.bagian {
+    min-height: 31px;
+    background-color: #000000;
+}
+
+.akhir {
+    justify-content: space-around;
+    align-items: center;
+    display: flex;
+}
+
+.akhir-form {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.akhir-form input {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin-bottom: 10px;
+    width: 800px;
+}
+
+.akhir-form textarea {
+    width: 800px;
+    height: 60px;
+}
+
+.kirimfooter {
+    width: 100px;
+    height: 35px;
+    background-color: #495336;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    font-size: 1em;
+    font-weight: 500;
+    margin-left: 20px;
+}
+
+.div-bagian {
+    display: flex;
+}
+
+.lari {
+    position: fixed;
+    height: 31px;
+    bottom: 0;
+    width: 100%;
+    background-color: #495336;
+}
+
+.running-text {
+    position: fixed;
+    bottom: 0;
+    background: #495336;
+    color: white;
+    width: 100%;
+    max-height: 20px;
+    padding: 5px;
+    text-align: center;
+    animation: moveText 20s linear infinite;
+}
+
+@keyframes moveText {
+    0% {
+        transform: translateX(80%);
+    }
+
+    100% {
+        transform: translateX(-90%);
+    }
+}
+
+/* ===================== RESPONSIVE DESIGN ===================== */
+
+/* --- Untuk layar tablet (max 992px) --- */
+@media (max-width: 992px) {
+
+    /* Navbar */
+    .navbar h1 {
+        font-size: 22px;
+        margin-left: 10px;
+    }
+
+    /* Menu Toggle for Tablet/Mobile */
+    .menu-toggle {
+        display: block;
+        z-index: 1001;
+    }
+
+    .navbar .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        height: 100vh;
+        background: var(--backgroud-color-image); /* Or header color */
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: right 0.4s ease;
+        z-index: 1000;
+        box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+        gap: 20px;
+        padding-top: 60px; /* Space for close button if needed, or just padding */
+    }
+
+    .navbar.active .nav-menu {
+        right: 0;
+    }
+
+    .navbar .nav-menu .list-navbar {
+        font-size: 20px;
+        padding: 10px;
+        margin: 0;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .list-navbar button {
+        margin: 0 auto; /* Center button */
+    }
+
+    /* About section */
+    .section-content {
+        flex-direction: column-reverse; /* Stack image on top or bottom */
+        padding: 80px 30px 30px;
+        text-align: center;
+        justify-content: center;
+    }
+
+    /* Show Image on Tablet */
+    .section-content img.imagea {
+        display: block;
+        width: 60%;
+        margin-bottom: 30px;
+        padding: 0;
+    }
+
+    .hero-details {
+        width: 100%;
+    }
+
+    .hero-details .title {
+        font-size: 45px;
+    }
+
+    .hero-details .sub-title {
+        font-size: 25px;
+    }
+
+    /* Layanan */
+    .layanan {
+        flex-wrap: wrap;
+        justify-content: center;
+        height: auto;
+        padding-bottom: 50px;
+    }
+
+    .layanan .list-layanan {
+        width: 45%;
+        margin-bottom: 20px;
+        padding: 10px;
+    }
+    
+    .penjelasanCard {
+        margin: 10px;
+    }
+    
+    .list-layanan img {
+        width: 100%; /* Adjust image inside card */
+        max-width: 120px;
+    }
+
+    /* Footer */
+    .akhir {
+        flex-direction: column;
+    }
+
+    .akhir-form input,
+    .akhir-form textarea {
+        width: 90%;
+        max-width: none;
+    }
+}
+
+/* --- Untuk layar HP (max 600px) --- */
+@media (max-width: 600px) {
+    /* Navbar */
+    .menu-toggle {
+        display: block;
+    }
+    
+    .navbar .nav-menu {
+        width: 100%; /* Full width on mobile */
+    }
+
+    .foto {
+        width: 100%;
+        padding-top: 80px;
+    }
+
+    /* Modal / Pop-up Adjustment */
+    .pop-up {
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100vh;
+        display: flex; /* Ensure flex is on to center */
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        padding: 20px;
+        box-sizing: border-box;
+        z-index: 2000; /* High z-index */
+    }
+    
+    .wrapper {
+        position: relative;
+        transform: scale(1); /* Reset scale */
+        width: 100%;
+        max-width: 400px; /* Keep max width */
+    }
+    
+    /* When active (register mode), handle overflow or resizing if needed */
+    .wrapper.active .form-box-login {
+        transform: translateX(-100%); /* Slide out fully */
+    }
+    
+    .wrapper.active .daftar-regis {
+        transform: translateX(0); /* Slide in fully */
+        position: relative; /* Make it flow */
+    }
+    
+    /* Ensure form content fits */
+    .daftar-regis {
+        width: 100%;
+        padding: 30px;
+        box-sizing: border-box;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateX(100%);
+    }
+
+    .section-content {
+        flex-direction: column-reverse;
+        padding: 20px;
+        text-align: center;
+    }
+
+    /* Show Image on Mobile */
+    .section-content img.imagea {
+        display: block;
+        position: relative; /* Reset fixed */
+        width: 80%;
+        margin: 0 auto 20px auto;
+        padding: 0;
+    }
+
+    .hero-details .title {
+        font-size: 36px;
+    }
+
+    .hero-details .sub-title {
+        font-size: 22px;
+    }
+
+    .btn {
+        padding: 8px 14px;
+        font-size: 16px;
+        margin-top: 5px;
+    }
+
+    .induk {
+        padding-bottom: 50px;
+        min-height: auto; /* Allow height to fit content */
+    }
+
+    .deskripsi {
+        width: 100%;
+        font-size: 16px;
+    }
+
+    /* Layanan Mobile */
+    .layanan .list-layanan {
+        width: 100%; /* Full width cards */
+        transform: none !important; /* Reset any transforms */
+        margin-bottom: 20px;
+    }
+    
+    .penjelasanCard {
+        margin: 0 10px;
+    }
+
+    /* Footer Mobile */
+    .bawah {
+        padding-bottom: 20px;
+    }
+    
+    .kirimfooter {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    .akhir-form form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .running-text {
+        font-size: 12px;
+    }
+}

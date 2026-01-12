@@ -1,0 +1,275 @@
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-image: url(download.jpg);
+            background-size: cover;
+            background-position: fixed;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        tbody button {
+            background-color: #6b7a59;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        tbody button:hover {
+            background-color: #4f593f;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 250px;
+            background-color: #8da070;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            height: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-header h1 {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: #4b5c30;
+            font-weight: bold;
+        }
+
+        .nav {
+            padding: 20px;
+        }
+
+        .nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+            font-size: 1.35em;
+        }
+
+        .nav a:hover {
+            background-color: #6b7a59;
+        }
+
+        .sidebar-footer {
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #ffffff;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            width: 100%;
+            background-color: #88976cce;
+        }
+
+        .panduan {
+            background-color: #b6c39d;
+            border: 1px solid #8b9876;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .panduan b {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #9aa87e;
+        }
+
+        th,
+        td {
+            border: 1px solid #5f694b;
+            text-align: center;
+            padding: 10px;
+        }
+
+        th {
+            background-color: #6b7a59;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #c2d1a9;
+        }
+
+        .eye-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .eye-btn img {
+            width: 25px;
+            height: 25px;
+        }
+
+        /* POPUP */
+        /* Overlay */
+        .matcha-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(45, 58, 30, 0.45);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        /* Modal */
+        .matcha-modal {
+            background: linear-gradient(135deg, #f5f9ed, #e8f1da);
+            width: 90%;
+            max-width: 420px;
+            border-radius: 18px;
+            box-shadow: 0 20px 50px rgba(106, 124, 79, 0.3);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .matcha-header {
+            background: linear-gradient(135deg, #8da070, #637943);
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .matcha-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .matcha-title h3 {
+            margin: 0;
+            color: white;
+            font-size: 18px;
+        }
+
+        .matcha-icon {
+            font-size: 22px;
+        }
+
+        /* Close button */
+        .matcha-close {
+            background: rgba(255, 255, 255, 0.25);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .matcha-close:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: rotate(90deg);
+        }
+
+        /* Body */
+        .matcha-body {
+            padding: 22px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .detail-item {
+            background: white;
+            padding: 12px 14px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(106, 124, 79, 0.1);
+        }
+
+        .label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6a7c4f;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+        }
+
+        .value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3a1e;
+        }
+
+        /* Footer */
+        .matcha-footer {
+            padding: 16px 22px;
+            background: rgba(141, 160, 112, 0.1);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* Button */
+        .matcha-btn {
+            background: linear-gradient(135deg, #8da070, #7a9059);
+            color: white;
+            border: none;
+            padding: 10px 26px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .matcha-btn:hover {
+            background: linear-gradient(135deg, #7a9059, #6b7a52);
+            transform: translateY(-2px);
+        }
+
+        /* Animation */
+        .animate-in {
+            animation: popIn 0.35s ease;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }

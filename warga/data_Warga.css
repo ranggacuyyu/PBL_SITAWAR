@@ -1,0 +1,184 @@
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        /* Welcome Animation Overlay Styles */
+        #welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #455033ff 0%, #617748ff 100%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .welcome-content {
+            text-align: center;
+            overflow: hidden;
+            /* For text reveal effects */
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #c7e4a8ff 0%, #89aa55ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .welcome-subtitle {
+            font-size: 1.5rem;
+            color: #dfe6e9;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .welcome-divider {
+            width: 0%;
+            height: 2px;
+            background: #fff;
+            margin: 20px auto;
+            opacity: 0.5;
+        }
+
+        #clock {
+            color: #fff;
+            font-family: monospace;
+            font-size: 18px;
+        }
+
+        .waktu-uuu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        body {
+            background-image: url(../image/download.jpg);
+            font-family: 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif !important;
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* HEADER */
+        .head {
+            background: linear-gradient(to right, #3f492d, #88976c);
+            height: 13vh;
+            align-items: center;
+            display: flex;
+            padding: 0 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 32px;
+            padding-top: 8px;
+        }
+
+        /* NAVBAR SAMPING */
+        .navbar {
+            min-height: 100vh;
+            width: 100%;
+            background-color: #88976cce;
+        }
+
+        .navigasi-navbar {
+            width: 220px;
+            background-color: #879867;
+            position: fixed;
+            top: 13vh;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+            padding: 9px 0 2px 0;
+        }
+
+        .list-navbar h2 {
+            padding: 10px;
+            margin: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 4px;
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .list-navbar h2:hover {
+            background-color: white;
+            color: #738B67;
+            transform: translateY(3px);
+        }
+
+        /* Konten utama */
+        .konten {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .gambar{
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .konten img{
+            max-width: 200px;
+            max-height: 200px;
+        }
+
+        .profile-card img {
+            width: 100%;
+            border-radius: 50%;
+        }
+
+        .profile-card p,
+        .profile-card h4 {
+            margin: 5px 0;
+        }
+
+        .badge-custom {
+            font-size: 0.85em;
+        }
+
+        .upload-label {
+            cursor: pointer;
+        }
+
+        .upload-label:hover {
+            background-color: #738B67;
+            color: white;
+        }
+
+        .file-input {
+            display: none;
+        }
